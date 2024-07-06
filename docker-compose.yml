@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: ft_transcendence_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pong_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    container_name: ft_transcendence_backend
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/pong_db
+    ports:
+      - "4567:4567"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: ft_transcendence_frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
