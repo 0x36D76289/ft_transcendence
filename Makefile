@@ -1,28 +1,21 @@
-.PHONY: all
-all: build up
 
-.PHONY: up
-up:
-	docker-compose up
+all: build run
 
-.PHONY: down
-down:
-	docker-compose down
+background: build
+	docker-compose up -d
 
-.PHONY: build
 build:
 	docker-compose build
 
-.PHONY: clean
+run:
+	docker-compose up
+
+down:
+	docker-compose down
+
 clean: down
-	docker-compose rm -f
+	docker-compose down --rmi all --volumes --remove-orphans
 
-.PHONY: fclean
-fclean: clean
-	docker-compose rmi -f
+re: down clean all
 
-.PHONY: re
-re: fclean all
-
-.PHONY: restart
-restart: down up
+.PHONY: all background build run down clean re
