@@ -5,16 +5,28 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ft_transcendence</title>
+	<link rel="stylesheet" href="styles/styles.css">
 </head>
 
 <body>
-	<h1>Coucou </h1>
-	<button id="fetch-users">Fetch Users</button>
-	<pre id="users"></pre>
+	<!-- Cursor -->
+	<div id="spotlight" class="spotlight"></div>
+	<!-- Language Switcher -->
+	<button id="languageSwitcher" class="language-switcher" aria-label="Switch Language">🇫🇷</button>
 
-	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Jordan_Bardella_-_Strasbourg_European_Parliament_September_2022_%28cropped%29.jpg/640px-Jordan_Bardella_-_Strasbourg_European_Parliament_September_2022_%28cropped%29.jpg" alt="Jordan Bardella">
+	<!-- Game -->
+	<button id="playButton" class="custom-button" data-lang-fr="Jouer" data-lang-en="Play" aria-label="Play">Play</button>
+	<div id="loadingSpinner" class="loading-spinner" style="display: none;"></div>
 
-	<script src="app.js"></script>
+	<!-- Slider for Flashlight Size -->
+	<div class="slider-container">
+		<label for="flashlightSize">Flashlight Size</label>
+		<input type="range" id="flashlightSize" name="flashlightSize" min="50" max="300" value="100">
+	</div>
+
+	<script src="js/drawOnBackground.js"></script>
+	<script src="js/cursorFlashlight.js"></script>
+	<script src="js/languageSwitcher.js"></script>
 </body>
 
 </html>
