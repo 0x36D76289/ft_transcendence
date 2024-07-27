@@ -5,28 +5,63 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ft_transcendence</title>
-	<link rel="stylesheet" href="styles/styles.css">
+	<link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-	<!-- Cursor -->
-	<div id="spotlight" class="spotlight"></div>
-	<!-- Language Switcher -->
-	<button id="languageSwitcher" class="language-switcher" aria-label="Switch Language">🇫🇷</button>
+	<header>
+		<h1 id="title">ft_transcendence</h1>
+		<nav>
+			<button id="loginBtn">Login</button>
+			<button id="registerBtn">Register</button>
+			<button id="langToggle">Switch to Français</button>
+		</nav>
+	</header>
 
-	<!-- Game -->
-	<button id="playButton" class="custom-button" data-lang-fr="Jouer" data-lang-en="Play" aria-label="Play">Play</button>
-	<div id="loadingSpinner" class="loading-spinner" style="display: none;"></div>
+	<main>
+		<div id="gameContainer" class="hidden">
+			<canvas id="pongCanvas"></canvas>
+			<div id="scoreBoard">
+				<span id="player1Score">0</span> - <span id="player2Score">0</span>
+			</div>
+		</div>
 
-	<!-- Slider for Flashlight Size -->
-	<div class="slider-container">
-		<label for="flashlightSize">Flashlight Size</label>
-		<input type="range" id="flashlightSize" name="flashlightSize" min="50" max="300" value="100">
-	</div>
+		<div id="loginForm" class="hidden">
+			<h2 id="loginTitle">Login</h2>
+			<form id="loginFormElement">
+				<input type="text" id="loginUsername" placeholder="Username" required>
+				<input type="password" id="loginPassword" placeholder="Password" required>
+				<button type="submit" id="loginSubmit">Login</button>
+			</form>
+		</div>
 
-	<script src="js/drawOnBackground.js"></script>
-	<script src="js/cursorFlashlight.js"></script>
-	<script src="js/languageSwitcher.js"></script>
+		<div id="registerForm" class="hidden">
+			<h2 id="registerTitle">Register</h2>
+			<form id="registerFormElement">
+				<input type="text" id="registerUsername" placeholder="Username" required>
+				<input type="password" id="registerPassword" placeholder="Password" required>
+				<input type="email" id="registerEmail" placeholder="Email" required>
+				<input type="text" id="registerFirstName" placeholder="First Name">
+				<input type="number" id="registerAge" placeholder="Age">
+				<button type="submit" id="registerSubmit">Register</button>
+			</form>
+		</div>
+
+		<div id="messageContainer" class="hidden">
+			<h2 id="messageTitle">Messages</h2>
+			<div id="messageList"></div>
+			<form id="messageForm">
+				<input type="text" id="messageInput" placeholder="Type your message...">
+				<button type="submit" id="messageSend">Send</button>
+			</form>
+		</div>
+	</main>
+
+	<script src="js/game.js"></script>
+	<script src="js/user.js"></script>
+	<script src="js/messaging.js"></script>
+	<script src="js/language.js"></script>
+	<script src="js/app.js"></script>
 </body>
 
 </html>

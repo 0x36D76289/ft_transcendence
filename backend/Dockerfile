@@ -1,10 +1,10 @@
-FROM ruby:latest
+FROM ruby:3.0
 
 WORKDIR /app
 
-COPY Gemfile* ./
+COPY Gemfile ./
 RUN bundle install
 
 COPY . .
 
-CMD ["ruby", "app.rb"]
+CMD ["bundle", "exec", "rackup", "-p", "3000", "-o", "0.0.0.0"]
