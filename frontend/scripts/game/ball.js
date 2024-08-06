@@ -51,7 +51,10 @@ export class Ball {
 		this.y = canvas.height / 2;
 		this.dx = Math.random() > 0.5 ? this.speed : -this.speed;
 		this.dy = Math.random() > 0.5 ? this.speed : -this.speed;
+		this.savedX = null;
+		this.savedY = null;
 		this.useSavedPosition = false;
+		console.log('reset ball');
 	}
 
 	savePosition() {

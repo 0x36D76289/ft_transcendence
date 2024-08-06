@@ -160,6 +160,8 @@ export class Pong {
 		this.elapsedTime = 0;
 		this.startTime = Date.now();
 		this.ball.reset(this.canvas);
+		this.paddle1.reset();
+		this.paddle2.reset();
 		this.isRunning = true;
 		this.isPaused = false;
 		this.chat.addChatMessage("Game restarted. Good luck!");
