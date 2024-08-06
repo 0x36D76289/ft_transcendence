@@ -1,15 +1,21 @@
 export class Paddle {
-	constructor(x, y, width, height, speed, isPlayer) {
+	constructor(x, y, width, height, isPlayer) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.speed = speed;
+		this.speed = 8;
 		this.isPlayer = isPlayer;
+		this.useSavedPosition = false;
+		this.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
 	}
 
 	moveToY(targetY) {
-		this.y = Math.max(0, Math.min(600 - this.height, targetY - this.height / 2));
+		if (this.useSavedPosition) {
+			this.y = this.savedY;
+		} else {
+			this.y = Math.max(0, Math.min(600 - this.height, targetY - this.height / 2));
+		}
 	}
 
 	update(ball) {
@@ -25,15 +31,13 @@ export class Paddle {
 	}
 
 	draw(ctx) {
-		ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
 
-		ctx.beginPath();
-		ctx.arc(this.x + this.width / 2, this.y, this.width / 2, 0, Math.PI, true);
-		ctx.fill();
-
-		ctx.beginPath();
-		ctx.arc(this.x + this.width / 2, this.y + this.height, this.width / 2, 0, Math.PI, false);
-		ctx.fill();
+	savePosition() {
+		this.savedY = this.y;
+		this.useSavedPosition = true;
+		console.log('saved position');
 	}
 }

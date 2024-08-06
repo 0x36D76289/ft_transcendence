@@ -11,10 +11,9 @@
 
 <body>
 	<button id="playBtn">Play</button>
-
 	<button id="homeBtn">Home</button>
-
 	<button id="settingsBtn">Settings</button>
+
 	<div id="settings" class="dropdown-content">
 		<ul>
 			<li>
@@ -35,7 +34,6 @@
 		<button id="saveSettingsBtn">Apply</button>
 	</div>
 
-
 	<div id="gameContainer">
 		<div id="gameArea">
 			<canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -44,15 +42,14 @@
 			<div id="chatOutput"></div>
 			<input type="text" id="chatInput" placeholder="Enter your message here">
 		</div>
-
-		<div id="gameStatus">
+		<div id="gameStatus" class="button-container">
 			<button id="restartBtn">Restart</button>
 			<button id="surrenderBtn">Surrender</button>
 			<button id="gameStatusBtn">Pause</button>
 		</div>
 	</div>
 
-	<script type="module" src="scripts/script.js"></script>
+	<script type="module" src="scripts/main.js"></script>
 </body>
 
 </html>
