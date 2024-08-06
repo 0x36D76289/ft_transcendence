@@ -6,6 +6,7 @@ export class Paddle {
 		this.height = height;
 		this.speed = 8;
 		this.isPlayer = isPlayer;
+		this.savedY = null;
 		this.useSavedPosition = false;
 		this.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
 	}
@@ -35,9 +36,14 @@ export class Paddle {
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 
+	reset() {
+		this.y = 300 - this.height / 2;
+		this.savedY = null;
+		this.useSavedPosition = false;
+	}
+
 	savePosition() {
 		this.savedY = this.y;
 		this.useSavedPosition = true;
-		console.log('saved position');
 	}
 }
