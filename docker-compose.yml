@@ -4,7 +4,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - $APP_DIR/uploads:/usr/share/nginx/html/uploads
+      - ${APP_DIR}/uploads:/usr/share/nginx/html/uploads
     depends_on:
       - backend
 
@@ -13,7 +13,7 @@ services:
     ports:
       - "4567:4567"
     volumes:
-      - $APP_DIR/uploads:/app/uploads
+      - ${APP_DIR}/uploads:/app/uploads
     depends_on:
       - db
     environment:
@@ -23,7 +23,7 @@ services:
   db:
     image: postgres:13
     volumes:
-      - $APP_DIR/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${APP_DIR}/db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: user
@@ -36,4 +36,4 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: $APP_DIR/db/pgdata
+      device: ${APP_DIR}/db/pgdata
