@@ -9,31 +9,27 @@ services:
       - backend
 
   backend:
-    build: ./backend
-    ports:
-      - "4567:4567"
+    build: ./backend/
+    container_name: django-backend
+    env_file: .env
     volumes:
-      - ${APP_DIR}/uploads:/app/uploads
+      - ./:/code/
+    ports:
+      - 8000:8000
     depends_on:
-      - db
-    environment:
-      DATABASE_URL: postgres://user:password@db/pong
-      SESSION_SECRET: your_session_secret_here
+      db:
+        condition: service_healthy
 
   db:
-    image: postgres:13
-    volumes:
-      - ${APP_DIR}/db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - pgdata:/var/lib/postgresql/data
+    image: postgres:alpine
+    container_name: psql-database
+    ports:
+      - 5432:5432
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: pong
-
-volumes:
-  pgdata:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ${APP_DIR}/db/pgdata
+      - POSTGRES_DB=transcendence
+    env_file: .env
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 1s
+      timeout: 5s
+      retries: 10

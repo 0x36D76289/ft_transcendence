@@ -1,11 +1,11 @@
-FROM ruby:3.0
+FROM python:bullseye
 
-WORKDIR /app
+RUN mkdir /code
 
-COPY Gemfile ./
+WORKDIR /code
 
-RUN bundle install
+COPY . /code
 
-COPY . .
+RUN python3 -m pip install -r requirements.txt
 
-CMD ["ruby", "app.rb"]
+CMD /code/backend/start.sh
