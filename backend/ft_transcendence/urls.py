@@ -6,5 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 	re_path('login', views.login),
 	re_path('signup', views.signup),
-	path('game/', include('game.urls'))
+	path('game/', include('game.urls')),
+	path('chat/', include('chat.urls'))
 ]
