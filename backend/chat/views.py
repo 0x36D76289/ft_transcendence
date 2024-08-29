@@ -8,14 +8,6 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-class MessageList(generics.ListCreateAPIView):
-	queryset = Message.objects.all()
-	serializer_class = MessageSerializer
-
-class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])

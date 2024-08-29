@@ -5,14 +5,6 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 
-class GameList(generics.ListCreateAPIView):
-	queryset = Game.objects.all()
-	serializer_class = GameSerializer
-
-class GameDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
-
 @api_view(['GET'])
 def GameAllHistory(request):
 	games = Game.objects.all()
