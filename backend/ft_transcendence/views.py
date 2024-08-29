@@ -28,7 +28,7 @@ def register(request):
 	user.set_password(request.data['password'])
 	user.save()
 	token = Token.objects.create(user=user)
-	return Response({'success': True, 'token': token.key, 'user': user.username})
+	return Response({'success': True, 'token': token.key, 'username': user.username})
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
