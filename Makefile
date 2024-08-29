@@ -1,3 +1,4 @@
+.PHONY: all config background build run down clean re
 
 all: build run
 
@@ -16,9 +17,10 @@ run:
 down:
 	docker-compose down
 
-clean: down
-	docker-compose down --rmi all --volumes --remove-orphans
+clean:
+	docker-compose stop
+	docker-compose rm -f
+	docker network prune -f
+	docker volume prune -f
 
 re: down clean all
-
-.PHONY: all config background build run down clean re
