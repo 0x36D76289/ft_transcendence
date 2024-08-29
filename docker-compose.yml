@@ -1,11 +1,11 @@
 services:
   frontend:
     build: ./frontend
+    container_name: nginx-frontend
     ports:
-      - "8080:80"  # HTTP
       - "8443:443" # HTTPS
     volumes:
-      - ${APP_DIR}/uploads:/usr/share/nginx/html/uploads
+      - ./uploads:/usr/share/nginx/html/uploads
     depends_on:
       - backend
 
@@ -15,8 +15,6 @@ services:
     env_file: .env
     volumes:
       - ./:/code/
-    ports:
-      - 8000:8000
     depends_on:
       db:
         condition: service_healthy
@@ -24,13 +22,14 @@ services:
   db:
     image: postgres:alpine
     container_name: psql-database
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_DB=transcendence
     env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -U postgres
       interval: 1s
       timeout: 5s
       retries: 10
+
+volumes:
+  postgres_data:
