@@ -1,10 +1,12 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from .serializers import UserSerializer
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def login(request):
@@ -16,7 +18,7 @@ def login(request):
 	return Response({"token": token.key, "user": serializer.data})
 
 @api_view(['POST'])
-def signup(request):
+def register(request):
 	serializer = UserSerializer(data=request.data)
 	if serializer.is_valid():
 		serializer.save()
@@ -27,3 +29,10 @@ def signup(request):
 		return Response({"token": token.key, "user": serializer.data})
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@authentication_classes(TokenAuthentication)
+@permission_classes(IsAuthenticated)
+def logout(request):
+	token = Token.objects.get(user=request.user)
+	token.delete()
+	return(Response({"success": True, "detail": "Logged out!"}, status=status.HTTP_200_OK))
