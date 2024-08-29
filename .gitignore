@@ -3,4 +3,6 @@ frontend/scripts/package-lock.json
 frontend/scripts/package.json
 frontend/scripts/eslint.config.mjs
 
+__pycache__/
+
 .env
