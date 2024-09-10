@@ -1,34 +1,13 @@
-@font-face {
-	font-family: 'Jetbrains Mono';
-	src: url('../assets/fonts/JetBrainsMono.ttf') format('truetype');
-}
-
-@font-face {
-	font-family: 'Monocraft';
-	src: url('../assets/fonts/Monocraft.ttf') format('truetype');
-}
-
-:root {
-	--background-color: white;
-	--text-color: black;
-	--font-family: Arial, sans-serif;
-	--font-size: 16px;
-}
-
-.dark-theme {
-	--background-color: black;
-	--text-color: white;
-}
-
 body {
-	background-color: var(--background-color);
-	color: var(--text-color);
-	font-family: var(--font-family);
-	font-size: var(--font-size);
-	transition: background-color 0.3s, color 0.3s, font-family 0.3s, font-size 0.3s;
+	font-family: Arial, sans-serif;
+	margin: 20px;
 }
 
-.settings-container {
-	max-width: 400px;
-	margin: auto;
+.button {
+	padding: 10px 20px;
+	background-color: #007BFF;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
 }

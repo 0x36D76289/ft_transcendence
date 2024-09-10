@@ -1,9 +1,12 @@
-export const homePage = {
-	render: () => `
-		<h1>Welcome to ft_transcendence</h1>
-		<button onclick="spa.navigateTo('/play')">Play</button>
-		<button onclick="spa.navigateTo('/settings')">Settings</button>
-		<button onclick="spa.navigateTo('/login')">Login / Register</button>
-		<button onclick="spa.logout()">Logout</button>
-	`,
-};
+export function homeView(state) {
+	return `
+    <h1>Home</h1>
+    <p>Counter: ${state.counter}</p>
+    <button data-event="click" data-action="incrementCounter">Increment</button>
+    <button data-event="click" data-action="goToAbout">Go to About</button>
+    ${state.isLoggedIn
+			? `<button data-event="click" data-action="logout">Logout</button>`
+			: `<button data-event="click" data-action="goToLogin">Login</button>`
+		}
+  `;
+}
