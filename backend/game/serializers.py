@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from game.models import Game
-from ft_transcendence.serializers import UserSerializer
+from user.serializers import UserSerializer
 
 class GameSerializer(serializers.ModelSerializer):
 	class Meta:
