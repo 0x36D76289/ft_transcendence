@@ -1,13 +1,28 @@
-body {
-	font-family: Arial, sans-serif;
-	margin: 20px;
+:root {
+  --text-color: black;
 }
 
-.button {
-	padding: 10px 20px;
-	background-color: #007BFF;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  color: var(--text-color);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+}
+
+input,
+button {
+  padding: 10px;
+}
+
+button {
+  cursor: pointer;
 }

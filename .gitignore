@@ -1,8 +1,8 @@
 node_modules/
+__pycache__/
+.idea/
+
 package-lock.json
 package.json
 eslint.config.mjs
-
-__pycache__/
-
 .env
