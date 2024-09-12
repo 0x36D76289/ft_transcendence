@@ -69,13 +69,41 @@ def send_friend_request(request):
 	if friendship != None:
 		if friendship.status == UserFriend.FRIEND:
 			return Response({'success': False, 'detail': 'Already friends'}, status=status.HTTP_400_BAD_REQUEST)
-		if (friendship.status == UserFriend.REQ_UID1 and user1.id == logged_user.id)\
-		or (friendship.status == UserFriend.REQ_UID2 and user2.id == logged_user.id):
+		if (friendship.status == UserFriend.REQ_UID1 and user1 == logged_user)\
+		or (friendship.status == UserFriend.REQ_UID2 and user2 == logged_user):
 			return Response({'success': False, 'detail': 'Already sent request to this user'}, status=status.HTTP_400_BAD_REQUEST)
 		friendship.status = UserFriend.FRIEND
 		friendship.save()
 		return Response({'success': True, 'detail': 'You are now friends'}, status=status.HTTP_200_OK)
-	stat = UserFriend.REQ_UID1 if user1.id == logged_user.id else UserFriend.REQ_UID2
+	stat = UserFriend.REQ_UID1 if user1 == logged_user else UserFriend.REQ_UID2
 	friendship = UserFriend(uid1=user1, uid2=user2, status=stat)
 	friendship.save()
 	return Response({'success': True, 'detail': 'Sent friend request'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def remove_friend_request(request):
+	logged_user = request.user
+	other_user = get_object_or_404(User, username=request.data['username'])
+	if logged_user == other_user:
+		return Response({'success': False, 'detail': 'Cannot be friend with yourself'}, status=status.HTTP_400_BAD_REQUEST)
+	user1 = logged_user if logged_user.id < other_user.id else other_user
+	user2 = other_user if logged_user.id < other_user.id else logged_user
+	try:
+		friendship = UserFriend.objects.get(uid1=user1.id, uid2=user2.id)
+	except:
+		friendship = None
+
+	message = ''
+	if friendship != None:
+		if friendship.status == UserFriend.FRIEND:
+			message = 'You are no longer friends'
+		elif (friendship.status == UserFriend.REQ_UID1 and user1 == other_user)\
+		or (friendship.status == UserFriend.REQ_UID2 and user2 == other_user):
+			message = 'Friend request declined'
+		else:
+			message = 'Friend request removed'
+		friendship.delete()
+		return Response({'success': True, 'detail': message}, status=status.HTTP_200_OK)
+	return Response({'success': False, 'detail': 'Users are not friends or no request was sent between them'})
