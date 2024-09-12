@@ -1,80 +1,34 @@
 export class SPAEngine {
-	constructor(appElement) {
-		this.appElement = appElement;
-		this.views = {};
-		this.state = {};
-		this.vDOM = null;
+	constructor() {
+		this.routes = {};
 	}
 
-	registerView(viewName, renderFunc) {
-		if (typeof renderFunc === 'function') {
-			this.views[viewName] = renderFunc;
+	addRoute(path, handler) {
+		this.routes[path] = handler;
+		console.log("Route added:", path);
+	}
+
+	navigate(path) {
+		if (this.routes[path]) {
+			console.log("Navigating to", path);
+			this.routes[path]();
 		} else {
-			console.error('renderFunc must be a function');
+			console.warn("Route not found");
 		}
 	}
 
-	registerActions(actions) {
-		this.actions = actions;
-	}
-
-	navigate(viewName) {
-		if (viewName in this.views) {
-			this.setState({ currentView: viewName });
-		} else {
-			console.error(`View ${viewName} is not registered.`);
-		}
-	}
-
-	setState(newState) {
-		this.state = { ...this.state, ...newState };
-		this.render();
-	}
-
-	render() {
-		const activeView = this.state.currentView;
-		const newVDOM = this.views[activeView](this.state);
-
-		if (this.vDOM !== newVDOM) {
-			this.appElement.innerHTML = newVDOM;
-			this.vDOM = newVDOM;
-			this.bindEvents();
-		}
-	}
-
-	bindEvents() {
-		const elements = this.appElement.querySelectorAll('[data-event]');
-		elements.forEach(el => {
-			const eventType = el.getAttribute('data-event');
-			const action = el.getAttribute('data-action');
-
-			const handler = () => {
-				if (action in this.actions) {
-					this.actions[action]();
-				}
-			};
-
-			el.removeEventListener(eventType, handler);
-			el.addEventListener(eventType, handler);
+	start() {
+		window.addEventListener("hashchange", () => {
+			this.navigate(window.location.hash.substring(1));
+			console.log("Hash changed to", window.location.hash);
 		});
-	}
 
-	handleCustomCodeInjection(html = '', css = '', js = '') {
-		if (html) {
-			this.appElement.innerHTML += html;
-		}
-		if (css) {
-			if (!document.querySelector(`style[data-injected="true"]`)) {
-				const style = document.createElement('style');
-				style.textContent = css;
-				document.head.appendChild(style);
-			}
-		}
-		if (js) {
-			const script = document.createElement('script');
-			script.textContent = js;
-			document.body.appendChild(script);
+		if (window.location.hash) {
+			this.navigate(window.location.hash.substring(1));
+			console.log("Initial hash found:", window.location.hash);
+		} else {
+			this.navigate('/');
+			console.log("No initial hash found");
 		}
 	}
-
 }

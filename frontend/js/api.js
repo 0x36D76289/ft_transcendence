@@ -1,61 +1,40 @@
 export class API {
-	constructor() {
-		this.token = null;
+	constructor(baseURL) {
+		this.baseURL = baseURL;
+		this.user = JSON.parse(localStorage.getItem('user')) || null;
+		this.token = localStorage.getItem('token') || null;
 	}
 
-	async register(username, password) {
-		assert(!this.token, 'You are already logged in.');
-		assert(username && password, 'Username and password are required.');
-
-		try {
-			const response = await fetch('http://127.0.0.1:8000/signup', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ username, password })
-			});
-
-			return response;
-		} catch (error) {
-			console.error('Registration failed:', error);
-		}
+	getUser() {
+		return this.user;
 	}
 
-	async login(username, password) {
-		assert(!this.token, 'You are already logged in.');
-		assert(username && password, 'Username and password are required.');
+	async register(inputuser, inputpassword) {
+		const response = await fetch(`${this.baseURL}/signup`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username: inputuser, password: inputpassword })
+		}).then(response => response.json()).then(data => console.log(data));
 
-		try {
-			const response = await fetch('http://127.0.0.1:8000/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ username, password })
-			});
-
-			return response;
-		} catch (error) {
-			console.error('Login failed:', error);
-		}
+		return response;
 	}
 
-	async logout() {
-		assert(this.token, 'You are not logged in.');
+	async login(inputuser, inputpassword) {
+		const response = await fetch(`${this.baseURL}/login`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username: inputuser, password: inputpassword })
+		});
+		return response.json();
+	}
 
-		try {
-			const response = await fetch('http://127.0.0.1:8000/logout', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Token ${this.token}`
-				}
-			});
-
-			return response;
-		} catch (error) {
-			console.error('Logout failed:', error);
-		}
+	async logout(token) {
+		const response = await fetch(`${this.baseURL}/logout`, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Token ${token}`
+			}
+		});
+		return response.json();
 	}
 }
