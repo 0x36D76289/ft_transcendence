@@ -8,8 +8,8 @@ class GameSerializer(serializers.ModelSerializer):
 		fields = ['p1', 'p2', 'p1_score', 'p2_score', 'time_start', 'time_end']
 
 class GameSerializerUsername(serializers.ModelSerializer):
-	p1 = serializers.SlugRelatedField(read_only=True, slug_field='username')
-	p2 = serializers.SlugRelatedField(read_only=True, slug_field='username')
+	p1 = UserSerializer()
+	p2 = UserSerializer()
 
 	class Meta:
 		model = Game
