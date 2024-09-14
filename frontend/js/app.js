@@ -1,11 +1,6 @@
-import {SPAEngine} from './SPAEngine';
+import { start } from "./spa.js";
 
-export const app = new SPAEngine();
-
-// Define routes
-app.addRoute('/', () => app.renderHomePage());
-app.addRoute('login', () => app.renderAuthPage());
-
-// Start the app
-app.start();
-app.renderHeader();
+// entry point
+document.addEventListener("DOMContentLoaded", () => {
+  start();
+});

@@ -1,54 +1,70 @@
-import {app} from "./app";
+import { navigate } from "./spa.js";
+import { logMessage } from "./logs.js";
 
-export class API {
-	constructor(baseURL) {
-		this.baseURL = baseURL;
-		this.username = JSON.parse(localStorage.getItem('username')) || null;
-		this.token = localStorage.getItem('token') || null;
-	}
+const baseURL = "https://localhost:8000";
 
-	getUserName() {
-		return this.username;
-	}
+export function getUserName() {
+  return localStorage.getItem("username");
+}
 
-	isLoggedIn() {
-		return !!this.token;
-	}
+export function isLoggedIn() {
+  return localStorage.getItem("token") !== null;
+}
 
-	async _request(endpoint, method, body) {
-		const headers = { 'Content-Type': 'application/json' };
-		if (this.token) {
-			headers['Authorization'] = `Token ${this.token}`;
-		}
+export async function request(endpoint, method, body) {
+  const token = localStorage.getItem("token");
+  const headers = { "Content-Type": "application/json" };
 
-		const response = await fetch(`${this.baseURL}${endpoint}`, {
-			method: method,
-			headers: headers,
-			body: body ? JSON.stringify(body) : null
-		});
-		return response.json();
-	}
+  if (token) {
+    headers["Authorization"] = `Token ${token}`;
+  }
 
-	async register(inputuser, inputpassword) {
-		return this._request('/signup', 'POST', { username: inputuser, password: inputpassword });
-	}
+  const response = await fetch(`${baseURL}${endpoint}`, {
+    method: method,
+    headers: headers,
+    body: body ? JSON.stringify(body) : null,
+  });
 
-	async login(inputuser, inputpassword) {
-		const data = await this._request('/login', 'POST', { username: inputuser, password: inputpassword });
-		if (data.token) {
-			this.token = data.token;
-			this.username = inputuser;
-			localStorage.setItem('token', this.token);
-			localStorage.setItem('username', JSON.stringify(this.username));
-		}
-		return data;
-	}
+  return response.json();
+}
 
-	logout() {
-		this.token = null;
-		this.username = null;
-		localStorage.removeItem('token');
-		localStorage.removeItem('username');
-		app.navigate('/');  // Navigate to home on logout
-	}
+export async function register(inputuser, inputpassword) {
+  const data = request("/signup", "POST", {
+    username: inputuser,
+    password: inputpassword,
+  });
+
+  if (data.token) {
+    logMessage(`User ${inputuser} registered`, "info");
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("username", inputuser);
+    login(inputuser, inputpassword);
+  } else {
+    logMessage(`Failed to register: ${data.error}`, "error");
+    alert(data.error);
+  }
+}
+
+export async function login(inputuser, inputpassword) {
+  const data = await request("/login", "POST", {
+    username: inputuser,
+    password: inputpassword,
+  });
+
+  if (data.token) {
+    logMessage(`User ${inputuser} logged in`, "info");
+    localStorage.setItem("token", data.token);
+    logMessage(`User ${inputuser} logged in`, "info");
+    localStorage.setItem("username", inputuser);
+    navigate("/");
+  } else {
+    logMessage(`Failed to log in: ${data.error}`, "error");
+    alert(data.error);
+  }
+}
+
+export function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  navigate("/");
 }
