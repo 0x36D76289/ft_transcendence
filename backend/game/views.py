@@ -3,7 +3,7 @@ from game.serializers import GameSerializer, GameSerializerUsername
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+from user.models import User
 
 @api_view(['GET'])
 def GameAllHistory(request):
