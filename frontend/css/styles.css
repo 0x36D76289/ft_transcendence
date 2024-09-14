@@ -1,40 +1,82 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+@font-face {
+  font-family: "Monocraft";
+  src: url("../assets/fonts/Monocraft.ttf") format("truetype");
 }
 
-header {
-    background-color: #333;
-    color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-around;
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../assets/fonts/JetBrainsMono.ttf") format("truetype");
 }
 
+:root {
+  --font-family: "Monocraft", sans-serif;
+  --font-size: 1rem;
+  --large-font-size: 3rem;
+  --small-font-size: 0.75rem;
+  --line-height: 1.6;
+  --text-color: white;
+  --background-color: black;
+}
+
+* {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+/* Button */
 button {
-    background-color: #008CBA;
-    border: none;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+  border: none;
+  background-color: transparent;
 }
 
-main {
-    flex-grow: 1;
-    padding: 20px;
+button:hover {
+  transform: scale(1.2);
+  transition: transform 0.2s ease-in-out;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+button:active {
+  transform: scale(1);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Home */
+.play-button {
+  font-size: var(--large-font-size);
+  position: sticky;
+	top: 50%;
+	left: 50%;
+}
+
+.account-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* Account */
+login-heading {
+	text-align: center;
+	margin: 0 auto;
+}
+
+input-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+input-container input {
+	margin: 10px 0;
+}
+
+action-buttons {
+	display: flex;
+	justify-content: center;
+}
+
+action-buttons button {
+	margin: 0 10px;
 }
