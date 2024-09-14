@@ -9,7 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Q
+from django.db.models import Q, F
+from game.models import Game
 
 # USER
 @api_view(['POST'])
@@ -59,6 +60,16 @@ def get_profile(request, username):
 	serializer = UserSerializer(user)
 	return Response(serializer.data)
 
+@api_view(['GET'])
+def get_stats(request, username):
+	try:
+		user = User.objects.get(username=username)
+	except:
+		return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+	
+	games_played = Game.objects.filter(Q(p1=user) | Q(p2=user)).count()
+	win_rate = (Game.objects.filter(Q(p1=user, p1_score__gt=F('p2_score')) | Q(p2=user), p2_score__gt=F('p1_score')).count() / (games_played if games_played != 0 else 1)) * 100
+	return Response({'games_played': games_played, 'win_rate': win_rate})
 
 # USER_FRIEND
 @api_view(['GET'])
