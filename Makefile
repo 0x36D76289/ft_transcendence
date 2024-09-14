@@ -1,4 +1,5 @@
 .PHONY: all config background build run down clean re
+.SILENT: clean
 
 all: build run
 
@@ -18,9 +19,10 @@ down:
 	docker-compose down
 
 clean:
-	docker-compose stop
-	docker-compose rm -f
-	docker network prune -f
-	docker volume prune -f
+	docker stop $$(docker ps -qa); \
+	docker rm $$(docker ps -qa); \
+	docker rmi -f $$(docker images -qa); \
+	docker volume rm $$(docker volume ls -q); \
+	docker network rm $$(docker network ls -q)
 
 re: down clean all
