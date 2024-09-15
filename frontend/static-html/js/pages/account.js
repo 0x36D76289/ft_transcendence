@@ -1,12 +1,64 @@
-import { register, login, logout } from "../api.js";
+import { registerUser, loginUser, logoutUser } from "../api.js";
 import { logMessage } from "../logs.js";
 import { navigate } from "../spa.js";
+
+function renderCSS() {
+  return `
+    .home-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: var(--small-font-size);
+      padding: 0.5rem 1rem;
+      background-color: #333;
+      color: var(--text-color);
+      border: none;
+      cursor: pointer;
+    }
+    .home-button:hover {
+      background-color: #555;
+    }
+    .login-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 150px);
+    }
+    .login {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+    input {
+      font-size: var(--font-size);
+      padding: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .password-container {
+      position: relative;
+    }
+    .password-container input {
+      padding-right: 2.5rem;
+    }
+    .toggle-password-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+  `;
+}
 
 export function renderAccount() {
   const app = document.getElementById("app");
   const username = localStorage.getItem("username");
+  const token = localStorage.getItem("token");
 
-  if (username) {
+  if (username && token) {
     app.innerHTML = `
       <div class="header">
         <button id="homeButton">Home</button>
@@ -17,52 +69,22 @@ export function renderAccount() {
         <button id="logoutButton">Logout</button>
       </div>
     `;
-
     const style = document.createElement("style");
-    style.innerHTML = `
-      .header {
-        font-size: var(--large-font-size);
-        color: var(--text-color);
-        background-color: var(--background-color);
-        padding: 1rem;
-      }
-
-      .account-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: calc(100vh - 150px); /* Subtract header height */
-        text-align: center;
-      }
-
-      .account-content h1 {
-        font-size: var(--large-font-size);
-        margin-bottom: 2rem;
-      }
-
-      button {
-        font-size: var(--font-size);
-        padding: 1rem;
-        background-color: #333;
-        color: var(--text-color);
-        border: none;
-        cursor: pointer;
-        width: 50%;
-        max-width: 300px;
-      }
-
-      button:hover {
-        background-color: #555;
-      }
-    `;
-
+    style.innerHTML = renderCSS();
     document.head.appendChild(style);
-
-    document.getElementById("logoutButton").addEventListener("click", () => {
-      logMessage(`User ${username} logged out`, "info");
-      logout();
-    });
+    document
+      .getElementById("logoutButton")
+      .addEventListener("click", async () => {
+        try {
+          await logoutUser(token);
+          logMessage(`User ${username} logged out`, "info");
+          localStorage.removeItem("username");
+          localStorage.removeItem("token");
+          navigate("/");
+        } catch (error) {
+          logMessage(`Logout failed: ${error.message}`, "error");
+        }
+      });
   } else {
     app.innerHTML = `
       <button id="homeButton" class="home-button">Home</button>
@@ -78,67 +100,9 @@ export function renderAccount() {
         </div>
       </div>
     `;
-
     const style = document.createElement("style");
-    style.innerHTML = `
-      .home-button {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        font-size: var(--small-font-size);
-        padding: 0.5rem 1rem;
-        background-color: #333;
-        color: var(--text-color);
-        border: none;
-        cursor: pointer;
-      }
-
-      .home-button:hover {
-        background-color: #555;
-      }
-
-      .login-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: calc(100vh - 150px);
-      }
-
-      .login {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        width: 100%;
-        max-width: 300px;
-      }
-
-      input {
-        font-size: var(--font-size);
-        padding: 1rem;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .password-container {
-        position: relative;
-      }
-
-      .password-container input {
-        padding-right: 2.5rem;
-      }
-
-      .toggle-password-icon {
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-      }
-    `;
-
+    style.innerHTML = renderCSS();
     document.head.appendChild(style);
-
-    // Toggle password visibility
     document.getElementById("togglePassword").addEventListener("click", () => {
       const passwordInput = document.getElementById("passwordInput");
       const toggleIcon = document.getElementById("togglePassword");
@@ -150,22 +114,39 @@ export function renderAccount() {
         toggleIcon.innerHTML = "&#128065;";
       }
     });
-
-    document.getElementById("loginButton").addEventListener("click", () => {
-      const username = document.getElementById("usernameInput").value;
-      const password = document.getElementById("passwordInput").value;
-      logMessage(`User ${username} logged in`, "info");
-      login(username, password);
-    });
-
-    document.getElementById("registerButton").addEventListener("click", () => {
-      const username = document.getElementById("usernameInput").value;
-      const password = document.getElementById("passwordInput").value;
-      logMessage(`User ${username} registered`, "info");
-      register(username, password);
-    });
+    document
+      .getElementById("loginButton")
+      .addEventListener("click", async () => {
+        const username = document.getElementById("usernameInput").value;
+        const password = document.getElementById("passwordInput").value;
+        try {
+          const response = await loginUser(username, password);
+          localStorage.setItem("username", username);
+          localStorage.setItem("token", response.token);
+          logMessage(`User ${username} logged in`, "info");
+          navigate("/account");
+        } catch (error) {
+          logMessage(`Login failed: ${error.message}`, "error");
+        }
+      });
+    document
+      .getElementById("registerButton")
+      .addEventListener("click", async () => {
+        const username = document.getElementById("usernameInput").value;
+        const password = document.getElementById("passwordInput").value;
+        try {
+          await registerUser(username, password);
+          logMessage(`User ${username} registered`, "info");
+          // Automatically log in after successful registration
+          const loginResponse = await loginUser(username, password);
+          localStorage.setItem("username", username);
+          localStorage.setItem("token", loginResponse.token);
+          navigate("/account");
+        } catch (error) {
+          logMessage(`Registration failed: ${error.message}`, "error");
+        }
+      });
   }
-
   document.getElementById("homeButton").addEventListener("click", () => {
     navigate("/");
   });
