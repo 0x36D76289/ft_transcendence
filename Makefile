@@ -1,28 +1,31 @@
-.PHONY: all config background build run down clean re
-.SILENT: clean
+DOCKER_COMPOSE = docker-compose
+PROJECT_NAME = ft_transcendence
 
-all: build run
-
-config:
-	sh ./config.sh
-
-background: build
-	docker-compose up -d
-
-build:
-	docker-compose build
-
-run:
-	docker-compose up
+up:
+	$(DOCKER_COMPOSE) up -d
 
 down:
-	docker-compose down
+	$(DOCKER_COMPOSE) down
+
+rebuild: down
+	$(DOCKER_COMPOSE) down --volumes --remove-orphans
+	$(DOCKER_COMPOSE) build
+	$(DOCKER_COMPOSE) up -d
 
 clean:
-	docker stop $$(docker ps -qa); \
-	docker rm $$(docker ps -qa); \
-	docker rmi -f $$(docker images -qa); \
-	docker volume rm $$(docker volume ls -q); \
-	docker network rm $$(docker network ls -q)
+	$(DOCKER_COMPOSE) down --volumes --rmi all --remove-orphans
+	docker system prune -a --volumes -f
 
-re: down clean all
+logs:
+	$(DOCKER_COMPOSE) logs -f
+
+status:
+	$(DOCKER_COMPOSE) ps
+
+restart:
+	$(DOCKER_COMPOSE) restart
+
+exec:
+	$(DOCKER_COMPOSE) exec $(service) $(cmd)
+
+.PHONY: up down rebuild clean logs status restart exec
