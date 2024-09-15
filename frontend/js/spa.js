@@ -1,8 +1,4 @@
 import { logMessage } from "./logs.js";
-// import { renderHeader } from "./components/header.js";
-
-import { renderHome } from "./pages/home.js";
-import { renderAccount } from "./pages/account.js";
 
 let routes = {};
 
@@ -19,6 +15,11 @@ export function removeRoute(path) {
 export function navigate(path) {
   if (routes[path]) {
     logMessage(`Navigating to ${path}`, "info");
+    const styles = document.head.querySelectorAll("style");
+    styles.forEach((style) => style.remove());
+    const app = document.getElementById("app");
+    app.innerHTML = "";
+
     routes[path]();
   } else {
     logMessage(`Route for ${path} not found`, "error");
@@ -27,10 +28,6 @@ export function navigate(path) {
 }
 
 export function start() {
-  addRoute("/", renderHome);
-  addRoute("/account", renderAccount);
-  // renderHeader(routes);
-
   window.addEventListener("hashchange", () => {
     logMessage(`Hash changed to ${window.location.hash}`, "info");
     navigate(window.location.hash.substring(1));
