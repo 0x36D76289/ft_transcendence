@@ -12,6 +12,11 @@ rebuild: down
 	$(DOCKER_COMPOSE) build
 	$(DOCKER_COMPOSE) up -d
 
+rebuild-frontend: 
+	$(DOCKER_COMPOSE) down frontend
+	$(DOCKER_COMPOSE) build frontend
+	$(DOCKER_COMPOSE) up -d
+
 clean:
 	$(DOCKER_COMPOSE) down --volumes --rmi all --remove-orphans
 	docker system prune -a --volumes -f
@@ -28,4 +33,4 @@ restart:
 exec:
 	$(DOCKER_COMPOSE) exec $(service) $(cmd)
 
-.PHONY: up down rebuild clean logs status restart exec
+.PHONY: up down rebuild rebuild-frontend clean logs status restart exec

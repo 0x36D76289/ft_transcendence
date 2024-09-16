@@ -12,32 +12,37 @@ export function removeRoute(path) {
   delete routes[path];
 }
 
-export function navigate(path) {
+export function navigate(path, pushState = true) {
   if (routes[path]) {
     logMessage(`Navigating to ${path}`, "info");
+
     const styles = document.head.querySelectorAll("style");
     styles.forEach((style) => style.remove());
     const app = document.getElementById("app");
     app.innerHTML = "";
 
     routes[path]();
+
+    if (pushState) {
+      window.history.pushState({ path }, "", path);
+    }
   } else {
     logMessage(`Route for ${path} not found`, "error");
-    navigate("/");
+    navigate("/", pushState);
   }
 }
 
-export function start() {
-  window.addEventListener("hashchange", () => {
-    logMessage(`Hash changed to ${window.location.hash}`, "info");
-    navigate(window.location.hash.substring(1));
-  });
+function handlePopState(event) {
+  const path = event.state?.path || "/";
+  logMessage(`Handling popstate for ${path}`, "info");
+  navigate(path, false);
+}
 
-  if (window.location.hash) {
-    logMessage(`Navigating to ${window.location.hash.substring(1)}`, "info");
-    navigate(window.location.hash.substring(1));
-  } else {
-    logMessage("No hash found, navigating to /", "info");
-    navigate("/");
-  }
+export function start() {
+  logMessage("Starting SPA", "info");
+
+  const initialPath = window.location.pathname;
+  navigate(initialPath, false);
+
+  window.addEventListener("popstate", handlePopState);
 }
