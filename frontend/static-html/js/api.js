@@ -54,15 +54,15 @@ export const getUserProfile = async (username, token) => {
 };
 
 export const registerUser = async (username, password) => {
-  return apiRequest(`${baseURL}register`, "POST", { username, password });
+  return apiRequest(`${baseURL}user/register`, "POST", { username, password });
 };
 
 export const loginUser = async (username, password) => {
-  return apiRequest(`${baseURL}login`, "POST", { username, password });
+  return apiRequest(`${baseURL}user/login`, "POST", { username, password });
 };
 
 export const logoutUser = async (token) => {
-  return apiRequest(`${baseURL}logout`, "POST", null, token);
+  return apiRequest(`${baseURL}user/logout`, "POST", null, token);
 };
 
 // Chat API
