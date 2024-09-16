@@ -18,7 +18,6 @@ const baseURL = "http://127.0.0.1:8000/";
 //    GET  http://127.0.0.1/game/history/<username>
 
 const handleError = (error) => {
-  console.error("API Error:", error);
   logMessage(`API Error: ${error.message}`);
 };
 
@@ -88,7 +87,6 @@ export const getUserGameHistory = async (username) => {
   return apiRequest(`${baseURL}game/history/${username}`, "GET");
 };
 
-// Fonction pour gérer la navigation après une action API réussie
 export const handleSuccessfulAction = (action, destination) => {
   logMessage(`${action} successful`);
   navigate(destination);
