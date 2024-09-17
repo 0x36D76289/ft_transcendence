@@ -1,8 +1,13 @@
 DOCKER_COMPOSE = docker-compose
 PROJECT_NAME = ft_transcendence
 
+all: build up
+
 up:
 	$(DOCKER_COMPOSE) up -d
+
+build:
+	$(DOCKER_COMPOSE) build
 
 down:
 	$(DOCKER_COMPOSE) down
@@ -38,4 +43,4 @@ restart:
 exec:
 	$(DOCKER_COMPOSE) exec $(service) $(cmd)
 
-.PHONY: up down rebuild rebuild-frontend rebuild-backend clean logs status restart exec
+.PHONY: all up build down rebuild rebuild-frontend rebuild-backend clean logs status restart exec
