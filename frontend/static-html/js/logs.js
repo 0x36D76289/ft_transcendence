@@ -1,22 +1,23 @@
 export function logMessage(message, level) {
   const timestamp = new Date().toISOString();
-  let colorCode;
+  let colorStyle;
 
   switch (level.toUpperCase()) {
     case "INFO":
-      colorCode = "\x1b[32m";
+      colorStyle = "color: green";
       break;
     case "WARNING":
-      colorCode = "\x1b[33m";
+      colorStyle = "color: orange";
       break;
     case "ERROR":
-      colorCode = "\x1b[31m";
+      colorStyle = "color: red";
       break;
     default:
-      colorCode = "\x1b[0m";
+      colorStyle = "color: black";
   }
 
   console.log(
-    `[${timestamp}] ${colorCode}[${level.toUpperCase()}] ${message}\x1b[0m`
+    `%c[${timestamp}] [${level.toUpperCase()}] ${message}`,
+    colorStyle
   );
 }
