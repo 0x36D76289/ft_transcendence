@@ -3,7 +3,7 @@ services:
     build: ./frontend
     container_name: nginx-frontend
     ports:
-      - "8443:443" # HTTPS
+      - "8443:443"
     depends_on:
       - backend
 
@@ -31,5 +31,24 @@ services:
       timeout: 5s
       retries: 10
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+
 volumes:
   postgres_data:
+  grafana_data:
