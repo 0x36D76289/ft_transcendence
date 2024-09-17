@@ -1,0 +1,10 @@
+groups:
+  - name: example
+    rules:
+      - alert: HighBackendLatency
+        expr: avg(rate(http_request_duration_seconds_sum{job="backend"}[1m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High request latency on backend"
