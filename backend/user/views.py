@@ -55,7 +55,7 @@ def logout(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def update_profile(request):
+def update_user(request):
 	user = request.user
 	updated = False
 	if request.data.get('username'):
