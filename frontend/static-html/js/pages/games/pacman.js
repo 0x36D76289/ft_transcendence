@@ -528,7 +528,7 @@ class Pacman {
     const message = document.createElement('div');
     message.textContent = won ? "You Win!" : "Game Over - You Lost!";
     message.style.position = 'absolute';
-    message.style.top = '11rem';
+    message.style.top = '5rem';
     message.style.left = '50%';
     message.style.transform = 'translateX(-50%)';
     message.style.fontSize = '2rem';
@@ -541,7 +541,7 @@ class Pacman {
     });
 
     replayButton.style.position = 'absolute';
-    replayButton.style.top = '15rem';
+    replayButton.style.top = '9rem';
     replayButton.style.left = '50%';
     replayButton.style.transform = 'translateX(-50%)';
     this.containerElement.appendChild(replayButton);
