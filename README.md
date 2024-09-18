@@ -80,7 +80,7 @@ don't forget the header `Content-Type: application/json`
 
 - `/user/register` **POST**
   - _description:_ register a new user
-  - _request:_ `username` and `password` in body
+  - _request:_ `username` and `password` in body, optional: `bio`
   - _response:_ `detail` and `username` in body when successful
 - `/user/login` **POST**  
   - _description:_ log in a user, returns an authentication token
@@ -89,6 +89,10 @@ don't forget the header `Content-Type: application/json`
 - `/user/logout` **POST**  
   - _description:_ log out a user, deleting and invalidating the existing authentication token
   - _request:_ `Authorization: Token <token>` in header
+  - _response:_ `detail` in body
+- `/user/update_user` **POST**  
+  - _description:_ update informations of a user
+  - _request:_ `Authorization: Token <token>` in header, `username` and/or `bio` in body
   - _response:_ `detail` in body
 - `/user/profile/<username>` **GET**  
   - _description:_ get public information of a user
@@ -119,6 +123,9 @@ don't forget the header `Content-Type: application/json`
   - _description:_ get the history of games played by a user
   - _response:_ a list of games in body containing each `p1`, `p2`, `p1_score`, `p2_score`, `time_start` and `time_end`
 
+- `/game` **DEBUG**
+  - _description:_ go to this endpoint on a web browser, allows to manually create games and add them in the database
+
 ### Chat
 
 - `/chat/get/<user>` **GET**
@@ -145,3 +152,6 @@ don't forget the header `Content-Type: application/json`
   - _description:_ checks if a user is blocked, returns true or false in `detail` when successful
   - _request:_ `Authorization: Token <token>` in header, `username` in body
   - _response:_ `detail` in body
+
+- `/chat` **DEBUG**
+  - _description:_ go to this endpoint on a web browser, allows to manually create messages and add them in the database
