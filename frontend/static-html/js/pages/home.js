@@ -1,56 +1,81 @@
 import { navigate } from "../spa.js";
 import { getUserProfile } from "../api.js";
 import { logMessage } from "../logs.js";
+import { createButton } from "../components/button.js";
 
 function renderHTML(username) {
-  return `
-<button class="play-button">Play</button>
-<button class="logout-button">Logout</button>
-${username ? `<div class="username-display">${username}</div>` : ""}
-  `;
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  const playButton = createButton("play-button", "Play", () => {
+    if (username) {
+      navigate("/play");
+    } else {
+      logMessage("User must be logged in to play", "info");
+      navigate("/account");
+    }
+  });
+
+  app.appendChild(playButton);
+
+  if (username) {
+    const logoutButton = createButton("logout-button", "Logout", () => {
+      localStorage.removeItem("username");
+      localStorage.removeItem("token");
+      navigate("/");
+    });
+
+    const usernameDisplay = createButton("username-display", `Welcome, ${username}`, () => {
+      navigate("/account");
+    });
+
+    app.appendChild(logoutButton);
+    app.appendChild(usernameDisplay);
+  }
 }
 
 function renderCSS() {
-  return `
-.play-button {
-  font-size: 60px;
-  padding: 2rem 4rem;
-  background-color: transparent;
-  color: var(--text-color);
-  border: none;
-  cursor: pointer;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: block;
-  transition: transform 0.2s;
-}
+  const style = document.createElement("style");
+  style.textContent = `
+    .play-button {
+      font-size: 60px;
+      padding: 2rem 4rem;
+      background-color: transparent;
+      color: var(--text-color);
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: block;
+      transition: transform 0.2s;
+    }
 
-.play-button:hover {
-  background-color: transparent;
-  transform: translate(-50%, -50%) scale(1.3);
-}
+    .play-button:hover {
+      background-color: transparent;
+      transform: translate(-50%, -50%) scale(1.3);
+    }
 
-.logout-button {
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-}
+    .logout-button {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+    }
 
-.username-display {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  font-size: var(--small-font-size);
-  color: var(--text-color);
-}
+    .username-display {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      font-size: var(--font-size);
+      color: var(--text-color);
+      background-color: transparent;
+    }
   `;
+  document.head.appendChild(style);
 }
 
 export async function renderHome() {
-  const app = document.getElementById("app");
-
   let username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
 
@@ -68,24 +93,6 @@ export async function renderHome() {
     }
   }
 
-  app.innerHTML = renderHTML(username);
-
-  const style = document.createElement("style");
-  style.innerHTML = renderCSS();
-  document.head.appendChild(style);
-
-  document.querySelector(".play-button").addEventListener("click", () => {
-    if (username) {
-      navigate("/play");
-    } else {
-      logMessage("User must be logged in to play", "info");
-      navigate("/account");
-    }
-  });
-
-  document.querySelector(".logout-button").addEventListener("click", () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
-    navigate("/");
-  });
+  renderCSS();
+  renderHTML(username);
 }
