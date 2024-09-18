@@ -35,6 +35,8 @@ def register(request):
 	user = User(username=request.data.get('username'))
 	user.set_password(request.data['password'])
 	user.last_online = now()
+	if request.data.get('bio'):
+		user.bio = request.data.get('bio')
 	user.save()
 	return Response({'detail': 'Account created', 'username': user.username})
 
@@ -49,6 +51,23 @@ def logout(request):
 	user.last_online = now()
 	user.save()
 	return(Response({'detail': 'Logged out!'}))
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+	user = request.user
+	updated = False
+	if request.data.get('username'):
+		user.username = request.data['username']
+		updated = True
+	if request.data.get('bio'):
+		user.bio = request.data['bio']
+		updated = True
+	if updated:
+		user.save()
+		return Response({'detail': 'Successfuly updated user'})
+	return Response({'detail': 'No valid fields'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def get_profile(request, username):
@@ -66,10 +85,12 @@ def get_stats(request, username):
 		user = User.objects.get(username=username)
 	except:
 		return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-	
+
 	games_played = Game.objects.filter(Q(p1=user) | Q(p2=user)).count()
-	win_rate = (Game.objects.filter(Q(p1=user, p1_score__gt=F('p2_score')) | Q(p2=user), p2_score__gt=F('p1_score')).count() / (games_played if games_played != 0 else 1)) * 100
-	return Response({'games_played': games_played, 'win_rate': win_rate})
+	win = Game.objects.filter(Q(p1=user, p1_score__gt=F('p2_score')) | Q(p2=user, p2_score__gt=F('p1_score'))).count()
+	lose = games_played - win
+	win_rate = (win / (games_played if games_played != 0 else 1)) * 100
+	return Response({'games_played': games_played, 'win': win, 'lose': lose, 'win_rate': win_rate})
 
 # USER_FRIEND
 @api_view(['GET'])

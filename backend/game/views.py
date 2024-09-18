@@ -20,3 +20,11 @@ def GameUserHistory(request, user):
 	games = Game.objects.filter(p1=user.id) | Game.objects.filter(p2=user.id)
 	serializer = GameSerializerUsername(games, many=True)
 	return Response(serializer.data)
+
+
+#DEBUG
+from rest_framework import generics
+
+class GameList(generics.ListCreateAPIView):
+	queryset = Game.objects.all()
+	serializer_class = GameSerializer
