@@ -13,6 +13,8 @@ import { createInput } from "../components/input.js";
 function createAccountContent(username) {
   const userprofile = getUserProfile(username);
   const userstats = getUserStats(username);
+  console.log(userprofile);
+  console.log(userstats);
 
   const container = document.createElement("div");
   container.className = "account-content";
@@ -25,8 +27,7 @@ function createAccountContent(username) {
   profileSection.innerHTML = `
     <h2>Profile</h2>
     <p><strong>Username:</strong> ${userprofile.username || "N/A"}</p>
-    <p><strong>Joined:</strong> ${
-      new Date(userprofile.date_joined).toLocaleDateString() || "N/A"
+    <p><strong>Joined:</strong> ${new Date(userprofile.date_joined).toLocaleDateString() || "N/A"
     }</p>
   `;
 
@@ -93,9 +94,13 @@ function createLoginContent() {
   passwordContainer.appendChild(passwordInput);
   passwordContainer.appendChild(togglePassword);
 
-  const loginButton = createButton("btn", "Login", () => {});
-  const registerButton = createButton("btn", "Register", () => {});
-  const login42Button = createButton("btn", "Login with 42", () => {});
+  const loginButton = createButton("btn", "Login", () => { });
+  loginButton.id = "loginButton"; // Ajouter un ID
+
+  const registerButton = createButton("btn", "Register", () => { });
+  registerButton.id = "registerButton"; // Ajouter un ID
+
+  const login42Button = createButton("btn", "Login with 42", () => { });
 
   loginForm.appendChild(usernameInput);
   loginForm.appendChild(passwordContainer);
@@ -225,20 +230,15 @@ export function renderAccount() {
     const toggleIcon = document.getElementById("togglePassword");
 
     if (passwordInput && toggleIcon) {
-      const passwordInput = document.getElementById("passwordInput");
-      const toggleIcon = document.getElementById("togglePassword");
-
-      if (toggleIcon) {
-        toggleIcon.addEventListener("click", () => {
-          if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            toggleIcon.innerHTML = "&#128065;";
-          } else {
-            passwordInput.type = "password";
-            toggleIcon.innerHTML = "&#128065;";
-          }
-        });
-      }
+      toggleIcon.addEventListener("click", () => {
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          toggleIcon.innerHTML = "&#128065;";
+        } else {
+          passwordInput.type = "password";
+          toggleIcon.innerHTML = "&#128065;";
+        }
+      });
     }
 
     const loginButton = document.getElementById("loginButton");
