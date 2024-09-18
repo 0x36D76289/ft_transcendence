@@ -79,20 +79,6 @@ export async function renderHome() {
   let username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
 
-  if (username && token) {
-    try {
-      const userProfile = await getUserProfile(username, token);
-      username = userProfile.username; // In case it has changed
-    } catch (error) {
-      logMessage(`Failed to fetch user profile: ${error.message}`, "error");
-
-      // If there's an error (e.g., token expired), we'll clear the stored credentials
-      localStorage.removeItem("username");
-      localStorage.removeItem("token");
-      username = null;
-    }
-  }
-
   renderCSS();
   renderHTML(username);
 }
