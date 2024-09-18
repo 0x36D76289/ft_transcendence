@@ -1,27 +1,9 @@
-import { navigate } from "./spa.js";
 import { logMessage } from "./logs.js";
 
-const baseURL = "http://127.0.0.1:8000/";
+const API_BASE_URL = "http://127.0.0.1:8000/";
 
-// User API
-//    GET http://127.0.0.1/8000/user/profile/<username> Authorization: Token d43e9357b18d56959e1dbf30923f673438b55a9
-//    POST http://127.0.0.1/8000/register Content-Type: application/json {"username": "<username>", "password": "<password>"}
-//    POST http://127.0.0.1/8000/login Content-Type: application/json {"username": "<username>", "password": "<password>"}
-//    POST http://127.0.0.1/8000/logout Authorization: Token d43e9357b18d56959e1dbf30923f673438b55a9
-
-// Chat API
-//    GET  http://127.0.0.1/chat/get/<username> Authorization: Token d43e9357b18d56959e1dbf30923f673438b55a9
-//    GET http://127.0.0.1/chat/send/ Content-Type: application/json Authorization: Token d43e9357b18d56959e1dbf30923f673438b55a9 {"username": "<username>", "message": "<message>"}
-
-// Game API
-//    GET http://127.0.0.1/game/history (all games history)
-//    GET  http://127.0.0.1/game/history/<username>
-
-const handleError = (error) => {
-  logMessage(`API Error: ${error.message}`);
-};
-
-const apiRequest = async (url, method, body = null, token = null) => {
+// Fonction pour gérer les requêtes POST
+async function postData(url = "", data = {}, token = null) {
   const headers = {
     "Content-Type": "application/json",
   };
@@ -29,65 +11,121 @@ const apiRequest = async (url, method, body = null, token = null) => {
     headers["Authorization"] = `Token ${token}`;
   }
 
-  try {
-    const response = await fetch(url, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : null,
-    });
+  const response = await fetch(`${API_BASE_URL}${url}`, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(data),
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+  logMessage(`POST ${url} ${response.status}`, "info");
+  console.log(response);
 
-    return await response.json();
-  } catch (error) {
-    handleError(error);
-    throw error;
+  return response.json();
+}
+
+// Fonction pour gérer les requêtes GET
+async function getData(url = "", token = null) {
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = `Token ${token}`;
   }
-};
 
-// User API
-export const getUserProfile = async (username, token) => {
-  return apiRequest(`${baseURL}user/profile/${username}`, "GET", null, token);
-};
+  const response = await fetch(`${API_BASE_URL}${url}`, {
+    method: "GET",
+    headers: headers,
+  });
+  return response.json();
+}
 
-export const registerUser = async (username, password) => {
-  return apiRequest(`${baseURL}user/register`, "POST", { username, password });
-};
+// Utilisateur : Inscription
+async function registerUser(username, password) {
+  return postData("/user/register", { username, password });
+}
 
-export const loginUser = async (username, password) => {
-  return apiRequest(`${baseURL}user/login`, "POST", { username, password });
-};
+// Utilisateur : Connexion
+async function loginUser(username, password) {
+  return postData("/user/login", { username, password });
+}
 
-export const logoutUser = async (token) => {
-  return apiRequest(`${baseURL}user/logout`, "POST", null, token);
-};
+// Utilisateur : Déconnexion
+async function logoutUser(token) {
+  return postData("/user/logout", {}, token);
+}
 
-// Chat API
-export const getChatMessages = async (username, token) => {
-  return apiRequest(`${baseURL}chat/get/${username}`, "GET", null, token);
-};
+// Utilisateur : Profil
+async function getUserProfile(username) {
+  return getData(`/user/profile/${username}`);
+}
 
-export const sendChatMessage = async (username, message, token) => {
-  return apiRequest(
-    `${baseURL}chat/send/`,
-    "GET",
-    { username, message },
-    token
-  );
-};
+// Utilisateur : Stats
+async function getUserStats(username) {
+  return getData(`/user/stats/${username}`);
+}
 
-// Game API
-export const getAllGamesHistory = async () => {
-  return apiRequest(`${baseURL}game/history`, "GET");
-};
+// Utilisateur : Envoyer une demande d'ami
+async function sendFriendRequest(username, token) {
+  return postData("/user/send_friend_request", { username }, token);
+}
 
-export const getUserGameHistory = async (username) => {
-  return apiRequest(`${baseURL}game/history/${username}`, "GET");
-};
+// Utilisateur : Retirer une demande d'ami ou supprimer un ami
+async function removeFriendRequest(username, token) {
+  return postData("/user/remove_friend_request", { username }, token);
+}
 
-export const handleSuccessfulAction = (action, destination) => {
-  logMessage(`${action} successful`);
-  navigate(destination);
+// Utilisateur : Obtenir le statut d'amitié
+async function getFriendshipStatus(username, token) {
+  return postData("/user/get_friendship", { username }, token);
+}
+
+// Jeu : Historique général des parties
+async function getGameHistory() {
+  return getData("/game/history");
+}
+
+// Jeu : Historique des parties d'un utilisateur
+async function getUserGameHistory(username) {
+  return getData(`/game/history/${username}`);
+}
+
+// Chat : Obtenir l'historique de chat
+async function getChatHistory(username, token) {
+  return getData(`/chat/get/${username}`, token);
+}
+
+// Chat : Envoyer un message
+async function sendMessage(username, message, token) {
+  return postData(`/chat/get/${username}`, { username, message }, token);
+}
+
+// Chat : Bloquer un utilisateur
+async function blockUser(username, token) {
+  return postData("/chat/block", { username }, token);
+}
+
+// Chat : Débloquer un utilisateur
+async function unblockUser(username, token) {
+  return postData("/chat/unblock", { username }, token);
+}
+
+// Chat : Vérifier si un utilisateur est bloqué
+async function isUserBlocked(username, token) {
+  return getData(`/chat/is_user_blocked`, token);
+}
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getUserProfile,
+  getUserStats,
+  sendFriendRequest,
+  removeFriendRequest,
+  getFriendshipStatus,
+  getGameHistory,
+  getUserGameHistory,
+  getChatHistory,
+  sendMessage,
+  blockUser,
+  unblockUser,
+  isUserBlocked,
 };

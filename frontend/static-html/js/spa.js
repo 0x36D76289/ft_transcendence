@@ -31,7 +31,6 @@ export function navigate(path, pushState = true) {
     navigate("/", pushState);
   }
 }
-
 function handlePopState(event) {
   const path = event.state?.path || "/";
   logMessage(`Handling popstate for ${path}`, "info");
