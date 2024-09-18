@@ -5,7 +5,7 @@ urlpatterns = [
 	path('login', views.login),
 	path('register', views.register),
 	path('logout', views.logout),
-	path('update_profile', views.update_profile),
+	path('update_user', views.update_user),
 	path('send_friend_request', views.send_friend_request),
 	path('remove_friend_request', views.remove_friend_request),
 	path('get_friendship', views.get_friendship),
