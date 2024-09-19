@@ -5,3 +5,9 @@ __pycache__/
 package-lock.json
 package.json
 eslint.config.mjs
+
+bin
+include
+lib
+lib64
+pyenv.cfg
