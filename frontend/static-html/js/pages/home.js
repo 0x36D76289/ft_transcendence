@@ -34,7 +34,7 @@ const CSS = `
 
 export async function renderHome() {
   if (localStorage.getItem("authToken")) {
-    const userProfile = await getUserProfile(token);
+    const userProfile = await getUserProfile(localStorage.getItem("username"));
 
     const usernameButton = createButton(userProfile.username, () => {
       logMessage("Username button clicked", "info");
@@ -44,8 +44,12 @@ export async function renderHome() {
   }
 
   const playButton = createButton("▶", () => {
-    logMessage("Hub button clicked", "info");
-    navigate("/hub");
+    logMessage("Play button clicked", "info");
+    if (localStorage.getItem("authToken")) {
+      navigate("/hub");
+    } else {
+      navigate("/connexion");
+    }
   }, "play-button");
   document.body.appendChild(playButton);
 

@@ -5,12 +5,17 @@ import { postData, getData } from "./utils.js";
 /**
  * Registers a new user.
  * 
- * @function registerUser
- * @param {string} username - The username of the new user.
- * @param {string} password - The password for the new user.
- * @param {string} [bio=''] - An optional bio for the new user.
- * @returns {Promise<Object>} The response object containing `detail` and `username` when successful.
+ * **POST** `/user/register`
  * 
+ * _description:_ Registers a new user with the provided username, password, and optional bio.
+ * 
+ * _request body:_ An object containing:
+ * - `username`: The username of the new user.
+ * - `password`: The password for the new user.
+ * - `bio`: (Optional) A short biography of the new user.
+ * 
+ * @param {string} username - The username of the new user.
+ * @param {string} password - The password for the new user. * @param {string} [bio=''] - An optional biography for the new user. 
  * @description
  * Sends a POST request to the `/user/register` endpoint to register a new user.
  * 

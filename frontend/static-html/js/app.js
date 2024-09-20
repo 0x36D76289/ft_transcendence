@@ -17,6 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   addRoute("/pacman", renderPacman);
 
-  flashlight();
   start();
 });
