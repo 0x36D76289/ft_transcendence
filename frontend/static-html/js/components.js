@@ -105,3 +105,17 @@ export function createForm(onSubmit, classNames = "") {
 
   return form;
 }
+
+export function createSelect(options, className) {
+  const select = document.createElement("select");
+  select.className = className;
+
+  options.forEach(option => {
+    const opt = document.createElement("option");
+    opt.value = option.value;
+    opt.textContent = option.text;
+    select.appendChild(opt);
+  });
+
+  return select;
+}
