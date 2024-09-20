@@ -1,5 +1,5 @@
-import { registerUser, loginUser } from "../../api/user.js";
-import { createButton, createInput, createForm, createHeading, createParagraph } from "../../components.js";
+import { loginUser, registerUser } from "../../api/user.js";
+import { createButton, createInput, createForm, createHeading } from "../../components.js";
 import { navigate } from "../../spa.js";
 
 const CSS = `
@@ -40,12 +40,15 @@ export function renderConnexion() {
 
 		if (event.submitter.name === "register") {
 			await registerUser(username, password);
-			navigate("/hub");
+			alert("Inscription réussie, veuillez vous connecter.");
 		} else if (event.submitter.name === "login") {
-			const response = await loginUser(username, password);
-			localStorage.setItem("authToken", response.token);
-			localStorage.setItem("username", response.username);
-			navigate("/hub");
+			try {
+				await loginUser(username, password);
+				alert("Connexion réussie");
+				navigate("/hub");
+			} catch (error) {
+				alert("Erreur de connexion");
+			}
 		}
 	}, "connexion-form");
 
