@@ -28,8 +28,8 @@ const CSS = `
 
 export async function renderProfile() {
 	const container = createDiv("profile-container");
+
 	const username = localStorage.getItem("username");
-	console.log(username);
 
 	try {
 		const profile = await getUserProfile(username);
