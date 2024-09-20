@@ -1,57 +1,31 @@
-import { registerUser } from "../../api/user.js";
+import { registerUser, loginUser } from "../../api/user.js";
 import { createButton, createInput, createForm, createHeading, createParagraph } from "../../components.js";
 import { navigate } from "../../spa.js";
 
 const CSS = `
 .connexion-container {
-	max-width: 400px;
-	margin: 0 auto;
-	padding: 2rem;
-	text-align: center;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	background-color: #f9f9f9;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
 }
 
-.connexion-heading {
-	font-size: 2rem;
-	margin-bottom: 1rem;
-	color: #333;
-}
-
-.connexion-input {
-	width: 100%;
-	padding: 0.5rem;
-	margin-bottom: 1rem;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	font-size: 1rem;
+.connexion-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 .connexion-button {
-	width: 48%;
-	padding: 0.5rem;
-	margin: 0.5rem 1%;
-	border: none;
-	border-radius: 4px;
+	padding: 0.5rem 1rem;
 	font-size: 1rem;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
 }
 
-.connexion-button:hover {
-	background-color: #0078d4;
-	color: #fff;
-}
-
-.connexion-error {
-	color: red;
-	margin-top: 1rem;
+.home-button {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
 }
 `;
 
@@ -59,50 +33,47 @@ export function renderConnexion() {
 	const container = document.createElement("div");
 	container.className = "connexion-container";
 
-	const heading = createHeading(1, "Sign Up / Login", "connexion-heading");
-	container.appendChild(heading);
-
 	const form = createForm(async (event) => {
 		event.preventDefault();
 		const username = event.target.username.value;
 		const password = event.target.password.value;
 
-		if (event.submitter.id === "register-button") {
-			try {
-				const response = await registerUser(username, password);
-				console.log(response);
-				navigate("/profile");
-			} catch (error) {
-				const errorParagraph = createParagraph("Failed to register. Please try again.", "connexion-error");
-				container.appendChild(errorParagraph);
-			}
-		} else if (event.submitter.id === "login-button") {
-			try {
-				const response = await loginUser(username, password);
-				localStorage.setItem("authToken", response.token);
-				navigate("/profile");
-			} catch (error) {
-				const errorParagraph = createParagraph("Failed to login. Please try again.", "connexion-error");
-				container.appendChild(errorParagraph);
-			}
+		if (event.submitter.name === "register") {
+			await registerUser(username, password);
+			navigate("/hub");
+		} else if (event.submitter.name === "login") {
+			const response = await loginUser(username, password);
+			localStorage.setItem("authToken", response.token);
+			localStorage.setItem("username", response.username);
+			navigate("/hub");
 		}
-	});
+	}, "connexion-form");
 
-	const usernameInput = createInput("text", "username", "Username", "connexion-input");
-	const passwordInput = createInput("password", "password", "Password", "connexion-input");
+	const heading = createHeading(1, "Connexion", "connexion-heading");
+	const usernameInput = createInput("Username", "text", "connexion-input");
+	usernameInput.name = "username";
+	const passwordInput = createInput("Password", "password", "connexion-input");
+	passwordInput.name = "password";
 
 	const registerButton = createButton("Register", null, "connexion-button");
-	registerButton.id = "register-button";
+	registerButton.type = "submit";
+	registerButton.name = "register";
 
 	const loginButton = createButton("Login", null, "connexion-button");
-	loginButton.id = "login-button";
+	loginButton.type = "submit";
+	loginButton.name = "login";
 
+	form.appendChild(heading);
 	form.appendChild(usernameInput);
 	form.appendChild(passwordInput);
 	form.appendChild(registerButton);
 	form.appendChild(loginButton);
 
 	container.appendChild(form);
+
+	const homeButton = createButton("Home", () => navigate("/"), "home-button");
+	document.body.appendChild(homeButton);
+
 	document.body.appendChild(container);
 
 	const style = document.createElement("style");

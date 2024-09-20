@@ -4,74 +4,66 @@ import { navigate } from "../../spa.js";
 
 const CSS = `
 .profile-container {
-	max-width: 800px;
-	margin: 0 auto;
-	padding: 1rem;
-	text-align: center;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2rem;
 }
-	
-.home-button {
-	position: absolute;
-	top: 10px;
-	left: 10px;
+
+.profile-heading {
+	font-size: 2rem;
+	margin-bottom: 1rem;
 }
-	
-.profile-button {
-	position: absolute;
-	bottom: 10px;
-	left: 50%;
-	transform: translateX(-50%);
+
+.profile-paragraph {
+	margin-bottom: 1rem;
+}
+
+.logout-button {
+	margin-top: 2rem;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
 }
 `;
 
-export async function renderProfile(username) {
-	const token = localStorage.getItem("authToken");
-	if (!token) {
-		navigate("/connexion");
-		return;
-	}
+export async function renderProfile() {
+	const container = createDiv("profile-container");
+	const username = localStorage.getItem("username");
+	console.log(username);
 
 	try {
-		const userProfile = await getUserProfile(username);
-		const userStats = await getUserStats(username);
+		const profile = await getUserProfile(username);
+		const stats = await getUserStats(username);
 
-		console.log(userProfile);
-		console.log(userStats);
+		const heading = createHeading(1, `Profile of ${profile.username}`, "profile-heading");
+		container.appendChild(heading);
 
-		const profileDiv = createDiv("profile-container");
+		const bioParagraph = createParagraph(`Bio: ${profile.bio || "No bio available"}`, "profile-paragraph");
+		container.appendChild(bioParagraph);
 
-		const heading = createHeading(1, `Profile of ${userProfile.username}`, "profile-heading");
-		const bioParagraph = createParagraph(userProfile.bio || "No bio available", "profile-paragraph");
-		const statsParagraph = createParagraph(`Stats: ${JSON.stringify(userStats)}`, "profile-paragraph");
+		const dateJoinedParagraph = createParagraph(`Date Joined: ${new Date(profile.date_joined).toLocaleDateString()}`, "profile-paragraph");
+		container.appendChild(dateJoinedParagraph);
 
-		profileDiv.appendChild(heading);
-		profileDiv.appendChild(bioParagraph);
-		profileDiv.appendChild(statsParagraph);
+		const isOnlineParagraph = createParagraph(`Status: ${profile.is_online ? "Online" : `Last online: ${new Date(profile.last_online).toLocaleString()}`}`, "profile-paragraph");
+		container.appendChild(isOnlineParagraph);
 
-		document.body.appendChild(profileDiv);
-	} catch (error) {
-		const errorParagraph = createParagraph("Failed to load profile information.", "profile-paragraph");
-		document.body.appendChild(errorParagraph);
-	}
+		const statsParagraph = createParagraph(`Stats: ${stats}`, "profile-paragraph");
+		container.appendChild(statsParagraph);
 
-	const homeButton = createButton("Home", () => navigate("/"), "home-button");
-	document.body.appendChild(homeButton);
-
-	if (token) {
 		const logoutButton = createButton("Logout", async () => {
-			await logoutUser(token);
+			await logoutUser(localStorage.getItem("authToken"));
 			localStorage.removeItem("authToken");
-			navigate("/login");
-		}, "profile-button");
-		document.body.appendChild(logoutButton);
+			localStorage.removeItem("username");
+			navigate("/connexion");
+		}, "logout-button");
+		container.appendChild(logoutButton);
+
+		document.body.appendChild(container);
+
+		const style = document.createElement("style");
+		style.textContent = CSS;
+		document.head.appendChild(style);
+	} catch (error) {
+		console.error("Error loading profile:", error);
 	}
-
-	const style = document.createElement("style");
-	style.textContent = CSS;
-
-	document.head.appendChild(style);
 }

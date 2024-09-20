@@ -1,6 +1,5 @@
 import { navigate } from "../spa.js";
 import * as components from "../components.js";
-import { getData } from "../api/utils.js";
 
 const CSS = `
 .card {
@@ -67,7 +66,7 @@ function createGameCard(user) {
 }
 
 export async function renderHub(token) {
-  const users = await getData("/users", {}, token);
+  // TODO: fetch every user from the API
 
   const hubContainer = components.createDiv("hub-container");
   users.forEach(user => {
