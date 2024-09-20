@@ -16,10 +16,11 @@ export function navigate(path, pushState = true) {
   if (routes[path]) {
     logMessage(`Navigating to ${path}`, "info");
 
-    const styles = document.head.querySelectorAll("style");
-    styles.forEach((style) => style.remove());
-    const app = document.getElementById("app");
-    app.innerHTML = "";
+    // Remove all CSS
+    document.querySelectorAll("style").forEach((style) => style.remove());
+
+    // Remove all HTML
+    document.body.innerHTML = "";
 
     routes[path]();
 
@@ -31,6 +32,7 @@ export function navigate(path, pushState = true) {
     navigate("/", pushState);
   }
 }
+
 function handlePopState(event) {
   const path = event.state?.path || "/";
   logMessage(`Handling popstate for ${path}`, "info");

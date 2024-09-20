@@ -1,5 +1,5 @@
 import { navigate } from "../../spa.js";
-import { createButton } from "../../components/button.js";
+import { createButton } from "../../components.js";
 
 const CELL_SIZE = 30; // pixels
 const GAME_WIDTH = 28 * CELL_SIZE; // 28 cells wide

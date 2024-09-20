@@ -1,84 +1,55 @@
 import { navigate } from "../spa.js";
-import { getUserProfile } from "../api.js";
 import { logMessage } from "../logs.js";
-import { createButton } from "../components/button.js";
+import { createButton } from "../components.js";
+import { getUserProfile } from "../api/user.js";
 
-function renderHTML(username) {
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  const playButton = createButton("play-button", "Play", () => {
-    if (username) {
-      navigate("/play");
-    } else {
-      logMessage("User must be logged in to play", "info");
-      navigate("/account");
-    }
-  });
-
-  app.appendChild(playButton);
-
-  if (username) {
-    const logoutButton = createButton("logout-button", "Logout", () => {
-      localStorage.removeItem("username");
-      localStorage.removeItem("token");
-      navigate("/");
-    });
-
-    const usernameDisplay = createButton("username-display", `Welcome, ${username}`, () => {
-      navigate("/account");
-    });
-
-    app.appendChild(logoutButton);
-    app.appendChild(usernameDisplay);
-  }
+const CSS = `
+.play-button {
+  background-color: transparent;
+  font-size: 5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease, font-size 0.3s ease;
 }
 
-function renderCSS() {
-  const style = document.createElement("style");
-  style.textContent = `
-    .play-button {
-      font-size: 60px;
-      padding: 2rem 4rem;
-      background-color: transparent;
-      color: var(--text-color);
-      border: none;
-      cursor: pointer;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      display: block;
-      transition: transform 0.2s;
-    }
-
-    .play-button:hover {
-      background-color: transparent;
-      transform: translate(-50%, -50%) scale(1.3);
-    }
-
-    .logout-button {
-      position: absolute;
-      right: 1rem;
-      top: 1rem;
-    }
-
-    .username-display {
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      font-size: var(--font-size);
-      color: var(--text-color);
-      background-color: transparent;
-    }
-  `;
-  document.head.appendChild(style);
+.play-button:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%) scale(1.3);
+  font-size: 5.5rem;
 }
+
+.play-button:active {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.username-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+`
 
 export async function renderHome() {
-  let username = localStorage.getItem("username");
-  const token = localStorage.getItem("token");
+  if (localStorage.getItem("authToken")) {
+    const userProfile = await getUserProfile(token);
 
-  renderCSS();
-  renderHTML(username);
+    const usernameButton = createButton(userProfile.username, () => {
+      logMessage("Username button clicked", "info");
+      navigate("/profile");
+    }, "username-button");
+    document.body.appendChild(usernameButton);
+  }
+
+  const playButton = createButton("▶", () => {
+    logMessage("Hub button clicked", "info");
+    navigate("/hub");
+  }, "play-button");
+  document.body.appendChild(playButton);
+
+  const style = document.createElement("style");
+  style.textContent = CSS;
+  document.head.appendChild(style);
 }
