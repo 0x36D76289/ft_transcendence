@@ -18,7 +18,6 @@ const CSS = `
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.1);
   transform: translate(-50%, -50%) scale(1.3);
-  font-size: 5.5rem;
 }
 
 .play-button:active {
@@ -34,13 +33,14 @@ const CSS = `
 
 export async function renderHome() {
   if (localStorage.getItem("authToken")) {
-    const userProfile = await getUserProfile(localStorage.getItem("username"));
-
-    const usernameButton = createButton(userProfile.username, () => {
-      logMessage("Username button clicked", "info");
-      navigate("/profile");
-    }, "username-button");
-    document.body.appendChild(usernameButton);
+    try {
+      const accountButton = createButton(localStorage.getItem("username"), async () => {
+        logMessage("Account button clicked", "info");
+        navigate("/account");
+      }, "username-button");
+    } catch (error) {
+      logMessage("User is not logged in", "info");
+    }
   }
 
   const playButton = createButton("▶", () => {
