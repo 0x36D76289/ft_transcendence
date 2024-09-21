@@ -1,5 +1,5 @@
 import { logMessage } from "../logs.js";
-import { getCookie } from "../cookie.js";
+// import { getCookie } from "../cookie.js";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
@@ -13,14 +13,12 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 export const postData = async (url = "", data = {}) => {
 	const headers = {
 		"Content-Type": "application/json",
-		"X-CSRFToken": getCookie("csrftoken"), // Protection CSRF
 	};
 
 	const response = await fetch(`${API_BASE_URL}${url}`, {
 		method: "POST",
 		headers: headers,
 		body: JSON.stringify(data),
-		credentials: "include",
 	});
 
 	logMessage(`POST ${url} ${response.status}`, "info");
@@ -40,14 +38,8 @@ export const postData = async (url = "", data = {}) => {
  * @returns {Promise<Object>} - A promise that resolves to the response data in JSON format.
  */
 export const getData = async (url = "") => {
-	const headers = {
-		"X-CSRFToken": getCookie("csrftoken"),
-	};
-
 	const response = await fetch(`${API_BASE_URL}${url}`, {
 		method: "GET",
-		headers: headers,
-		credentials: "include",
 	});
 
 	if (!response.ok) {
