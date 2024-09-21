@@ -10,11 +10,11 @@ export let currentUser = null;
 // entry point
 document.addEventListener("DOMContentLoaded", async () => {
   // Vérification de l'état de connexion de l'utilisateur
-  try {
-    currentUser = await checkAuthStatus(); // Renvoie null si non connecté
-  } catch (error) {
-    console.error("Erreur de vérification de l'authentification", error);
-  }
+  // try {
+  //   currentUser = await checkAuthStatus(); // Renvoie null si non connecté
+  // } catch (error) {
+  //   console.error("Erreur de vérification de l'authentification", error);
+  // }
 
   // Routes
   addRoute("/", renderHome);

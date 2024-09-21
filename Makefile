@@ -1,4 +1,4 @@
-DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE = docker compose
 PROJECT_NAME = ft_transcendence
 
 all: build up
