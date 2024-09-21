@@ -1,21 +1,20 @@
-import { logMessage } from "./logs.js";
 import { getData } from "./api/utils.js";
 
 let routes = {};
 
 export function addRoute(path, handler) {
-  logMessage(`Adding route for ${path}`, "info");
+  console.log(`Adding route for ${path}`);
   routes[path] = handler;
 }
 
 export function removeRoute(path) {
-  logMessage(`Removing route for ${path}`, "info");
+  console.log(`Removing route for ${path}`);
   delete routes[path];
 }
 
 export function navigate(path, pushState = true) {
   if (routes[path]) {
-    logMessage(`Navigating to ${path}`, "info");
+    console.log(`Navigating to ${path}`);
 
     // Remove all CSS
     document.querySelectorAll("style").forEach((style) => style.remove());
@@ -29,24 +28,24 @@ export function navigate(path, pushState = true) {
       window.history.pushState({ path }, "", path);
     }
   } else {
-    logMessage(`Route for ${path} not found`, "error");
-    navigate("/", pushState);
+    console.log(`Route for ${path} not found`);
+    navigate("/home", pushState);
   }
 }
 
-function handlePopState(event) {
-  const path = event.state?.path || "/";
-  logMessage(`Handling popstate for ${path}`, "info");
-  navigate(path, false);
-}
+// function handlePopState(event) {
+//   const path = event.state?.path || "/";
+//   console.log(`Pop state: ${path}`);
+//   navigate(path, false);
+// }
 
 export function start() {
-  logMessage("Starting SPA", "info");
+  console.log("Starting SPA");
 
   const initialPath = window.location.pathname;
   navigate(initialPath, false);
 
-  window.addEventListener("popstate", handlePopState);
+  // window.addEventListener("popstate", handlePopState);
 }
 
 export const checkAuthStatus = async () => {

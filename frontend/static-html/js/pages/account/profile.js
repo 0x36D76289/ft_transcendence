@@ -1,6 +1,8 @@
 import { getUserStats, getUserProfile, logoutUser } from "../../api/user.js";
 import { createButton, createParagraph, createHeading, createDiv } from "../../components.js";
-import { navigate } from "../../spa.js";
+import { addRoute, navigate } from "../../spa.js";
+import { readCookie, eraseCookie } from "../../cookie.js";
+import { renderLogin } from "./login.js";
 
 const CSS = `
 .profile-container {
@@ -27,43 +29,36 @@ const CSS = `
 `;
 
 export async function renderProfile() {
+	// load CSS
+	const style = document.createElement("style");
+	style.textContent = CSS;
+	document.head.appendChild(style);
+
+	// check if user is authenticated
+	const tokenValue = readCookie("authToken");
+	if (!tokenValue) {
+		navigate("/account/login");
+		return;
+	}
+
+	// get user profile and stats
+	const profile = await getUserProfile(tokenValue);
+	const stats = await getUserStats(tokenValue);
+
 	const container = createDiv("profile-container");
 
-	const username = localStorage.getItem("username");
+	createHeading(1, "Profile", "profile-heading", container);
 
-	try {
-		const profile = await getUserProfile(username);
-		const stats = await getUserStats(username);
+	createParagraph(`Username: ${profile.username}`, "profile-paragraph", container);
+	createParagraph(`Created At: ${new Date(profile.createdAt).toLocaleString()}`, "profile-paragraph", container);
+	createParagraph(`Last Seen: ${new Date(profile.lastSeen).toLocaleString()}`, "profile-paragraph", container);
+	createParagraph(`Games Played: ${stats.gamesPlayed}`, "profile-paragraph", container);
+	createParagraph(`Games Won: ${stats.gamesWon}`, "profile-paragraph", container);
 
-		const heading = createHeading(1, `Profile of ${profile.username}`, "profile-heading");
-		container.appendChild(heading);
-
-		const bioParagraph = createParagraph(`Bio: ${profile.bio || "No bio available"}`, "profile-paragraph");
-		container.appendChild(bioParagraph);
-
-		const dateJoinedParagraph = createParagraph(`Date Joined: ${new Date(profile.date_joined).toLocaleDateString()}`, "profile-paragraph");
-		container.appendChild(dateJoinedParagraph);
-
-		const isOnlineParagraph = createParagraph(`Status: ${profile.is_online ? "Online" : `Last online: ${new Date(profile.last_online).toLocaleString()}`}`, "profile-paragraph");
-		container.appendChild(isOnlineParagraph);
-
-		const statsParagraph = createParagraph(`Stats: ${stats}`, "profile-paragraph");
-		container.appendChild(statsParagraph);
-
-		const logoutButton = createButton("Logout", async () => {
-			await logoutUser(localStorage.getItem("authToken"));
-			localStorage.removeItem("authToken");
-			localStorage.removeItem("username");
-			navigate("/connexion");
-		}, "logout-button");
-		container.appendChild(logoutButton);
-
-		document.body.appendChild(container);
-
-		const style = document.createElement("style");
-		style.textContent = CSS;
-		document.head.appendChild(style);
-	} catch (error) {
-		console.error("Error loading profile:", error);
-	}
+	createButton("Logout", async () => {
+		await logoutUser(tokenValue);
+		eraseCookie("authToken");
+		addRoute("/account/login", renderLogin);
+		navigate("/account/login");
+	}, "logout-button", container);
 }
