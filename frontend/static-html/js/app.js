@@ -1,27 +1,30 @@
-import { start, addRoute, checkAuthStatus } from "./spa.js";
+import { start, addRoute } from "./spa.js";
 import { renderHome } from "./pages/home.js";
 import { renderProfile } from "./pages/account/profile.js";
 import { renderHub } from "./pages/hub.js";
 import { renderPacman } from "./pages/games/pacman.js";
-import { renderConnexion } from "./pages/account/connexion.js";
-
-export let currentUser = null;
+import { renderLogin } from "./pages/account/login.js";
+import { readCookie } from "./cookie.js";
 
 // entry point
 document.addEventListener("DOMContentLoaded", async () => {
-  // Vérification de l'état de connexion de l'utilisateur
-  // try {
-  //   currentUser = await checkAuthStatus(); // Renvoie null si non connecté
-  // } catch (error) {
-  //   console.error("Erreur de vérification de l'authentification", error);
-  // }
-
   // Routes
-  addRoute("/", renderHome);
+  addRoute("/home", renderHome);
   addRoute("/hub", renderHub);
-  addRoute("/profile", renderProfile);
-  addRoute("/connexion", renderConnexion);
-  addRoute("/pacman", renderPacman);
+
+  // Account pages
+  if (readCookie("authToken")) {
+    currentUser = await getUserProfile(readCookie("authToken"));
+    addRoute("/account/profile", renderProfile);
+  } else {
+    addRoute("/account/login", renderLogin);
+  }
+
+  addRoute("/account/login", renderLogin);
+
+  // Game pages
+  addRoute("/game", renderPacman);
+  addRoute("/game/pacman", renderPacman);
 
   start();
 });

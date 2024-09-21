@@ -111,124 +111,56 @@ const CSS = `
 `;
 
 function createUserCard(user) {
-  const box = components.createDiv("player-box");
-
-  if (!user.connected) {
-    box.classList.add("offline");
-  }
-
-  const img = components.createImage(user.profilePicture, user.username);
-  box.appendChild(img);
-
-  const statusCircle = components.createDiv(`status-circle ${user.connected ? "status-online" : "status-offline"}`);
-  box.appendChild(statusCircle);
-
-  const usernameLabel = components.createDiv("username-label");
-  usernameLabel.textContent = user.username;
-  box.appendChild(usernameLabel);
-
-  // Add mouse-following effect
-  box.addEventListener('mousemove', (e) => {
-    const rect = box.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const deltaX = (x - centerX) / centerX;
-    const deltaY = (y - centerY) / centerY;
-
-    box.style.transform = `perspective(1000px) rotateY(${deltaX * 20}deg) rotateX(${-deltaY * 20}deg) scale3d(1.1, 1.1, 1.1)`;
-  });
-
-  box.addEventListener('mouseleave', () => {
-    box.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
-  });
-
-  return box;
+  const playerBox = components.createDiv("player-box", grid);
+  const statusCircle = components.createDiv(`status-circle status-${user.connected ? "online" : "offline"}`, playerBox);
+  const profilePicture = components.createImage(user.profilePicture, user.username, "", playerBox);
+  const usernameLabel = components.createDiv("username-label", playerBox);
+  usernameLabel.innerText = user.username;
 }
 
 function sortUsers(users, criteria) {
-  if (criteria === "name") {
-    return users.sort((a, b) => a.username.localeCompare(b.username));
-  } else {
-    return users.sort((a, b) => b.connected - a.connected);
-  }
+  return users.sort((a, b) => {
+    if (criteria === "name") {
+      return a.username.localeCompare(b.username);
+    } else {
+      return a.connected - b.connected;
+    }
+  });
 }
 
 export async function renderHub(token) {
+  // load CSS
+  const style = document.createElement("style");
+  style.textContent = CSS;
+  document.head.appendChild(style);
+
   let users = Array.from({ length: 64 }, (_, i) => ({
     username: `User${i + 1}`,
     profilePicture: `https://picsum.photos/200?random=${Math.floor(Math.random() * 1000)}`,
     connected: Math.random() > 0.5
   }));
 
-  const hubContainer = components.createDiv("hub-container");
-
-  const title = components.createHeading(1, "HUB", "hub-title");
-  hubContainer.appendChild(title);
-
-  const controls = components.createDiv("controls");
-
-  const sortDropdown = components.createSelect(
-    [
-      { value: "status", text: "Sort by Status" },
-      { value: "name", text: "Sort by name" },
-    ],
-    "sort-dropdown"
-  );
+  const container = components.createDiv("hub-container");
+  const title = components.createHeading(1, "Hub", "hub-title", container);
+  const controls = components.createDiv("controls", container);
+  const sortDropdown = components.createSelect(["name", "status"], "sort-dropdown", controls);
+  const searchInput = components.createInput("Search...", "text", "search-input", controls);
+  const grid = components.createDiv("grid", container);
 
   sortDropdown.addEventListener("change", () => {
-    const criteria = sortDropdown.value;
-    users = sortUsers(users, criteria);
-    renderGrid(users);
-  });
-
-  controls.appendChild(sortDropdown);
-
-  const searchInput = components.createInput("text", "search-input", "Search users...");
-  searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase();
-    const filteredUsers = users.filter(user => user.username.toLowerCase().includes(query));
-    renderGrid(filteredUsers);
-  });
-
-  controls.appendChild(searchInput);
-
-  hubContainer.appendChild(controls);
-
-  const grid = components.createDiv("grid");
-  hubContainer.appendChild(grid);
-
-  function renderGrid(users) {
     grid.innerHTML = "";
-    users.forEach(user => {
-      const userCard = createUserCard(user);
-      grid.appendChild(userCard);
-    });
-  }
+    users = sortUsers(users, sortDropdown.value);
+    users.forEach(createUserCard);
+  });
 
-  users = sortUsers(users, "status");
-  renderGrid(users);
+  searchInput.addEventListener("input", () => {
+    grid.innerHTML = "";
+    const filteredUsers = users.filter(user => user.username.includes(searchInput.value));
+    filteredUsers.forEach(createUserCard);
+  });
 
-  const homeButton = components.createButton("Home", () => {
-    navigate("/");
-  }, "home-button");
-  hubContainer.appendChild(homeButton);
+  users.forEach(createUserCard);
 
-  // Retrieve username from local storage
-  const storedUsername = localStorage.getItem("username") || "Anonymous";
-
-  // Add account button
-  const accountButton = components.createButton(`${storedUsername}`, () => {
-    navigate("/profile");
-  }, "account-button");
-  hubContainer.appendChild(accountButton);
-
-  document.body.appendChild(hubContainer);
-
-  const style = document.createElement("style");
-  style.textContent = CSS;
-  document.head.appendChild(style);
+  components.createButton("Home", () => navigate("/home"), "home-button", container);
+  components.createButton("Account", () => navigate("/profile"), "account-button", container);
 }

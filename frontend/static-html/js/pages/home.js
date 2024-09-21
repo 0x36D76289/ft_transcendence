@@ -1,7 +1,7 @@
 import { navigate } from "../spa.js";
-import { logMessage } from "../logs.js";
 import { createButton } from "../components.js";
 import { getUserProfile } from "../api/user.js";
+import { readCookie } from "../cookie.js";
 
 const CSS = `
 .play-button {
@@ -32,28 +32,24 @@ const CSS = `
 `
 
 export async function renderHome() {
-  if (localStorage.getItem("authToken")) {
-    try {
-      const accountButton = createButton(localStorage.getItem("username"), async () => {
-        logMessage("Account button clicked", "info");
-        navigate("/account");
-      }, "username-button");
-    } catch (error) {
-      logMessage("User is not logged in", "info");
-    }
-  }
-
-  const playButton = createButton("▶", () => {
-    logMessage("Play button clicked", "info");
-    if (localStorage.getItem("authToken")) {
-      navigate("/hub");
-    } else {
-      navigate("/connexion");
-    }
-  }, "play-button");
-  document.body.appendChild(playButton);
-
+  // load CSS
   const style = document.createElement("style");
   style.textContent = CSS;
   document.head.appendChild(style);
+
+  const tokenValue = readCookie("authToken");
+  console.log(tokenValue);
+  if (!tokenValue) {
+    navigate("/account/login");
+    return;
+  }
+
+  const profile = await getUserProfile(tokenValue);
+
+  // add username button
+  const usernameButton = createButton(profile.username, () => { navigate("/profile") }, "username-button");
+
+  // add play button
+  const playButton = createButton("▶️", () => { navigate("/game") }, "play-button");
+
 }

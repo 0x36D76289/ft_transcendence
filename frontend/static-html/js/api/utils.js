@@ -1,5 +1,3 @@
-import { logMessage } from "../logs.js";
-// import { getCookie } from "../cookie.js";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
@@ -21,10 +19,11 @@ export const postData = async (url = "", data = {}) => {
 		body: JSON.stringify(data),
 	});
 
-	logMessage(`POST ${url} ${response.status}`, "info");
+	console.log(response);
 
+	// Check if the response is OK (status 200-299)
 	if (!response.ok) {
-		logMessage(`POST ${url} failed with status ${response.status}`, "error");
+		console.error(`HTTP error! status: ${response.status}`);
 		throw new Error(`HTTP error! status: ${response.status}`);
 	}
 
@@ -43,14 +42,14 @@ export const getData = async (url = "") => {
 	});
 
 	if (!response.ok) {
-		logMessage(`GET ${url} ${response.status}`, "error");
+		console.error(`HTTP error! status: ${response.status}`);
 		throw new Error(`HTTP error! status: ${response.status}`);
 	}
 
 	try {
 		return await response.json();
 	} catch (error) {
-		logMessage(`GET ${url} failed to parse JSON`, "error");
+		console.error("Failed to parse JSON");
 		throw new Error("Failed to parse JSON");
 	}
 };
