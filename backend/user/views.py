@@ -24,7 +24,7 @@ def login(request):
 	token, created = Token.objects.get_or_create(user=user)
 	user.is_online = True
 	user.save()
-	return Response({'token': token.key, 'username': user.username})
+	return Response({'token': token.key, 'username': user.username, 'detail': 'Successfuly logged in!'})
 
 @api_view(['POST'])
 def register(request):
