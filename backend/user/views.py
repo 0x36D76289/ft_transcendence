@@ -70,6 +70,8 @@ def update_user(request):
 	return Response({'detail': 'No valid fields'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_profile(request, username):
 	try:
 		user = User.objects.get(username=username)
@@ -80,6 +82,8 @@ def get_profile(request, username):
 	return Response(serializer.data)
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_stats(request, username):
 	try:
 		user = User.objects.get(username=username)
