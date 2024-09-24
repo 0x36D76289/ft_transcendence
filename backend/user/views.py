@@ -96,6 +96,14 @@ def get_stats(request, username):
 	win_rate = (win / (games_played if games_played != 0 else 1)) * 100
 	return Response({'games_played': games_played, 'win': win, 'lose': lose, 'win_rate': win_rate})
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def list_users(request):
+	query_set = User.objects.all().order_by('-date_joined')[:20]
+	serializer = UserSerializer(query_set, many=True)
+	return Response(serializer.data);
+
 # USER_FRIEND
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
