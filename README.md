@@ -90,6 +90,10 @@ don't forget the header `Content-Type: application/json`
   - _description:_ log out a user, deleting and invalidating the existing authentication token
   - _request:_ `Authorization: Token <token>` in header
   - _response:_ `detail` in body
+- `/user/is_token_valid` **POST**  
+  - _description:_ checks if a token is valid and returns the user's username it corresponds to
+  - _request:_ `token` in body
+  - _response:_ `detail`, `username` when successful
 - `/user/update_user` **POST**  
   - _description:_ update informations of a user
   - _request:_ `Authorization: Token <token>` in header, `username` and/or `bio` in body
