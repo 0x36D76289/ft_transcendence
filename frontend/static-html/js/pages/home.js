@@ -16,7 +16,6 @@ const CSS = `
 
 .play-button:hover {
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.1);
   transform: translate(-50%, -50%) scale(1.3);
 }
 
@@ -39,17 +38,17 @@ export async function renderHome() {
 
   const tokenValue = readCookie("authToken");
   console.log(tokenValue);
-  if (!tokenValue) {
-    navigate("/account/login");
-    return;
+
+  let usernameButton = null;
+
+  if (tokenValue) {
+    const profile = await getUserProfile(tokenValue);
+    usernameButton = createButton(profile.username, () => { navigate("/profile") }, "username-button");
+  } else {
+    usernameButton = createButton("Login", () => { navigate("/login") }, "username-button");
   }
 
-  const profile = await getUserProfile(tokenValue);
-
-  // add username button
-  const usernameButton = createButton(profile.username, () => { navigate("/profile") }, "username-button");
-
-  // add play button
   const playButton = createButton("▶️", () => { navigate("/game") }, "play-button");
-
+  document.body.appendChild(playButton);
+  document.body.appendChild(usernameButton);
 }

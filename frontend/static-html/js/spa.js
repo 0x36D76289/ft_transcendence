@@ -47,11 +47,3 @@ export function start() {
 
   // window.addEventListener("popstate", handlePopState);
 }
-
-export const checkAuthStatus = async () => {
-  const response = await getData("/auth/status/");
-  if (response.is_authenticated) {
-    return response.user;
-  }
-  return null;
-};

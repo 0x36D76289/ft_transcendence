@@ -1,4 +1,3 @@
-
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 /**
@@ -8,10 +7,12 @@ const API_BASE_URL = "http://127.0.0.1:8000";
  * @param {Object} data - The data to be sent in the body of the POST request.
  * @returns {Promise<Object>} - A promise that resolves to the JSON response from the server.
  */
-export const postData = async (url = "", data = {}) => {
+export async function postData(url = "", data = {}) {
 	const headers = {
 		"Content-Type": "application/json",
 	};
+
+	console.log(`curl -X POST -H "Content-Type: application/json" -d '${JSON.stringify(data)}' ${API_BASE_URL}${url}`);
 
 	const response = await fetch(`${API_BASE_URL}${url}`, {
 		method: "POST",
@@ -19,16 +20,12 @@ export const postData = async (url = "", data = {}) => {
 		body: JSON.stringify(data),
 	});
 
-	console.log(response);
+	const responseData = await response.json();
 
-	// Check if the response is OK (status 200-299)
-	if (!response.ok) {
-		console.error(`HTTP error! status: ${response.status}`);
-		throw new Error(`HTTP error! status: ${response.status}`);
-	}
+	console.log(responseData);
 
-	return response.json();
-};
+	return responseData;
+}
 
 /**
  * Fetches data from the specified URL with optional data and CSRF token.
@@ -36,20 +33,16 @@ export const postData = async (url = "", data = {}) => {
  * @param {string} url - The endpoint URL to fetch data from.
  * @returns {Promise<Object>} - A promise that resolves to the response data in JSON format.
  */
-export const getData = async (url = "") => {
+export async function getData(url = "") {
+	console.log(`curl -X GET ${API_BASE_URL}${url}`);
+
 	const response = await fetch(`${API_BASE_URL}${url}`, {
 		method: "GET",
 	});
 
-	if (!response.ok) {
-		console.error(`HTTP error! status: ${response.status}`);
-		throw new Error(`HTTP error! status: ${response.status}`);
-	}
+	const responseData = await response.json();
 
-	try {
-		return await response.json();
-	} catch (error) {
-		console.error("Failed to parse JSON");
-		throw new Error("Failed to parse JSON");
-	}
-};
+	console.log(responseData);
+
+	return responseData;
+}
