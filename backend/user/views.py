@@ -53,6 +53,13 @@ def logout(request):
 	return(Response({'detail': 'Logged out!'}))
 
 @api_view(['POST'])
+def is_token_valid(request):
+	if not request.data.get('token'):
+		return Response({'detail': 'Missing token argument'}, status=status.HTTP_400_BAD_REQUEST)
+	token = get_object_or_404(Token, key=request.data['token'])
+	return Response({'username': token.user.username, 'detail': 'Valid token !'})
+
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_user(request):
