@@ -11,5 +11,6 @@ urlpatterns = [
 	path('get_friendship', views.get_friendship),
 	path('get_friends', views.get_friends),
 	path('profile/<username>', views.get_profile),
-	path('stats/<username>', views.get_stats)
+	path('stats/<username>', views.get_stats),
+	path('list', views.list_users)
 ]

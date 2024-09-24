@@ -96,10 +96,16 @@ don't forget the header `Content-Type: application/json`
   - _response:_ `detail` in body
 - `/user/profile/<username>` **GET**  
   - _description:_ get public information of a user
+  - _request:_ `Authorization: Token <token>` in header
   - _response:_ `id`, `username`, `bio`, `date_joined`, `is_online` and `last_online` in body
 - `/user/stats/<username>` **GET**
   - _description:_ get public game stats of a user
+  - _request:_ `Authorization: Token <token>` in header
   - _response:_ `games_played` and `win_rate` in body
+- `/user/list` **GET**
+  - _description:_ list the 20 last registered users
+  - _request:_ `Authorization: Token <token>` in header
+  - _response:_ list of users
 - `/user/send_friend_request` **POST**
   - _description:_ send a friend request to another user, if this user already sent you a friend request you are now friends
   - _request:_ `Authorization: Token <token>` in header, `username` in body (username of the target)
