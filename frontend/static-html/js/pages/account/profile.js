@@ -37,7 +37,7 @@ export async function renderProfile() {
 	// check if user is authenticated
 	const tokenValue = readCookie("authToken");
 	if (!tokenValue) {
-		navigate("/account/login");
+		navigate("/login");
 		return;
 	}
 
@@ -58,7 +58,7 @@ export async function renderProfile() {
 	createButton("Logout", async () => {
 		await logoutUser(tokenValue);
 		eraseCookie("authToken");
-		addRoute("/account/login", renderLogin);
-		navigate("/account/login");
+		addRoute("/login", renderLogin);
+		navigate("/login");
 	}, "logout-button", container);
 }
