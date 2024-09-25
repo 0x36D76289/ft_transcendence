@@ -1,54 +1,70 @@
-import { navigate } from "../spa.js";
-import { createButton } from "../components.js";
-import { getUserProfile } from "../api/user.js";
+import { navigate, loadPage } from "../spa.js";
 import { readCookie } from "../cookie.js";
 
-const CSS = `
-.play-button {
+const cssContent = `
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+}
+.username-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+#play-button {
+  font-size: 3rem;
   background-color: transparent;
-  font-size: 5rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform 0.3s ease, font-size 0.3s ease;
+  transition: transform 0.2s ease-in-out;
 }
 
-.play-button:hover {
-  cursor: pointer;
-  transform: translate(-50%, -50%) scale(1.3);
+#play-button:hover {
+  transform: scale(1.3);
 }
 
-.play-button:active {
-  transform: translate(-50%, -50%) scale(1.1);
+#play-button:active {
+  transform: scale(1.4);
 }
+`;
 
-.username-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-}
-`
+export function renderHome() {
+  const token = readCookie("authToken");
+  let userNameHTML = '';
 
-export async function renderHome() {
-  // load CSS
-  const style = document.createElement("style");
-  style.textContent = CSS;
-  document.head.appendChild(style);
-
-  const tokenValue = readCookie("authToken");
-  console.log(tokenValue);
-
-  let usernameButton = null;
-
-  if (tokenValue) {
-    const profile = await getUserProfile(tokenValue);
-    usernameButton = createButton(profile.username, () => { navigate("/profile") }, "username-button");
-  } else {
-    usernameButton = createButton("Login", () => { navigate("/login") }, "username-button");
+  if (token) {
+    const username = readCookie("username");
+    userNameHTML = `<button id="username-button">${username}</button>`;
   }
 
-  const playButton = createButton("▶️", () => { navigate("/game") }, "play-button");
-  document.body.appendChild(playButton);
-  document.body.appendChild(usernameButton);
+  const htmlContent = `
+  <div class="home-container">
+    <div class="username-container">
+      ${userNameHTML}
+    </div>
+    <button id="play-button">Play</button>
+  </div>
+  `;
+
+  // Load the HTML and CSS content
+  loadPage(htmlContent, cssContent);
+
+  // Event listener for the Play button
+  document.getElementById("play-button").addEventListener("click", () => {
+    if (token) {
+      navigate("/hub");
+    } else {
+      navigate("/login");
+    }
+  });
+
+  // Event listener for the Username button
+  if (token) {
+    document.getElementById("username-button").addEventListener("click", () => {
+      const username = readCookie("username");
+      navigate(`/${username}`);
+    });
+  }
 }
