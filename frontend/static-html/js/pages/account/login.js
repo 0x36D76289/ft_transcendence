@@ -1,114 +1,83 @@
-import { loginUser, registerUser } from "../../api/user.js";
-import { createButton, createDiv, createHeading, createInput, createParagraph, createForm } from "../../components.js";
-import { navigate } from "../../spa.js";
+import { postData } from "../../api/utils.js";
+import { navigate, addRoute, loadPage } from "../../spa.js";
+import { createCookie } from "../../cookie.js";
+import { renderProfile } from "./profile.js";
 
-const CSS = `
+const htmlContent = `
+<div class="login-container">
+  <h1>Login or Register</h1>
+  <input id="username" type="text" placeholder="Username" class="input-field" /><br />
+  <input id="password" type="password" placeholder="Password" class="input-field" /><br />
+  <button id="login-button" class="action-button">Login</button>
+  <button id="register-button" class="action-button">Register</button>
+  <button id="home-button" class="home-button">Back to Home</button>
+  <p id="message"></p>
+</div>
+`;
+
+const cssContent = `
 .login-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-	background-color: var(--background-color);
-	color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
-
-.login-card {
-	background-color: #111;
-	border-radius: 5px;
-	padding: 2rem;
-	width: 300px;
+.input-field {
+  margin-bottom: 10px;
 }
-
-.login-title {
-	font-size: var(--large-font-size);
-	margin-bottom: 1rem;
-	text-align: center;
+.action-button {
+  margin-top: 10px;
 }
-
-.input-group {
-	margin-bottom: 1rem;
-	display: flex;
-	flex-direction: column;
-}
-
-.input-group input {
-	padding: 0.5rem;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-}
-
-.button-group {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 1rem;
-}
-
-.message {
-	margin-top: 1rem;
-	text-align: center;
-	font-size: var(--small-font-size);
-}
-
-.error-message {
-	color: #ff4d4f;
+.home-button {
+  margin-top: 20px;
 }
 `;
 
 export function renderLogin() {
-	const style = document.createElement("style");
-	style.textContent = CSS;
-	document.head.appendChild(style);
 
-	const container = createDiv("login-container");
-	const card = createDiv("login-card", container);
 
-	createHeading(2, "Welcome", "login-title", card);
+  // Load the HTML and CSS content
+  loadPage(htmlContent, cssContent);
 
-	const form = createForm(handleSubmit, "", card);
+  // Event listeners for Login and Register buttons
+  document.getElementById("login-button").addEventListener("click", async () => {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
-	const usernameInput = createInput("Username", "text", "input-group", form);
-	const passwordInput = createInput("Password", "password", "input-group", form);
+    if (username && password) {
+      const response = await postData("/user/login", {}, { username, password });
+      if (response.token) {
+        createCookie("authToken", response.token, 7);  // Store token for 7 days
+        createCookie("username", response.username, 7);  // Store username
+        addRoute(`/${response.username}`, (params) => renderProfile(params.username));
+        navigate("/home");
+      } else {
+        document.getElementById("message").textContent = "Login failed. Please try again.";
+      }
+    } else {
+      document.getElementById("message").textContent = "Please enter both username and password.";
+    }
+  });
 
-	const buttonGroup = createDiv("button-group", form);
-	const loginButton = createButton("Login", handleLogin, "", buttonGroup);
-	const registerButton = createButton("Register", handleRegister, "", buttonGroup);
+  document.getElementById("register-button").addEventListener("click", async () => {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
-	const message = createParagraph("", "message", card);
+    if (username && password) {
+      const response = await postData("/user/register", {}, { username, password });
+      if (response.username) {
+        document.getElementById("message").textContent = "Registration successful! You can now log in.";
+      } else {
+        document.getElementById("message").textContent = "Registration failed. Please try again.";
+      }
+    } else {
+      document.getElementById("message").textContent = "Please enter both username and password.";
+    }
+  });
 
-	async function handleLogin(event) {
-		event.preventDefault();
-		await handleSubmit(event, true);
-	}
-
-	async function handleRegister(event) {
-		event.preventDefault();
-		await handleSubmit(event, false);
-	}
-
-	async function handleSubmit(event, isLogin) {
-		const username = usernameInput.value;
-		const password = passwordInput.value;
-
-		const action = isLogin ? loginUser : registerUser;
-		const response = await action(username, password);
-
-		if (response.detail) {
-			message.textContent = response.detail;
-			message.className = response.ok ? "message" : "message error-message";
-		} else {
-			message.textContent = "";
-		}
-
-		if (response.ok) {
-			if (isLogin) {
-				
-				alert("Login successful!");
-				navigate("/");
-			} else {
-				alert("Registration successful! Please login to continue.");
-			}
-		}
-	}
-
-	return container;
+  // Event listener for Back to Home button
+  document.getElementById("home-button").addEventListener("click", () => {
+    navigate("/home");
+  });
 }
