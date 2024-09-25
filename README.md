@@ -1,167 +1,135 @@
-# ft_transcendence
+# 🎮 ft_transcendence
 
-## ⚙️ Minimal technical requirement
+Welcome to **ft_transcendence**, a multiplayer web-based game application built with **Django**, **PostgreSQL**, and **Vanilla JavaScript**. Below are the project specifications, game system overview, security concerns, and backend API documentation.
 
-- The front-end should be written in **pure vanilla JavaScript**
-- The backend must be written in **Django** *(cf. Use a Framework as backend.).*
-- Use **PostgreSQL** as Database *(cf. Use a database for the backend -and more.)*
-- The website must be **compatible** with the latest stable up-to-date version of
-**Google Chrome** .
-- The user should encounter **no unhandled errors** and **no warnings** when browsing the
-website.
-- Everything must be launched with a single command line to run an autonomous
-container provided by Docker . Example : **docker-compose up --build**. 
+---
 
-## 🕹️ Game system
+## 📑 Table of Contents
 
-- Both players will **use the same keyboard**.
-- Should be possible to **propose a tournament**. At the start of a tournament, each player
-must enter his temporary alias name *(cf. Major module: Standard user management, authentication, users across tournaments.)*
-- There must be a **matchmaking system**
-- All players must **adhere to the same rules**, which includes having identical paddle
-speed
+1. [Minimal Technical Requirements](#️-minimal-technical-requirements)
+2. [Game System](#️-game-system)
+3. [Security Concerns](#️-security-concerns)
+4. [Modules Overview](#-modules-overview)
+5. [Backend API Documentation](#️-backend-api-documentation)
+   - [User Endpoints](#user-endpoints)
+   - [Game Endpoints](#game-endpoints)
+   - [Chat Endpoints](#chat-endpoints)
 
-## 🔐 Security concerns
+---
 
-- Any password stored in your database, if applicable, **must be hashed**. Please make sure you use a **strong** password hashing algorithm
-- The website must be **protected against SQL injections/XSS**.
-- **Enable an HTTPS** connection for all aspects (Utilize wss instead of ws...).
-- You need to **implement some form of validation** for forms and any user input on the server side if a backend is used.
-- Regardless of whether you choose to implement the JWT Security module with 2FA, it’s crucial to prioritize the security of your website. For instance, if you opt to create an API, ensure your routes are protected. Remember, even if you decide not to use JWT tokens, securing the site remains essential. *(cf. Major module: Implement Two-Factor Authentication (2FA) and JWT.)*
-- For obvious security reasons, **any credentials, API keys, env variables etc... must be saved locally in a .env** file and ignored by git. Publicly stored credentials will lead you directly to a failure of the project.
+## ⚙️ Minimal Technical Requirements
 
-### Modules used for **mandatory**
+- **Frontend**: Pure **vanilla JavaScript**
+- **Backend**: Built with **Django**
+- **Database**: Utilizes **PostgreSQL**
+- **Browser Compatibility**: Latest stable version of **Google Chrome**
+- **Error Handling**: No unhandled errors or warnings during browsing
+- **Docker**: Run everything with a single command
 
-To attain 100% project completion, **a minimum of 7 major modules is required**. Two Minor Modules are equivalent to one Major Module.
+---
 
-1 + 0.5 + 1 + 1 + 1 + 1 + 1 + 0.5
-= 7
+## 🕹️ Game System
 
-- Web
-  - **Major module**: Use a Framework as backend.
-  - Minor module: Use a database for the backend and more.
+- **Same Keyboard Play**: Both players use the same keyboard.
+- **Tournament Mode**: Players can propose and enter tournaments with temporary alias names.
+- **Matchmaking**: A built-in system for matchmaking between players.
+- **Unified Game Rules**: All players must adhere to identical game rules, including paddle speed.
 
-- User Management
-  - **Major module**: Standard user management, authentication, users across tournaments.
-  - **Major module**: Implementing a remote authentication.
+---
 
-- Gameplay and user experience
-  - **Major module**: Remote players.
-  - **Major module**: Live Chat.
+## 🔐 Security Concerns
 
-- AI-Algo
-  - **Major module**: Introduce an AI Opponent.
-  - Minor module: User and Game Stats Dashboards.
+- **Password Security**: All passwords must be hashed using a strong algorithm.
+- **Injection Protection**: Protect against SQL injections and XSS attacks.
+- **HTTPS**: Enable **HTTPS** for all connections, using **wss** for WebSockets.
+- **Input Validation**: Implement server-side validation for all forms and user inputs.
+- **Environment Variables**: Store credentials, API keys, and other sensitive data in a `.env` file, which should be added to `.gitignore`.
 
-- Cybersecurity
-  - **Major module**: Implement Two-Factor Authentication (2FA) and JWT.
+---
 
-- Devops
-  - Minor module: Monitoring system.
+## 📦 Modules Overview
 
-- Gaming
-  - **Major module**: Add Another Game with User History and Matchmaking.
-  - Minor module: Game Customization Options.
+To complete the project, a minimum of **7 major modules** is required. Two minor modules can replace one major module. The following modules are included:
 
-- Accessibility
-  - Minor module: Support on all devices.
-  - Minor module: Expanding Browser Compatibility.
-  - Minor module: Multiple language supports.
-  - Minor module: Server-Side Rendering (SSR) Integration.
+### Web Development
 
-## Backend API
+- **Major Module**: Use a framework as backend
+- **Minor Module**: Use a database for the backend
 
-- Requests to the backend are either **GET** or **POST** requests  
-- **POST** requests that sends data in their body must send json, 
-don't forget the header `Content-Type: application/json`
-- Requests needing `Authorization: Token <token>` in header means they are only usable by logged users, `<token>` is the authentication token returned by the /user/login api
+### User Management
 
-### User
+- **Major Module**: Standard user management, authentication, users across tournaments
+- **Major Module**: Implement remote authentication
 
-- `/user/register` **POST**
-  - _description:_ register a new user
-  - _request:_ `username` and `password` in body, optional: `bio`
-  - _response:_ `detail` and `username` in body when successful
-- `/user/login` **POST**  
-  - _description:_ log in a user, returns an authentication token
-  - _request:_ `username` and `password` in body
-  - _response:_ `token` and `username` in body when successful
-- `/user/logout` **POST**  
-  - _description:_ log out a user, deleting and invalidating the existing authentication token
-  - _request:_ `Authorization: Token <token>` in header
-  - _response:_ `detail` in body
-- `/user/is_token_valid` **POST**  
-  - _description:_ checks if a token is valid and returns the user's username it corresponds to
-  - _request:_ `token` in body
-  - _response:_ `detail`, `username` when successful
-- `/user/update_user` **POST**  
-  - _description:_ update informations of a user
-  - _request:_ `Authorization: Token <token>` in header, `username` and/or `bio` in body
-  - _response:_ `detail` in body
-- `/user/profile/<username>` **GET**  
-  - _description:_ get public information of a user
-  - _request:_ `Authorization: Token <token>` in header
-  - _response:_ `id`, `username`, `bio`, `date_joined`, `is_online` and `last_online` in body
-- `/user/stats/<username>` **GET**
-  - _description:_ get public game stats of a user
-  - _request:_ `Authorization: Token <token>` in header
-  - _response:_ `games_played` and `win_rate` in body
-- `/user/list` **GET**
-  - _description:_ list the 20 last registered users
-  - _request:_ `Authorization: Token <token>` in header
-  - _response:_ list of users
-- `/user/send_friend_request` **POST**
-  - _description:_ send a friend request to another user, if this user already sent you a friend request you are now friends
-  - _request:_ `Authorization: Token <token>` in header, `username` in body (username of the target)
-  - _response:_ `detail` in body
-- `/user/remove_friend_request` **POST**
-  - _description:_ this api does either 3 things: remove a friend request you made to this user, decline a friend request the user made to you or remove friendship if you are already friends
-  - _request:_ `Authorization: Token <token>` in header, `username` in body (username of the target)
-  - _response:_ `detail` in body
-- `/user/get_friendship` **POST**
-  - _description:_ get the friendship information about a user, returns FRIEND if you are friends, REQ_SENT if you sent a friend request to this user, REQ_RECEIVED if you received a friend request from this user, else returns NONE
-  - _request:_ `Authorization: Token <token>` in header, `username` in body (username of the target)
-  - _response:_ `detail` in body
+### Gameplay & UX
 
-### Game
+- **Major Module**: Remote players
+- **Major Module**: Live chat
 
-- `/game/history` **GET**
-  - _description:_ get the history of all games played (il faudra limiter ici)
-  - _response:_ a list of games in body containing each `p1`, `p2`, `p1_score`, `p2_score`, `time_start` and `time_end`
+### AI & Algorithms
 
-- `/game/history/<user>` **GET**
-  - _description:_ get the history of games played by a user
-  - _response:_ a list of games in body containing each `p1`, `p2`, `p1_score`, `p2_score`, `time_start` and `time_end`
+- **Major Module**: Introduce an AI opponent
+- **Minor Module**: User and game stats dashboards
 
-- `/game` **DEBUG**
-  - _description:_ go to this endpoint on a web browser, allows to manually create games and add them in the database
+### Cybersecurity
 
-### Chat
+- **Major Module**: Implement Two-Factor Authentication (2FA) and JWT
 
-- `/chat/get/<user>` **GET**
-  - _description:_ get the chat history with another user
-  - _request:_ `Authorization: Token <token>` in header
-  - _response:_ a list of messages in body containing each `sender`, `receiver`, `content` and `time_created`
+### DevOps
 
-- `/chat/get/<user>` **POST**
-  - _description:_ send a message to another user
-  - _request:_ `Authorization: Token <token>` in header, `username` and `message` in body
-  - _response:_ `detail` in body
+- **Minor Module**: Monitoring system
 
-- `/chat/block` **POST**
-  - _description:_ block another user
-  - _request:_ `Authorization: Token <token>` in header, `username` in body
-  - _response:_ `detail` in body
+### Gaming
 
-- `/chat/unblock` **POST**
-  - _description:_ unblock another user
-  - _request:_ `Authorization: Token <token>` in header, `username` in body
-  - _response:_ `detail` in body
+- **Major Module**: Add another game with user history and matchmaking
+- **Minor Module**: Game customization options
 
-- `/chat/is_user_blocked` **GET**
-  - _description:_ checks if a user is blocked, returns true or false in `detail` when successful
-  - _request:_ `Authorization: Token <token>` in header, `username` in body
-  - _response:_ `detail` in body
+### Accessibility
 
-- `/chat` **DEBUG**
-  - _description:_ go to this endpoint on a web browser, allows to manually create messages and add them in the database
+- **Minor Modules**: Support for all devices, expanding browser compatibility, multi-language support, SSR integration
+
+---
+
+## 🚀 Backend API Documentation
+
+All API requests are either **GET** or **POST**. POST requests should use the appropriate headers. Authorization requires the header for logged-in users.
+
+### User Endpoints
+
+| **Endpoint**                  | **Method** | **Description**                                                          | **Request**                                               | **Response**                                                       |
+| ----------------------------- | ---------- | ------------------------------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------ |
+| `/user/register`              | **POST**   | Register a new user                                                      | `username`, `password` in body, optional: `bio`           | `detail`, `username` on success                                    |
+| `/user/login`                 | **POST**   | Log in a user, returns an authentication token                           | `username`, `password` in body                            | `token`, `username` on success                                     |
+| `/user/logout`                | **POST**   | Log out a user and invalidate the token                                  | Authorization in header                                   | `detail` in body                                                   |
+| `/user/is_token_valid`        | **POST**   | Check if a token is valid                                                | `token` in body                                           | `detail`, `username` on success                                    |
+| `/user/update_user`           | **POST**   | Update user information                                                  | Authorization in header, `username`, `bio` in body        | `detail` in body                                                   |
+| `/user/profile/<username>`    | **GET**    | Get public information of a user                                         | Authorization in header                                   | `id`, `username`, `bio`, `date_joined`, `is_online`, `last_online` |
+| `/user/stats/<username>`      | **GET**    | Get public game stats of a user                                          | Authorization in header                                   | `games_played`, `win_rate` in body                                 |
+| `/user/list`                  | **GET**    | List the last 20 registered users                                        | Authorization in header                                   | List of users                                                      |
+| `/user/send_friend_request`   | **POST**   | Send a friend request, or accept if the user already sent you one        | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
+| `/user/remove_friend_request` | **POST**   | Remove a friend request, decline a request, or unfriend                  | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
+| `/user/get_friendship`        | **POST**   | Get friendship status with a user (FRIEND, REQ_SENT, REQ_RECEIVED, NONE) | Authorization in header, `username` in body               | `detail` in body                                                   |
+
+### Game Endpoints
+
+| **Endpoint**           | **Method** | **Description**                         | **Response**                                                                    |
+| ---------------------- | ---------- | --------------------------------------- | ------------------------------------------------------------------------------- |
+| `/game/history`        | **GET**    | Get the history of all games played     | List of games with `p1`, `p2`, `p1_score`, `p2_score`, `time_start`, `time_end` |
+| `/game/history/<user>` | **GET**    | Get the game history of a specific user | List of games with `p1`, `p2`, `p1_score`, `p2_score`, `time_start`, `time_end` |
+
+### Chat Endpoints
+
+| **Endpoint**            | **Method** | **Description**                    | **Request**                                            | **Response**                                                       |
+| ----------------------- | ---------- | ---------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------ |
+| `/chat/get/<user>`      | **GET**    | Get chat history with another user | Authorization in header                                | List of messages (`sender`, `receiver`, `content`, `time_created`) |
+| `/chat/send`            | **POST**   | Send a message to another user     | Authorization in header, `username`, `message` in body | `detail` in body                                                   |
+| `/chat/block`           | **POST**   | Block another user                 | Authorization in header, `username` in body            | `detail` in body                                                   |
+| `/chat/unblock`         | **POST**   | Unblock another user               | Authorization in header, `username` in body            | `detail` in body                                                   |
+| `/chat/is_user_blocked` | **GET**    | Check if a user is blocked         | Authorization in header                                | `detail` in body                                                   |
+
+---
+
+## ⚠️ Debug Endpoints
+
+- `/game`: Allows manual game creation via browser
+- `/chat`: Allows manual message creation via browser
