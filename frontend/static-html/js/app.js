@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const username = readCookie("username");
   if (readCookie("authToken") && username) {
-    addRoute(`/${username}`, () => renderProfile(username));
+    addRoute("/profile", () => renderProfile(username));
     addRoute("/hub", renderHub);
   }
 
