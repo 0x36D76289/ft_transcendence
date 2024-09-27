@@ -32,7 +32,7 @@ def register(request):
 	if not serializer.is_valid():
 		return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save(password=request.data.get('password'))
-	return Response({'detail': 'Account created', 'username': serializer.data})
+	return Response({'detail': 'Account created', 'username': serializer.data['username']})
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -52,6 +52,14 @@ def is_token_valid(request):
 		return Response({'detail': 'Missing token argument'}, status=status.HTTP_400_BAD_REQUEST)
 	token = get_object_or_404(Token, key=request.data['token'])
 	return Response({'username': token.user.username, 'detail': 'Valid token !'})
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+	user = request.user
+	user.delete()
+	return Response({'detail': 'Account deleted.'})
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
