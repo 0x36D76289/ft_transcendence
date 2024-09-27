@@ -3,10 +3,11 @@ from django.contrib.auth.models import AbstractBaseUser
 
 class User(AbstractBaseUser):
 	username = models.CharField(max_length=20, unique=True)
-	bio = models.CharField(max_length=100)
+	bio = models.CharField(max_length=100, blank=True)
+	pfp = models.ImageField(default='pfp/default.png', upload_to='pfp')
 	date_joined = models.DateTimeField(auto_now_add=True)
 	is_online = models.BooleanField(default=False)
-	last_online = models.DateTimeField()
+	last_login = models.DateTimeField(null=True)
 
 	USERNAME_FIELD = "username"
 

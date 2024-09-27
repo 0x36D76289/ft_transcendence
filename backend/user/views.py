@@ -1,10 +1,9 @@
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from rest_framework.response import Response
 from user.serializers import UserSerializer, UserFriendSerializer
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from user.models import User, UserFriend
-from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from rest_framework.authentication import TokenAuthentication
@@ -23,22 +22,17 @@ def login(request):
 		return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
 	token, created = Token.objects.get_or_create(user=user)
 	user.is_online = True
+	user.last_login = now()
 	user.save()
 	return Response({'token': token.key, 'username': user.username, 'detail': 'Successfuly logged in!'})
 
 @api_view(['POST'])
 def register(request):
-	if not request.data.get('username') or not request.data.get('password'):
-		return Response({'detail': 'Missing arguments'}, status=status.HTTP_400_BAD_REQUEST)
-	if User.objects.filter(username=request.data.get('username')).exists():
-		return Response({'detail': 'A user with this username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-	user = User(username=request.data.get('username'))
-	user.set_password(request.data['password'])
-	user.last_online = now()
-	if request.data.get('bio'):
-		user.bio = request.data.get('bio')
-	user.save()
-	return Response({'detail': 'Account created', 'username': user.username})
+	serializer = UserSerializer(data=request.data)
+	if not serializer.is_valid():
+		return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+	serializer.save(password=request.data.get('password'))
+	return Response({'detail': 'Account created', 'username': serializer.data})
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -63,18 +57,11 @@ def is_token_valid(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_user(request):
-	user = request.user
-	updated = False
-	if request.data.get('username'):
-		user.username = request.data['username']
-		updated = True
-	if request.data.get('bio'):
-		user.bio = request.data['bio']
-		updated = True
-	if updated:
-		user.save()
-		return Response({'detail': 'Successfuly updated user'})
-	return Response({'detail': 'No valid fields'}, status=status.HTTP_400_BAD_REQUEST)
+	serializer = UserSerializer(request.user, data=request.data, partial=True)
+	if not serializer.is_valid():
+		return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+	serializer.save()
+	return Response({'detail': 'Successfuly updated user'})
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -159,8 +146,7 @@ def remove_friend_request(request):
 	other_user = get_object_or_404(User, username=request.data.get('username'))
 	if logged_user == other_user:
 		return Response({'detail': 'Cannot be friend with yourself'}, status=status.HTTP_400_BAD_REQUEST)
-	user1 = logged_user if logged_user.id < other_user.id else other_user
-	user2 = other_user if logged_user.id < other_user.id else logged_user
+	user1, user2 = (logged_user, other_user) if logged_user.id < other_user.id else (other_user, logged_user)
 	try:
 		friendship = UserFriend.objects.get(uid1=user1.id, uid2=user2.id)
 	except:
@@ -187,8 +173,7 @@ def get_friendship(request):
 	other_user = get_object_or_404(User, username=request.data.get('username'))
 	if logged_user == other_user:
 		return Response({'detail': 'Cannot be friend with yourself'}, status=status.HTTP_400_BAD_REQUEST)
-	user1 = logged_user if logged_user.id < other_user.id else other_user
-	user2 = other_user if logged_user.id < other_user.id else logged_user
+	user1, user2 = (logged_user, other_user) if logged_user.id < other_user.id else (other_user, logged_user)
 	try:
 		friendship = UserFriend.objects.get(uid1=user1.id, uid2=user2.id)
 	except:
