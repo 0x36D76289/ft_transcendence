@@ -1,231 +1,312 @@
-import { getData } from '../api/utils.js';
+import { postData } from '../api/utils.js';
+import { loadPage, navigate } from '../spa.js';
 import { readCookie } from '../cookie.js';
-import { loadPage } from '../spa.js';
+// import { generateMultipleProfiles } from '../profile_generator.js';
 
-const htmlStructure = `
-  <div class="hub-container">
-    <button id="home-button" class="home-button">Home</button>
-    <h1>User Hub</h1>
-    <div class="user-grid" id="user-grid"></div>
+const HTML = `
+<div class="hub-container">
+  <div class="left-sidebar">
+    <div class="user-avatar"></div>
+    <div class="user-info">
+      <p class="username">username</p>
+      <p class="last-login">Last login: 05/12/2024</p>
+      <p class="creation-date">Created: 04/12/2001</p>
+      <p class="bio">User bio goes here...</p>
+    </div>
+    <div class="sidebar-controls">
+      <button class="settings-button"><i class="fa fa-cog"></i></button>
+      <div class="status-toggle"><i class="fa fa-microphone"></i></div>
+    </div>
   </div>
-`;
+  
+  <div class="central-hub">
+    <div class="user-grid-container">
+      <div class="user-grid" id="userGrid"></div>
+    </div>
+  </div>
+  
+  <div class="right-sidebar">
+    <div class="game-controls">
+      <button class="play-button">Play</button>
+      <button class="tournaments-button">Tournaments</button>
+    </div>
+    <div class="global-chat">
+      <h3>Global Chat</h3>
+      <div class="chat-messages" id="chatMessages"></div>
+      <input type="text" id="chatInput" placeholder="Type your message...">
+    </div>
+  </div>
+</div>
+`
 
-// CSS styles
-const styles = `
-  .hub-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  .home-button {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-
-  .user-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
-    max-height: 80vh; /* Adjust the height as needed */
-    overflow-y: auto;
-  }
-
-  .user-card {
-    background-color: #111;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-
-  .user-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
-  }
-
-  .profile-photo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #fff;
-    margin-bottom: 10px;
-  }
-
-  .username {
-    font-size: 14px;
-    margin: 0;
-  }
-
-  .status-indicator {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin: 10px auto 0;
-  }
-
-  .status-online {
-    background-color: #4CAF50;
-  }
-
-  .status-offline {
-    background-color: #F44336;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .side-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 300px;
-    height: 100%;
-    background-color: var(--panel-bg-color);
-    color: var(--text-color);
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    overflow-y: auto;
-    z-index: 1000;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-  }
-
-  .side-panel.open {
-    transform: translateX(0);
-  }
-
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-color);
-    cursor: pointer;
-  }
-
-  .side-panel .profile-photo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
-  }
-`;
-
-// Main rendering function
-export async function renderHub() {
-  const token = readCookie("authToken");
-
-  // Fetch the list of users
-  const users = await getData('/user/list', {
-    Authorization: `Token ${token}`
-  });
-
-  if (!users || users.length === 0) {
-    document.body.innerHTML = "<p>No users found or you are not authorized to view this page.</p>";
-    return;
-  }
-
-  // Load the HTML structure and CSS
-  loadPage(htmlStructure, styles);
-
-  const userGrid = document.getElementById('user-grid');
-
-  // Generate user cards with animation delay
-  users.forEach((user, index) => {
-    const userCard = createUserCard(user);
-    userCard.style.animation = `fadeIn 0.5s ease ${index * 0.05}s both`;
-    userGrid.appendChild(userCard);
-  });
-
-  // Add event listener for user selection
-  userGrid.addEventListener('click', handleUserClick);
-
-  // Add event listener for home button
-  document.getElementById('home-button').addEventListener('click', () => {
-    window.location.href = '/';
-  });
-
-  // Add event listener to close side panel when clicking outside
-  document.addEventListener('click', handleOutsideClick);
+const CSS = `
+.hub-container {
+  display: flex;
+  height: 100vh;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  background-color: var(--background-color);
 }
 
-function createUserCard(user) {
-  const userCard = document.createElement('div');
-  userCard.className = 'user-card';
-  userCard.dataset.username = user.username;
-
-  const profilePhoto = user.profile_photo || `https://picsum.photos/200?random=${Math.floor(Math.random() * 1000)}`;
-  const statusClass = user.is_online ? 'status-online' : 'status-offline';
-
-  userCard.innerHTML = `
-    <img src="${profilePhoto}" alt="${user.username}'s photo" class="profile-photo" />
-    <p class="username">${user.username}</p>
-    <div class="status-indicator ${statusClass}"></div>
-  `;
-
-  return userCard;
+.left-sidebar, .right-sidebar {
+  width: var(--sidebar-width);
+  background-color: rgba(47, 47, 47, 0.8);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  overflow-y: auto;
 }
 
-async function handleUserClick(event) {
-  const userCard = event.target.closest('.user-card');
-  if (!userCard) return;
+.left-sidebar {
+  left: 0;
+}
 
-  const username = userCard.dataset.username;
-  const token = readCookie("authToken");
+.right-sidebar {
+  right: 0;
+}
 
-  // Fetch the profile data of the clicked user
-  const profileData = await getData(`/user/profile/${username}`, {
-    Authorization: `Token ${token}`
-  });
+.left-sidebar:hover, .right-sidebar:hover {
+  background-color: rgba(47, 47, 47, 1);
+}
 
-  if (profileData) {
-    let sidePanel = document.querySelector('.side-panel');
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  margin: 0 auto 20px;
+  transition: transform 0.3s ease;
+}
 
-    if (!sidePanel) {
-      // Create a side panel element
-      sidePanel = document.createElement('div');
-      sidePanel.className = 'side-panel';
-      document.body.appendChild(sidePanel);
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.user-info p {
+  margin: 5px 0;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.sidebar-controls {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.central-hub {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: var(--background-color);
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-grid-container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--user-cell-min-width), 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.user-cell {
+  background-color: rgba(63, 63, 63, 0.8);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  max-width: var(--user-cell-max-width);
+  margin: 0 auto;
+}
+
+.user-cell:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.user-cell img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.user-cell:hover img {
+  transform: scale(1.1);
+}
+
+.user-cell .status-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.online { background-color: #4caf50; }
+.offline { background-color: #bdbdbd; }
+
+.game-controls {
+  margin-bottom: 20px;
+}
+
+.play-button, .tournaments-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 20px;
+  color: var(--text-color);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-family);
+}
+
+.play-button {
+  background-color: var(--button-bg-color);
+}
+
+.tournaments-button {
+  background-color: var(--button-bg-color);
+}
+
+.play-button:hover, .tournaments-button:hover {
+  background-color: var(--button-hover-bg-color);
+  transform: translateY(-2px);
+}
+
+.play-button:active, .tournaments-button:active {
+  background-color: var(--button-active-bg-color);
+  transform: translateY(0);
+}
+
+.global-chat {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  background-color: rgba(63, 63, 63, 0.8);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  overflow-y: auto;
+  font-family: "JetBrains Mono", monospace;
+}
+
+#chatInput {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  background-color: rgba(63, 63, 63, 0.8);
+  color: var(--text-color);
+  font-family: "JetBrains Mono", monospace;
+  transition: all 0.3s ease;
+}
+
+#chatInput:focus {
+  background-color: rgba(63, 63, 63, 1);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--button-hover-bg-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.user-cell, .chat-messages > div {
+  animation: fadeIn 0.5s ease-out;
+}`
+
+export function hub() {
+  loadPage(HTML, CSS);
+
+  const userGrid = document.getElementById('userGrid');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+
+  function getRandomProfilePicture() {
+    const randomId = Math.floor(Math.random() * 1000);
+    return `https://randomuser.me/api/portraits/lego/${randomId % 10}.jpg`;
+  }
+
+  function getRandomUsername() {
+    const adjectives = ['Cool', 'Super', 'Fast', 'Smart', 'Brave', 'Happy', 'Sad', 'Angry', 'Funny', 'Lazy'];
+    const nouns = ['Lion', 'Tiger', 'Bear', 'Shark', 'Eagle', 'Wolf', 'Fox', 'Panda', 'Dragon', 'Unicorn'];
+    return adjectives[Math.floor(Math.random() * adjectives.length)] + nouns[Math.floor(Math.random() * nouns.length)];
+  }
+
+  async function loadUsers() {
+    try {
+      const users = Array.from({ length: 50 }, () => ({
+        avatar: getRandomProfilePicture(),
+        username: getRandomUsername(),
+        online: Math.random() > 0.5
+      }));
+      userGrid.innerHTML = users.map(user => `
+        <div class="user-cell">
+          <img src="${user.avatar}" alt="${user.username}">
+          <p>${user.username}</p>
+          <div class="status-indicator ${user.online ? 'online' : 'offline'}"></div>
+        </div>
+      `).join('');
+    } catch (error) {
+      console.error('Failed to load users:', error);
     }
+  }
 
-    // Populate the side panel with user details
-    sidePanel.innerHTML = `
-      <button class="close-button">&times;</button>
-      <h2>${profileData.username}</h2>
-      <img src="${profileData.profile_photo || `https://picsum.photos/200?random=${Math.floor(Math.random() * 1000)}`}" alt="${profileData.username}'s photo" class="profile-photo" />
-      <p><strong>Status:</strong> ${profileData.is_online ? 'Online' : 'Offline'}</p>
-      <p><strong>Bio:</strong> ${profileData.bio || 'No bio available'}</p>
-    `;
-
-    // Add event listener to close the side panel
-    sidePanel.querySelector('.close-button').addEventListener('click', () => {
-      document.body.removeChild(sidePanel);
+  function setupChat() {
+    chatInput.addEventListener('keypress', async (e) => {
+      if (e.key === 'Enter' && chatInput.value.trim()) {
+        try {
+          await postData('/chat/message', {}, { message: chatInput.value.trim() }, readCookie('authToken'));
+          chatInput.value = '';
+        } catch (error) {
+          console.error('Failed to send message:', error);
+        }
+      }
     });
 
-    // Open the side panel
-    requestAnimationFrame(() => {
-      sidePanel.classList.add('open');
-    });
+    // Here you would typically set up a WebSocket connection for real-time chat
+    // For simplicity, we'll just simulate incoming messages
+    setInterval(() => {
+      const fakeMessage = {
+        username: 'User ' + Math.floor(Math.random() * 10),
+        message: 'Hello, this is a simulated message!',
+        timestamp: new Date().toLocaleTimeString()
+      };
+      appendMessage(fakeMessage);
+    }, 5000);
   }
-}
 
-function handleOutsideClick(event) {
-  const sidePanel = document.querySelector('.side-panel');
-  if (sidePanel && !sidePanel.contains(event.target) && !event.target.closest('.user-card')) {
-    document.body.removeChild(sidePanel);
+  function appendMessage(message) {
+    const messageElement = document.createElement('div');
+    messageElement.innerHTML = `<strong>${message.username}</strong> (${message.timestamp}): ${message.message}`;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
+
+  document.querySelector('.play-button').addEventListener('click', () => navigate('/game'));
+  document.querySelector('.tournaments-button').addEventListener('click', () => navigate('/tournaments'));
+
+  loadUsers();
+  setupChat();
 }

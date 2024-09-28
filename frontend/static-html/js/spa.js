@@ -22,6 +22,9 @@ export function navigate(path, pushState = true) {
   if (routes[path]) {
     console.log(`Navigating to ${path}`);
 
+    // document.body.innerHTML = "";
+    // document.head.innerHTML = "";
+
     // Execute the handler for the route
     routes[path]();
 
