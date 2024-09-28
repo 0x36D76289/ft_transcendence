@@ -20,6 +20,9 @@
   --button-hover-bg-color: #555;
   --button-active-bg-color: #777;
   --nav-button-width: 100px;
+  --sidebar-width: 250px;
+  --user-cell-min-width: 120px;
+  --user-cell-max-width: 200px;
 }
 
 * {
@@ -29,11 +32,15 @@
 }
 
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
-  line-height: var(--line-height);
-  color: var(--text-color);
-  background-color: var(--background-color);
+	background-color: #1f1f1f;
+	font-family: var(--font-family);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 button {

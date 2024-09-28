@@ -1,26 +1,15 @@
-import { start, addRoute } from "./spa.js";
+import { start, addRoute, navigate } from "./spa.js";
 import { readCookie } from "./cookie.js";
-import { renderHome } from "./pages/home.js";
-import { renderLogin } from "./pages/account/login.js";
-import { renderProfile } from "./pages/account/profile.js";
-import { renderHub } from "./pages/hub.js";
-import { generateMultipleProfiles } from "./profile_generator.js";
+import { login } from "./pages/login.js";
+import { hub } from "./pages/hub.js";
 
 // entry point
 document.addEventListener("DOMContentLoaded", async () => {
-  addRoute("/", renderHome);
-  addRoute("/home", renderHome);
-  addRoute("/login", renderLogin);
-
-  const username = readCookie("username");
-  if (readCookie("authToken") && username) {
-    addRoute("/profile", () => renderProfile(username));
-    addRoute("/hub", renderHub);
-  }
-
-    // Call functions
-  generateMultipleProfiles(50); // Call this to generate profiles
-  // deleteMultipleProfiles(); // Call this to delete profiles
-
+  addRoute("/", hub);
+  addRoute("/login", login);
   start();
+
+  // if (readCookie("token") === null) {
+  //   navigate("/login");
+  // }
 });
