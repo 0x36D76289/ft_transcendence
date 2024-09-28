@@ -30,7 +30,7 @@ def login(request):
 def register(request):
 	serializer = UserSerializer(data=request.data)
 	if not serializer.is_valid():
-		return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save(password=request.data.get('password'))
 	return Response({'detail': 'Account created', 'username': serializer.data['username']})
 
@@ -67,7 +67,7 @@ def delete_user(request):
 def update_user(request):
 	serializer = UserSerializer(request.user, data=request.data, partial=True)
 	if not serializer.is_valid():
-		return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save()
 	return Response({'detail': 'Successfuly updated user'})
 
