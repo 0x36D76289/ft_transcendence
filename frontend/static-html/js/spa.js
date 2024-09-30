@@ -1,3 +1,5 @@
+import { sidebar } from "./components/sidebar.js";
+
 let routes = {};
 
 export function addRoute(path, handler) {
@@ -11,10 +13,11 @@ export function removeRoute(path) {
 }
 
 function injectContent(htmlContent, cssContent = "") {
-  document.body.innerHTML = htmlContent;
+  const [sidebarHTML, sidebarCSS] = sidebar();
+  document.body.innerHTML = sidebarHTML + htmlContent;
 
   const styleElement = document.createElement("style");
-  styleElement.textContent = cssContent;
+  styleElement.textContent = sidebarCSS + cssContent;
   document.head.appendChild(styleElement);
 }
 

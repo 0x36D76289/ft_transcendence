@@ -9,77 +9,146 @@
 }
 
 :root {
-  --font-family: "Monocraft", sans-serif;
-  --font-size: 16px;
-  --large-font-size: calc(var(--font-size) * 2);
-  --small-font-size: calc(var(--font-size) * 0.8);
-  --line-height: 1.6;
-  --text-color: white;
-  --background-color: black;
-  --button-bg-color: #333;
-  --button-hover-bg-color: #555;
-  --button-active-bg-color: #777;
-  --nav-button-width: 100px;
-  --sidebar-width: 250px;
-  --user-cell-min-width: 120px;
-  --user-cell-max-width: 200px;
+	font-size: 20px;
+
+	/* Margin */
+	--margin-xxs: .25rem;
+	--margin-xs: .5rem;
+	--margin-s: .75rem;
+	--margin-m: 1rem;
+	--margin-l: 1.25rem;
+	--margin-xl: 1.75rem;
+	--margin-xxl: 2.5rem;
+
+	/* Padding */
+	--padding-xxs: .25rem;
+	--padding-xs: .5rem;
+	--padding-s: .75rem;
+	--padding-m: 1rem;
+	--padding-l: 1.25rem;
+	--padding-xl: 1.75rem;
+	--padding-xxl: 2.5rem;
+
+	/* colors */
+	--dark: hsl(0, 0%, 0%);
+	--gray10: hsl(0, 0%, 10%);
+	--gray20: hsl(0, 0%, 20%);
+	--gray30: hsl(0, 0%, 30%);
+	--gray40: hsl(0, 0%, 40%);
+	--gray50: hsl(0, 0%, 50%);
+	--gray60: hsl(0, 0%, 60%);
+	--gray70: hsl(0, 0%, 70%);
+	--gray80: hsl(0, 0%, 80%);
+	--gray90: hsl(0, 0%, 90%);
+	--colora: #FDAC53;
+	/* Marigold */
+	--colora2: #0072B5;
+	/* French Blue */
+
+	/* landing page */
+	--ff: "Monocraft", sans-serif;
+	--ff2: "JetBrains Mono", monospace;
+	--h1: bold 4rem/1em var(--ff);
+	--h2: bold 3rem/1.2em var(--ff);
+	--h3: bold 2.25rem/1.2em var(--ff);
+	--h4: bold 1.5rem/1.6em var(--ff);
+	--big: 1.25rem/1.6em var(--ff2);
+	--p: 1rem/1.6em var(--ff2);
+	--small: .75rem/2em var(--ff2);
+
+	/* UI */
+	--h1ui: bold 3rem/1.2em var(--ff);
+	--h2ui: bold 2.25rem/1.2em var(--ff);
+	--h3ui: bold 1.5rem/1.2em var(--ff);
+	--h4ui: bold 1.12rem/1.6em var(--ff);
+	--bigui: 1rem/1.6em var(--ff);
+	--pui: .8rem/1.6em var(--ff);
+	--smallui: .75rem/1.8em var(--ff);
+
+	/* Container */
+	--container-max-width: 1200px;
+	--container-padding: 2rem;
+
+	/* Breakpoints */
+	--b-mobile: 480px;
+	--b-tablet: 768px;
+	--b-desktop: 1024px;
+	--b-large: 1200px;
+
+	--sidebar-width: 256px;
+	/* --sidebar-min-width: 80px; */
+	--transition: 0.3s ease;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Reset CSS */
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+	scroll-behavior: smooth;
 }
 
 body {
-	background-color: #1f1f1f;
-	font-family: var(--font-family);
 	display: flex;
-	justify-content: center;
-	align-items: center;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
+	font-family: var(--ff);
+	font-size: 1rem;
+	/* 16px */
+	line-height: 1.6;
+	color: var(--gray90);
+	background-color: var(--gray10);
 }
 
-button {
-  font-family: var(--font-family);
-  font-size: var(--small-font-size);
-  color: var(--text-color);
-  background-color: #333;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* Containers */
+.container {
+	max-width: var(--container-max-width);
+	padding: 0 var(--container-padding);
+	margin: 0 auto;
 }
 
-button:hover {
-  background-color: #555;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+/* Typographie globale */
+h1,
+h2,
+h3,
+h4 {
+	color: var(--gray90);
 }
 
-button:active {
-  background-color: var(--button-active-bg-color);
+h1 {
+	font: var(--h1);
 }
 
-input {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
-  padding: 0.5rem;
-  background-color: #222;
-  color: var(--text-color);
-  border: 1px solid #444;
+h2 {
+	font: var(--h2);
 }
 
-select {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
-  padding: 0.5rem;
-  background-color: #222;
-  color: var(--text-color);
-  border: 1px solid #444;
+h3 {
+	font: var(--h3);
+}
+
+h4 {
+	font: var(--h4);
+}
+
+p {
+	font: var(--p);
+	margin-bottom: var(--margin-m);
+}
+
+small {
+	font: var(--small);
+}
+
+a {
+	text-decoration: none;
+	color: var(--color-primary);
+}
+
+a:hover {
+	color: var(--color-secondary);
 }
