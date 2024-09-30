@@ -20,74 +20,46 @@ const HTML = `
     <div class="message"></div>
   </div>
 </div>
-`
+`;
 
 const CSS = `
 .login-content-box {
-  background-color: #2f2f2f;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 300px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20rem;
+	border-radius: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 300px;
+	height: 300px;
+	background-color: azure;
 }
 
-.login-content .username-input, .login-content .password-input {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
+.login-content {
+	display: flex;
+	flex-direction: column;
+	width: auto;
 }
 
-.login-content .username-input label, .login-content .password-input label {
-  color: #ffffff;
-  margin-bottom: 5px;
-}
-
-.login-content input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #444;
-  border-radius: 4px;
-  background-color: #3f3f3f;
-  color: #ffffff;
-}
-
-.login-content input::placeholder {
-  color: #888;
+.username-input, .password-input {
+	margin-bottom: 1rem;
 }
 
 .button-container {
-  display: flex;
-  justify-content: space-between;
-}
-
-.button-container button {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: #4caf50;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.button-container button:hover {
-  background-color: #45a049;
-}
-
-.button-container .register-button {
-  background-color: #008cba;
-}
-
-.button-container .register-button:hover {
-  background-color: #007bb5;
+	display: flex;
+	justify-content: space-evenly;
+	flex-direction: row;
 }
 
 .message {
-  color: #ffffff;
-  text-align: center;
-  margin-top: 10px;
+	margin-top: 1rem;
+	color: red;
 }
-`
+`;
 
 export function login() {
 	loadPage(HTML, CSS);
@@ -100,7 +72,7 @@ export function login() {
 		try {
 			const response = await postData("/user/login", {}, { username, password });
 			if (response.token) {
-				createCookie("authToken", response.token, 7);
+				createCookie("token", response.token, 7);
 				navigate("/");
 			} else {
 				messageDiv.textContent = response.detail || "Login failed";
