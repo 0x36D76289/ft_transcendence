@@ -32,6 +32,7 @@ class ChatConsumer(WebsocketConsumer):
             case 1:
                 return two
             case _:
+                pass
                 print(self.channel_layer.groups[self.room_name])
         print("#" * 20)
         return ""
@@ -48,13 +49,13 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data: str):
         #TODO: use json
-        print("+" * 20)
-        print("received " + text_data)
+#        print("+" * 20)
+#        print("received " + text_data)
         if text_data == "ping":
-            print("Sent ping")
+#            print("Sent ping")
             self.send("pong")
         else:
-            print("sent to group")
+#            print("sent to group")
             async_to_sync(self.channel_layer.group_send)(
                 self.room_name,
                 {
@@ -62,10 +63,10 @@ class ChatConsumer(WebsocketConsumer):
                     "msg": text_data
                 }
             )
-        print("+" * 20)
+#        print("+" * 20)
 
     def message(self, event):
-        print("+" * 20)
-        print(event)
-        print("+" * 20)
+#        print("+" * 20)
+#        print(event)
+#        print("+" * 20)
         self.send(event["msg"])

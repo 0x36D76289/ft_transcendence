@@ -10,9 +10,6 @@
 
 		<!--HACK: These buttons are all debug features, not keeping them-->
 		<input id="the_button" type="button" value="TEST">
-		<input id="reset" type="button" value="RESET">
-		<input id="erase" type="button" value="ERASE">
-		<input id="draw" type="button" value="DRAW">
 		<input id="send_score_0" type="button" value="send score 0 0">
 		<input id="send_score_1" type="button" value="send score 1 0">
 		<input id="send_score_w" type="button" value="win game">
@@ -31,20 +28,25 @@
 
 			//TODO: wait for socket to connect ?
 			//TODO: error on enemy socket close ?
-			{
+			//{
 				const VIEW = document.getElementById("game");
+				const BUFF = document.createElement("canvas")
 				const VIEW_DIMENSIONS = [VIEW.width, VIEW.height]
 				const GAME_DIMENSIONS = [400, 300]
-				const ctx = VIEW.getContext("2d")
+				const ctx = VIEW.getContext("2d", { alpha: false })
+				const buff_ctx = BUFF.getContext("2d", { alpha: false })
 				let keys = new Set();
 				window.addEventListener('keydown', function (e) {keys.add(e.key)})
 				window.addEventListener('keyup', function (e) {keys.delete(e.key)})
+				BUFF.width = VIEW_DIMENSIONS[0];
+				BUFF.height = VIEW_DIMENSIONS[1];
+				buff_ctx.fillStyle = "white"
+				buff_ctx.textAlign = "center"
+				buff_ctx.textBaseline = "middle"
+				buff_ctx.font = "50px Arial";
 
 				function draw_rect(x1, y1, x2, y2) {
-
-					//TODO: buffer rendering to avoid flashes
-					ctx.fillStyle = "black"
-					ctx.fillRect(
+					buff_ctx.fillRect(
 						x1 * VIEW_DIMENSIONS[0] / GAME_DIMENSIONS[0],
 						y1 * VIEW_DIMENSIONS[1] / GAME_DIMENSIONS[1],
 						(x2-x1) * VIEW_DIMENSIONS[0] / GAME_DIMENSIONS[0],
@@ -53,8 +55,7 @@
 				}
 
 				function reset() {
-					ctx.fillStyle = "white"
-					ctx.fillRect(0, 0, VIEW_DIMENSIONS[0], VIEW_DIMENSIONS[1]);
+					buff_ctx.clearRect(0, 0, VIEW_DIMENSIONS[0], VIEW_DIMENSIONS[1]);
 				}
 
 
@@ -101,65 +102,115 @@
 					last_processed_state = Object.assign({}, current_state)
 				}
 
-				function tick(state, input) {
-					let ret = Object.assign({}, state);
+				function bound(pos, size, min, max) {
+					if (pos - size < min)
+						return min + size
+					if (pos + size > max)
+						return max - size
+					return pos
+				}
 
-					ret.frame = state.frame + 1
+				function bound(pos, size, min, max) {
+					if (pos - size < min)
+						return min + size
+					if (pos + size > max)
+						return max - size
+					return pos
+				}
 
-					// move paddles
-					ret.p1_height += input[0] * GAME_SETTINGS.paddle_speed
-					ret.p2_height += input[1] * GAME_SETTINGS.paddle_speed
-					function bound(pos, size, min, max) {
-						if (pos - size < min)
-							return min + size
-						if (pos + size > max)
-							return max - size
-						return pos
+				//INFO: MODIFIES STATE
+				function tick_move_paddle(state, input) {
+					state.p1_height += input[0] * GAME_SETTINGS.paddle_speed
+					state.p2_height += input[1] * GAME_SETTINGS.paddle_speed
+					state.p1_height = bound(state.p1_height, GAME_SETTINGS.paddle_height, 0, GAME_DIMENSIONS[1])
+					state.p2_height = bound(state.p2_height, GAME_SETTINGS.paddle_height, 0, GAME_DIMENSIONS[1])
+				}
+
+				//INFO: MODIFIES STATE
+				function tick_move_ball(state, input) {
+					state.ball_x += state.ball_speed_x
+					state.ball_y += state.ball_speed_y
+					state.ball_x = bound(state.ball_x, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[0])
+					state.ball_y = bound(state.ball_y, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[1])
+				}
+
+				//INFO: MODIFIES STATE
+				function tick_bounce_vertical(state, input) {
+					if (
+							state.ball_y == GAME_SETTINGS.ball_size ||
+							state.ball_y == GAME_DIMENSIONS[1] - GAME_SETTINGS.ball_size
+					)
+						state.ball_speed_y *= -1;
+				}
+
+				function is_ball_on_left(state) {
+					return state.ball_x == GAME_SETTINGS.ball_size;
+				}
+				function is_ball_on_right(state) {
+					return state.ball_x == GAME_DIMENSIONS[0] - GAME_SETTINGS.ball_size;
+				}
+				function is_ball_on_wall (state) {
+					return is_ball_on_left(state) || is_ball_on_right(state);
+				}
+
+				function is_ball_bouncing(ball_y, paddle_y) {
+					return (
+						ball_y - GAME_SETTINGS.ball_size < paddle_y + GAME_SETTINGS.paddle_height &&
+						ball_y + GAME_SETTINGS.ball_size > paddle_y - GAME_SETTINGS.paddle_height
+					);
+				}
+
+				function ball_bounce_y_speed(ball_y, paddle_y) {
+					return (((ball_y - paddle_y) / GAME_SETTINGS.ball_y_speed_factor) | 0);
+				}
+
+				//INFO: MODIFIES STATE
+				function multiplayer_tick_bounce_horizontal(state, input) {
+					if (!is_ball_on_wall(state)) {
+						return ;
 					}
-					ret.p1_height = bound(ret.p1_height, GAME_SETTINGS.paddle_height, 0, GAME_DIMENSIONS[1])
-					ret.p2_height = bound(ret.p2_height, GAME_SETTINGS.paddle_height, 0, GAME_DIMENSIONS[1])
-
-					// move ball
-					ret.ball_x += ret.ball_speed_x
-					ret.ball_y += ret.ball_speed_y
-					ret.ball_x = bound(ret.ball_x, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[0])
-					ret.ball_y = bound(ret.ball_y, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[1])
-
-					// horizontal bounce
-					if (ret.ball_x == GAME_SETTINGS.ball_size || ret.ball_x == GAME_DIMENSIONS[0] - GAME_SETTINGS.ball_size) {
-						ret.ball_speed_x *= -1
-						if (ret.ball_x == GAME_SETTINGS.ball_size)
-							ret.ball_speed_y = ret.ball_y - ret.p1_height
-						else
-							ret.ball_speed_y = ret.ball_y - ret.p2_height
-						ret.ball_speed_y /= GAME_SETTINGS.ball_y_speed_factor
-						ret.ball_speed_y = ret.ball_speed_y | 0
-
-						if (ret.ball_x == GAME_SETTINGS.ball_size && player_num == 1 && (ret.ball_y - GAME_SETTINGS.ball_size > ret.p1_height + GAME_SETTINGS.paddle_height || ret.ball_y + GAME_SETTINGS.ball_size < ret.p1_height - GAME_SETTINGS.paddle_height)) {
-							console.log("I died on 1");
+					state.ball_speed_x *= -1
+					if (is_ball_on_left(state)) {
+						if (player_num == 1 && !is_ball_bouncing(state.ball_y, state.p1_height)) {
 							scores[1] += 1;
 							sock.send(JSON.stringify({
 								type:"score",
 								p1: scores[0],
 								p2: scores[1]
 							}))
+							clearInterval(interval);
+						} else {
+							state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p1_height)
 						}
-						if (ret.ball_x == GAME_DIMENSIONS[0] - GAME_SETTINGS.ball_size && player_num == 2 && (ret.ball_y - GAME_SETTINGS.ball_size > ret.p2_height + GAME_SETTINGS.paddle_height || ret.ball_y + GAME_SETTINGS.ball_size < ret.p2_height - GAME_SETTINGS.paddle_height)) {
+					} else {
+						if (player_num == 2 && !is_ball_bouncing(state.ball_y, state.p2_height)) {
 							scores[0] += 1;
 							sock.send(JSON.stringify({
 								type:"score",
 								p1: scores[0],
 								p2: scores[1]
 							}))
+							clearInterval(interval);
+						} else {
+							state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p2_height)
 						}
-
 					}
-					// ceiling/floor bounce
-					if (ret.ball_y == GAME_SETTINGS.ball_size || ret.ball_y == GAME_DIMENSIONS[1] - GAME_SETTINGS.ball_size)
-						ret.ball_speed_y *= -1
+				}
+
+				//INFO: takes a state and an input, simulates the next state and returns it
+				function multiplayer_tick(state, input) {
+					let ret = Object.assign({}, state);
+
+					ret.frame = state.frame + 1
+
+					tick_move_paddle(ret, input)
+					tick_move_ball(ret, input)
+					tick_bounce_vertical(ret, input);
+					multiplayer_tick_bounce_horizontal(ret, input);
+
 					return ret
 				}
-				function update() {
+				function multiplayer_update() {
 					// go forward
 					current_frame += 1
 
@@ -188,13 +239,13 @@
 					let validating = true
 					let frame_input_count = 0
 					current_state = Object.assign({}, last_processed_state);
-					let input = [ // TODO: check off by one
+					let input = [ // TODO: check off by one (it works doe)
 						inputs[current_state.frame][0],
 						inputs[current_state.frame][1]
 						]
 					while (current_state.frame < current_frame) {
 						frame_input_count = 0
-						current_state = tick(current_state, input)
+						current_state = multiplayer_tick(current_state, input)
 						if (inputs[current_state.frame][0] != undefined) {
 							input[0] = inputs[current_state.frame][0]
 							frame_input_count += 1;
@@ -203,7 +254,7 @@
 							input[1] = inputs[current_state.frame][1]
 							frame_input_count += 1;
 						}
-						current_state = tick(current_state, input)
+						current_state = multiplayer_tick(current_state, input)
 						if (validating && frame_input_count == 2) {
 							last_processed_state = Object.assign({}, current_state);
 							last_processed_frame = last_processed_state.frame
@@ -241,6 +292,8 @@
 						state.ball_x + GAME_SETTINGS.ball_size,
 						state.ball_y + GAME_SETTINGS.ball_size
 						)
+					buff_ctx.fillText(scores[0] + " - " + scores[1], (VIEW_DIMENSIONS[0] / 2) | 0, (VIEW_DIMENSIONS[1] / 2) | 0)
+					ctx.drawImage(BUFF, 0, 0);
 				}
 				sock.onmessage = function(object) {
 					try {
@@ -252,12 +305,12 @@
 								sock.send('{"type":"score","p1":0, "p2": 0}')
 							}
 						} else if (inner.type == "score") {
-							console.log("received score update ", inner);
+							//console.log("received score update ", inner);
 							scores[0] = inner.p1;
 							scores[1] = inner.p2;
 							clearInterval(interval);
 							init()
-							interval = setInterval(update, 1000/60)
+							interval = setInterval(multiplayer_update, 1000/60)
 						} else if (inner.type == "input") {
 							while (inner.frame >= inputs.length) {
 								inputs[inputs.length] = [undefined, undefined]
@@ -273,9 +326,6 @@
 
 				// HACK: debug features
 				document.getElementById("the_button").onclick = function() {console.log("TEST")}
-				document.getElementById("reset").onclick = function() {init()}
-				document.getElementById("erase").onclick = function() {reset()}
-				document.getElementById("draw").onclick = function() {draw(current_state)}
 				document.getElementById("send_score_0").onclick = function() {sock.send('{"type":"score","p1":0, "p2": 0}')}
 				document.getElementById("send_score_1").onclick = function() {sock.send('{"type":"score","p1":1, "p2": 0}')}
 				document.getElementById("send_score_w").onclick = function() {sock.send('{"type":"score","p1":10, "p2": 0}')}
@@ -286,6 +336,6 @@
 				draw_rect(200, 150, 380, 280)
 				console.log("display ", VIEW_DIMENSIONS)
 				console.log("game ", GAME_DIMENSIONS)
-			}
+//			}
 		</script>
 	</body>
