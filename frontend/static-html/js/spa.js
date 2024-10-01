@@ -1,4 +1,7 @@
-import { sidebar } from "./components/sidebar.js";
+import { sidebar } from "./utils/sidebar.js";
+import { createBlurCircle, initBlurCicle } from "./utils/blurcircle.js";
+import { flashlightEvent, initflashlight } from "./utils/flashlight.js";
+import { pixelBreakerEvent, initPixelBreaker } from "./utils/pixelbreaker.js";
 
 let routes = {};
 
@@ -14,21 +17,46 @@ export function removeRoute(path) {
 
 function injectContent(htmlContent, cssContent = "") {
   const [sidebarHTML, sidebarCSS] = sidebar();
-  document.body.innerHTML = sidebarHTML + htmlContent;
+  const [pixelbreakerHTML, pixelbreakerCSS] = initPixelBreaker();
+  const [blurCircleHTML, blurCircleCSS] = initBlurCicle();
+  const [flashlightHTML, flashlightCSS] = initflashlight();
+  document.body.innerHTML = `
+  ${sidebarHTML}
+  ${htmlContent}
+  ${pixelbreakerHTML}
+  ${blurCircleHTML}
+  ${flashlightHTML}
+  <audio id="clickSound">
+    <source src="assets/sounds/click.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+  `;
+
+  document.querySelectorAll('.nav-button, .settings-btn, .logout-btn, .play-btn, .user-profile').forEach(element => {
+    element.addEventListener('click', () => {
+      clickSound.play();
+    });
+  });
 
   const styleElement = document.createElement("style");
-  styleElement.textContent = sidebarCSS + cssContent;
+  styleElement.textContent = `
+  ${sidebarCSS}
+  ${cssContent}
+  ${pixelbreakerCSS}
+  ${blurCircleCSS}
+  ${flashlightCSS}
+  `;
+
   document.head.appendChild(styleElement);
+  createBlurCircle();
+  flashlightEvent();
+  pixelBreakerEvent();
 }
 
 export function navigate(path, pushState = true) {
   if (routes[path]) {
     console.log(`Navigating to ${path}`);
 
-    // document.body.innerHTML = "";
-    // document.head.innerHTML = "";
-
-    // Execute the handler for the route
     routes[path]();
 
     if (pushState) {

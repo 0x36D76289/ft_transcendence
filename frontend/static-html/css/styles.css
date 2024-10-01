@@ -1,11 +1,11 @@
 @font-face {
-  font-family: "Monocraft";
-  src: url("../assets/fonts/Monocraft.ttf") format("truetype");
+	font-family: "Monocraft";
+	src: url("../assets/fonts/Monocraft.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "JetBrains Mono";
-  src: url("../assets/fonts/JetBrainsMono.ttf") format("truetype");
+	font-family: "JetBrains Mono";
+	src: url("../assets/fonts/JetBrainsMono.ttf") format("truetype");
 }
 
 :root {
@@ -87,6 +87,7 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	cursor: none !important;
 }
 
 html {
@@ -98,17 +99,9 @@ body {
 	display: flex;
 	font-family: var(--ff);
 	font-size: 1rem;
-	/* 16px */
 	line-height: 1.6;
 	color: var(--gray90);
 	background-color: var(--gray10);
-}
-
-/* Containers */
-.container {
-	max-width: var(--container-max-width);
-	padding: 0 var(--container-padding);
-	margin: 0 auto;
 }
 
 /* Typographie globale */
