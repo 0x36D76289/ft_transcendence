@@ -8,13 +8,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		if not validated_data.get('password'):
-			raise serializers.ValidationError('Must include a password')
+			raise serializers.ValidationError({'detail': 'Must include a password'})
 		user = User.objects.create(**validated_data)
 		user.set_password(validated_data['password'])
 		user.save()
 		return user
 
 	def update(self, instance, validated_data):
+		if validated_data.get('password'):
+			instance.set_password(validated_data['password'])
+		elif instance.is_guest:
+			raise serializers.ValidationError({'detail': 'Must include a password'})
 		instance.username = validated_data.get('username', instance.username)
 		instance.bio = validated_data.get('bio', instance.bio)
 		instance.pfp = validated_data.get('pfp', instance.pfp)
