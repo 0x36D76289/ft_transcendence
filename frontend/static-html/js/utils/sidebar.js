@@ -1,3 +1,51 @@
+import { getData } from '../api/utils.js';
+import { readCookie, eraseCookie } from '../cookie.js';
+import { navigate } from '../spa.js';
+
+const HTML = `
+<div class="sidebar" id="sidebar">
+	<div class="user-profile">
+		<div class="user-pp-container">
+			<img class="user-pp"
+				src=""
+				alt="">
+		</div>
+		<div class="user-info">
+			<p class="user-username"></p>
+			<p class="user-creation-date"></p>
+		</div>
+	</div>
+
+	<div class="nav-buttons">
+		<div class="nav-button" data-nav="hub">
+			<img class="nav-icon" src="https://api.iconify.design/mdi:home.svg" alt="Hub Icon">
+			<span class="nav-text">Hub</span>
+		</div>
+		<div class="nav-button" data-nav="games">
+			<img class="nav-icon" src="https://api.iconify.design/mdi:gamepad-variant.svg" alt="Games Icon">
+			<span class="nav-text">Games</span>
+		</div>
+		<div class="nav-button" data-nav="friends">
+			<img class="nav-icon" src="https://api.iconify.design/mdi:account-group.svg" alt="Friends Icon">
+			<span class="nav-text">Friends</span>
+		</div>
+		<div class="nav-button" data-nav="tournaments">
+			<img class="nav-icon" src="https://api.iconify.design/mdi:trophy.svg" alt="Tournaments Icon">
+			<span class="nav-text">Tournaments</span>
+		</div>
+	</div>
+
+	<div class="action-buttons">
+		<button class="settings-btn">
+			<img src="https://api.iconify.design/mdi:cog.svg" alt="Settings Icon" width="24" height="24">
+		</button>
+		<button class="logout-btn">
+			<img src="https://api.iconify.design/mdi:logout.svg" alt="Logout Icon" width="24" height="24">
+		</button>
+	</div>
+</div>
+`
+
 
 const CSS = `
 .sidebar {
@@ -126,60 +174,84 @@ const CSS = `
 	display: flex;
 	justify-content: center;
 
-	img {
-		width: var(--padding-m);
-		height: var(--padding-m);
-		filter: invert(100%);
-		margin-right: var(--margin-s);
+	button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: var(--padding-xs);
+		border-radius: 50%;
+		transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
+
+		img {
+			width: var(--padding-m);
+			height: var(--padding-m);
+			filter: invert(100%);
+		}
+
+		&:hover {
+			background-color: var(--gray20);
+			transform: scale(1.1);
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+		}
+
+		&:active {
+			background-color: var(--gray30);
+			transform: scale(0.95);
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+	}
+}
+`
+export function siderbarEvent() {
+	document.querySelector('.logout-btn').addEventListener('click', () => {
+		eraseCookie('token');
+		eraseCookie('username');
+		navigate('/login');
+	});
+
+	document.querySelector('.settings-btn').addEventListener('click', () => {
+		navigate('/settings');
+	});
+
+	document.querySelectorAll('.nav-button').forEach(button => {
+		button.addEventListener('click', event => {
+			const nav = event.currentTarget.dataset.nav;
+			navigate(`/${nav}`);
+		});
+	});
+
+	document.querySelector('.user-profile').addEventListener('click', () => {
+		navigate('/profile');
+	});
+
+	const username = readCookie('username');
+
+	if (username) {
+		getData(`/users/profile/${username}`)
+			.then(response => {
+				try {
+					const data = JSON.parse(response);
+					document.querySelector('.user-pp').src = data.profile_picture_url;
+					document.querySelector('.user-username').textContent = data.username;
+					document.querySelector('.user-creation-date').textContent = `Joined: ${new Date(data.date_joined).toLocaleDateString()}`;
+				} catch (error) {
+					console.error('Failed to parse JSON response:', error);
+
+				}
+			}).catch(error => {
+				console.error('Failed to fetch user profile:', error);
+				document.querySelector('.user-username').textContent = 'Guest';
+				document.querySelector('.user-creation-date').textContent = 'Please log in';
+				document.querySelector('.user-pp').src = 'https://api.iconify.design/mdi:account-circle.svg';
+			});
 	}
 }
 
-`
+export function initSidebar() {
+	const token = readCookie('token');
+	if (!token) {
+		return ['', ''];
+	}
 
-const HTML = `
-<div class="sidebar" id="sidebar">
-	<div class="user-profile">
-		<div class="user-pp-container">
-			<img class="user-pp"
-				src="https://cdn.discordapp.com/avatars/923942986650374225/0d862b03708563c3134c222d25c08203.webp?size=1024&animated=true&width=0&height=230"
-				alt="User Profile Picture">
-		</div>
-		<div class="user-info">
-			<p class="user-username">cadence</p>
-			<p class="user-creation-date">24/12/2004</p>
-		</div>
-	</div>
-
-	<div class="nav-buttons">
-		<div class="nav-button">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:home.svg" alt="Hub Icon">
-			<span class="nav-text">Hub</span>
-		</div>
-		<div class="nav-button">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:gamepad-variant.svg" alt="Games Icon">
-			<span class="nav-text">Games</span>
-		</div>
-		<div class="nav-button">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:account-group.svg" alt="Friends Icon">
-			<span class="nav-text">Friends</span>
-		</div>
-		<div class="nav-button">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:trophy.svg" alt="Tournaments Icon">
-			<span class="nav-text">Tournaments</span>
-		</div>
-	</div>
-
-	<div class="action-buttons">
-		<button class="settings-btn">
-			<img src="https://api.iconify.design/mdi:cog.svg" alt="Settings Icon" width="24" height="24">
-		</button>
-		<button class="logout-btn">
-			<img src="https://api.iconify.design/mdi:logout.svg" alt="Logout Icon" width="24" height="24">
-		</button>
-	</div>
-</div>
-`
-
-export function sidebar() {
 	return [HTML, CSS];
 }

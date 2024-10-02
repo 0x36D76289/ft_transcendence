@@ -1,21 +1,21 @@
 const HTML = `
 <div class="blur-circle"></div>
-`
+`;
 
 const CSS = `
 .blur-circle {
 	position: absolute;
-	background-color: red;
+	background-color: hsl(0, 100%, 50%, 0.5);
 	border-radius: 50%;
-	filter: blur(100px);
+	filter: blur(10rem);
 	z-index: -2;
 }
-`
+`;
 
 export function createBlurCircle() {
 	const circle = document.querySelector(".blur-circle");
 
-	const size = 500;
+	const size = 1000;
 	circle.style.width = `${size}px`;
 	circle.style.height = `${size}px`;
 
@@ -41,10 +41,16 @@ export function createBlurCircle() {
 		requestAnimationFrame(updatePosition);
 	}
 
+	function handleResize() {
+		posX = Math.min(posX, window.innerWidth - size);
+		posY = Math.min(posY, window.innerHeight - size);
+	}
+
+	window.addEventListener('resize', handleResize);
+
 	updatePosition();
 }
 
 export function initBlurCicle() {
 	return [HTML, CSS];
 }
-

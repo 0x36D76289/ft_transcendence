@@ -104,6 +104,10 @@ body {
 	background-color: var(--gray10);
 }
 
+html, body {
+	overflow: hidden;
+}
+
 /* Typographie globale */
 h1,
 h2,
