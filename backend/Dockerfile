@@ -1,4 +1,4 @@
-FROM python:bullseye
+FROM python:bookworm
 
 RUN mkdir -p /code /media/pfp
 
