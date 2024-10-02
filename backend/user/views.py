@@ -6,13 +6,13 @@ from rest_framework.authtoken.models import Token
 from user.models import User, UserFriend
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q, F
 from game.models import Game
 
 # USER
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def login(request):
 	try:
 		user = User.objects.get(username=request.data.get('username'))
@@ -27,6 +27,8 @@ def login(request):
 	return Response({'token': token.key, 'username': user.username, 'detail': 'Successfuly logged in!'})
 
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def register(request):
 	serializer = UserSerializer(data=request.data)
 	if not serializer.is_valid():
@@ -35,8 +37,6 @@ def register(request):
 	return Response({'detail': 'Account created', 'username': serializer.data['username']})
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def logout(request):
 	user = request.user
 	token = Token.objects.get(user=user)
@@ -47,6 +47,8 @@ def logout(request):
 	return(Response({'detail': 'Logged out!'}))
 
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def is_token_valid(request):
 	if not request.data.get('token'):
 		return Response({'detail': 'Missing token argument'}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,16 +56,12 @@ def is_token_valid(request):
 	return Response({'username': token.user.username, 'detail': 'Valid token !'})
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def delete_user(request):
 	user = request.user
 	user.delete()
 	return Response({'detail': 'Account deleted.'})
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def update_user(request):
 	serializer = UserSerializer(request.user, data=request.data, partial=True)
 	if not serializer.is_valid():
@@ -72,8 +70,6 @@ def update_user(request):
 	return Response({'detail': 'Successfuly updated user'})
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def get_profile(request, username):
 	try:
 		user = User.objects.get(username=username)
@@ -84,8 +80,6 @@ def get_profile(request, username):
 	return Response(serializer.data)
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def get_stats(request, username):
 	try:
 		user = User.objects.get(username=username)
@@ -99,8 +93,6 @@ def get_stats(request, username):
 	return Response({'games_played': games_played, 'win': win, 'lose': lose, 'win_rate': win_rate})
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def list_users(request):
 	query_set = User.objects.all().order_by('-date_joined')[:20]
 	serializer = UserSerializer(query_set, many=True)
@@ -108,8 +100,6 @@ def list_users(request):
 
 # USER_FRIEND
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def get_friends(request, user):
 	if user != request.user.username:
 		return Response({'detail': 'You can\'t see someone else friends'}, status=status.HTTP_400_BAD_REQUEST)
@@ -118,8 +108,6 @@ def get_friends(request, user):
 	return Response(serializer.data)
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def send_friend_request(request):
 	logged_user = request.user
 	other_user = get_object_or_404(User, username=request.data.get('username'))
@@ -147,8 +135,6 @@ def send_friend_request(request):
 	return Response({'detail': 'Sent friend request'})
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def remove_friend_request(request):
 	logged_user = request.user
 	other_user = get_object_or_404(User, username=request.data.get('username'))
@@ -174,8 +160,6 @@ def remove_friend_request(request):
 	return Response({'detail': 'Users are not friends or no request was sent between them'})
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def get_friendship(request):
 	logged_user = request.user
 	other_user = get_object_or_404(User, username=request.data.get('username'))
