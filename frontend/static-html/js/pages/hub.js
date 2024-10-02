@@ -1,23 +1,14 @@
 import { loadPage } from '../spa.js';
+import { initSidebar, siderbarEvent } from '../utils/sidebar.js';
+import { initBackground } from '../utils/background.js';
 
 const HTML = `
 <div class="main-content">
 	<button class="play-btn"><h1>Play</h1></button>
 </div>
-`
+`;
 
 const CSS = `
-button {
-	font-family: var(--ff);
-	font-size: 1rem;
-	padding: var(--padding-xs) var(--padding-s);
-	border: none;
-	border-radius: 4px;
-	background-color: var(--color-primary);
-	color: var(--gray10);
-	transition: transform var(--transition);
-}
-
 .main-content {
 	display: flex;
 	justify-content: center;
@@ -28,33 +19,57 @@ button {
 	margin: 0;
 
 	.play-btn {
-		backdrop-filter: blur(32px);
-		border-radius: 12px;
-		padding: var(--padding-m);
+		backdrop-filter: blur(128px);
+		border-radius: 64px;
+		padding: var(--padding-xxl);
 		border: none;
-		/* cursor: pointer; */
 		z-index: 0;
 		transition: background-color var(--transition), transform var(--transition);
-	}
+		background-color: transparent;
+		user-select: none;
 
-	.play-btn:hover {
-		transform: scale(1.05);
-	}
+		button {
+			font-family: var(--ff);
+			font-size: 1rem;
+			padding: var(--padding-xs) var(--padding-s);
+			border: none;
+			border-radius: 4px;
+			background-color: var(--colora);
+			color: var(--gray10);
+			transition: transform var(--transition);
+			transform: scale(1.3);
 
-	.play-btn:active {
-		transform: scale(0.95);
+			&:active {
+				transform: scale(1.2);
+			}
+		}
+
+		&:hover {
+			transform: scale(1.05);
+		}
+
+		&:active {
+			transform: scale(0.95);
+		}
 	}
 }
-
-button:hover {
-	transform: scale(1.3);
-}
-
-button:active {
-	transform: scale(1.2);
-}
-`
+`;
 
 export function hub() {
-  loadPage(HTML, CSS);
+	const [sidebarHTML, sidebarCSS] = initSidebar();
+	const [backgroundHTML, backgroundCSS] = initBackground();
+
+	const loadHTML = `
+	${sidebarHTML}
+	${backgroundHTML}
+	${HTML}
+	`
+	const loadCSS = `
+	${sidebarCSS}
+	${backgroundCSS}
+	${CSS}
+	`
+
+	loadPage(loadHTML, loadCSS);
+	siderbarEvent();
 }

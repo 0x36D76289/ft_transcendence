@@ -1,7 +1,6 @@
-import { sidebar } from "./utils/sidebar.js";
-import { createBlurCircle, initBlurCicle } from "./utils/blurcircle.js";
 import { flashlightEvent, initflashlight } from "./utils/flashlight.js";
 import { pixelBreakerEvent, initPixelBreaker } from "./utils/pixelbreaker.js";
+import { readCookie } from "./cookie.js";
 
 let routes = {};
 
@@ -16,15 +15,11 @@ export function removeRoute(path) {
 }
 
 function injectContent(htmlContent, cssContent = "") {
-  const [sidebarHTML, sidebarCSS] = sidebar();
   const [pixelbreakerHTML, pixelbreakerCSS] = initPixelBreaker();
-  const [blurCircleHTML, blurCircleCSS] = initBlurCicle();
   const [flashlightHTML, flashlightCSS] = initflashlight();
   document.body.innerHTML = `
-  ${sidebarHTML}
   ${htmlContent}
   ${pixelbreakerHTML}
-  ${blurCircleHTML}
   ${flashlightHTML}
   <audio id="clickSound">
     <source src="assets/sounds/click.mp3" type="audio/mp3">
@@ -40,15 +35,12 @@ function injectContent(htmlContent, cssContent = "") {
 
   const styleElement = document.createElement("style");
   styleElement.textContent = `
-  ${sidebarCSS}
   ${cssContent}
   ${pixelbreakerCSS}
-  ${blurCircleCSS}
   ${flashlightCSS}
   `;
 
   document.head.appendChild(styleElement);
-  createBlurCircle();
   flashlightEvent();
   pixelBreakerEvent();
 }
@@ -57,14 +49,20 @@ export function navigate(path, pushState = true) {
   if (routes[path]) {
     console.log(`Navigating to ${path}`);
 
-    routes[path]();
-
-    if (pushState) {
-      window.history.pushState({ path }, "", path);
+    if (readCookie("token") === null && path !== "/login" && routes["/login"] !== undefined) {
+      path = "/login";
     }
+
+    setTimeout(() => {
+      routes[path]();
+
+      if (pushState) {
+        window.history.pushState({ path }, "", path);
+      }
+    }, 170); 
   } else {
-    console.log(`Route for ${path} not found. Redirecting to /home.`);
-    navigate("/home", pushState);
+    console.log(`Route for ${path} not found. Redirecting to /`);
+    navigate("/", pushState);
   }
 }
 
