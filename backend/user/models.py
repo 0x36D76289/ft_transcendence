@@ -8,6 +8,7 @@ class User(AbstractBaseUser):
 	date_joined = models.DateTimeField(auto_now_add=True)
 	is_online = models.BooleanField(default=False)
 	last_login = models.DateTimeField(null=True)
+	is_guest = models.BooleanField(default=False)
 
 	USERNAME_FIELD = "username"
 

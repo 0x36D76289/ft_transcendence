@@ -30,7 +30,16 @@ def login(request):
 @authentication_classes([])
 @permission_classes([])
 def register(request):
-	serializer = UserSerializer(data=request.data)
+	if request.data.get('token'):
+		try:
+			guest = Token.objects.get(key=request.data['token']).user
+		except:
+			return Response({'detail': 'Token is not valid'}, status=status.HTTP_404_NOT_FOUND)
+		if not guest.is_guest:
+			return Response({'detail': 'Token corresponds to a non guest user'}, status=status.HTTP_400_BAD_REQUEST)
+		serializer = UserSerializer(guest, data=request.data)
+	else:
+		serializer = UserSerializer(data=request.data)
 	if not serializer.is_valid():
 		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save(password=request.data.get('password'))
@@ -41,8 +50,10 @@ def logout(request):
 	user = request.user
 	token = Token.objects.get(user=user)
 	token.delete()
+	if user.is_guest:
+		user.delete()
+		return(Response({'detail': 'Logged out and removed guest account!'}))
 	user.is_online = False
-	user.last_online = now()
 	user.save()
 	return(Response({'detail': 'Logged out!'}))
 
@@ -68,6 +79,17 @@ def update_user(request):
 		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save()
 	return Response({'detail': 'Successfuly updated user'})
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def create_guest(request):
+	guest = User.objects.create()
+	guest.username = f"guest_{guest.id}"
+	guest.is_guest = True
+	guest.save()
+	token, created = Token.objects.get_or_create(user=guest)
+	return Response({'token': token.key, 'username': guest.username, 'detail': 'Successfuly created guest account!'})
 
 @api_view(['GET'])
 def get_profile(request, username):

@@ -8,6 +8,7 @@ urlpatterns = [
 	path('is_token_valid', views.is_token_valid),
 	path('update_user', views.update_user),
 	path('delete_user', views.delete_user),
+	path('create_guest', views.create_guest),
 	path('profile/<username>', views.get_profile),
 	path('stats/<username>', views.get_stats),
 	path('send_friend_request', views.send_friend_request),
