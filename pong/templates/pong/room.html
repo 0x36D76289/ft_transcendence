@@ -16,6 +16,7 @@
 		<input id="print_input" type="button" value="print keys">
 		<input id="shutup" type="button" value="shutup">
 		<input id="disconnect" type="button" value="disconnect">
+		<input id="mainmenu" type="button" value="home">
 		<script>
 			const ROOM_NAME = document.getElementById("rooname").textContent;
 			const sock = new WebSocket(
@@ -36,8 +37,10 @@
 				const ctx = VIEW.getContext("2d", { alpha: false })
 				const buff_ctx = BUFF.getContext("2d", { alpha: false })
 				let keys = new Set();
-				window.addEventListener('keydown', function (e) {keys.add(e.key)})
-				window.addEventListener('keyup', function (e) {keys.delete(e.key)})
+				let game_ongoing = false;
+				let bots = [0, 0]
+				window.addEventListener('keydown', function (e) {keys.add(e.code)})
+				window.addEventListener('keyup', function (e) {keys.delete(e.code)})
 				BUFF.width = VIEW_DIMENSIONS[0];
 				BUFF.height = VIEW_DIMENSIONS[1];
 				buff_ctx.fillStyle = "white"
@@ -66,6 +69,8 @@
 					ball_size: 3,
 					ball_speed: 5,
 					ball_y_speed_factor: 3,
+					win_score: 10,
+					countdown_length: 180,
 				}
 				let interval = undefined;
 				let player_num = 0;
@@ -80,7 +85,8 @@
 					p1_height: 0,
 					p2_height: 0,
 					ball_speed_x: 0,
-					ball_speed_y: 0
+					ball_speed_y: 0,
+					countdown_frames: 0,
 				};
 				let last_processed_state = Object.assign({}, current_state)
 
@@ -96,10 +102,11 @@
 					current_state.p2_height = current_state.ball_y
 					current_state.ball_speed_y = -GAME_SETTINGS.ball_speed
 					current_state.ball_speed_x = GAME_SETTINGS.ball_speed
+					current_state.countdown_frames = GAME_SETTINGS.countdown_length
 					if (scores[0] <= scores[1]) {
 						current_state.ball_speed_x *= -1;
 					}
-					last_processed_state = Object.assign({}, current_state)
+					last_processed_state = Object.assign({}, current_state);
 				}
 
 				function bound(pos, size, min, max) {
@@ -128,10 +135,14 @@
 
 				//INFO: MODIFIES STATE
 				function tick_move_ball(state, input) {
-					state.ball_x += state.ball_speed_x
-					state.ball_y += state.ball_speed_y
-					state.ball_x = bound(state.ball_x, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[0])
-					state.ball_y = bound(state.ball_y, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[1])
+					if (state.countdown_frames > 0) {
+						state.countdown_frames -= 1
+					} else {
+						state.ball_x += state.ball_speed_x
+						state.ball_y += state.ball_speed_y
+						state.ball_x = bound(state.ball_x, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[0])
+						state.ball_y = bound(state.ball_y, GAME_SETTINGS.ball_size, 0, GAME_DIMENSIONS[1])
+					}
 				}
 
 				//INFO: MODIFIES STATE
@@ -218,9 +229,9 @@
 					if (inputs.length <= current_frame) {
 						inputs[current_frame] = [undefined, undefined];
 					}
-					if (keys.has("ArrowUp")) {
+					if (keys.has("ArrowUp") || keys.has("KeyW")) {
 						inputs[current_frame][player_num - 1] = -1;
-					} else if (keys.has("ArrowDown")) {
+					} else if (keys.has("ArrowDown") || keys.has("KeyS")) {
 						inputs[current_frame][player_num - 1] = 1;
 					} else {
 						inputs[current_frame][player_num - 1] = 0;
@@ -267,8 +278,89 @@
 					// create an array of size 3 and save during while loop at the right place
 					// only draw if array is of size 3
 				}
+
+				//INFO: MODIFIES STATE
+				function local_bounce_horizontal(state, input) {
+					if (!is_ball_on_wall(state)) {
+						return ;
+					}
+					state.ball_speed_x *= -1
+					if (is_ball_on_left(state)) {
+						if (!is_ball_bouncing(state.ball_y, state.p1_height)) {
+							scores[1] += 1;
+							init()
+						} else {
+							state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p1_height)
+						}
+					} else {
+						if (!is_ball_bouncing(state.ball_y, state.p2_height)) {
+							scores[0] += 1;
+							init()
+						} else {
+							state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p2_height)
+						}
+					}
+				}
+
+				function bot_sim(p_y, ball_y, ball_x) {
+					if (ball_x < GAME_SETTINGS.ball_speed * 2) {
+						if (p_y < ball_y) {
+							p_y += (GAME_SETTINGS.paddle_height * 2 / 3) | 0
+						} else {
+							p_y -= (GAME_SETTINGS.paddle_height * 2 / 3) | 0
+						}
+					}
+					if (p_y < ball_y) {
+						return 1;
+					}
+					if (p_y > ball_y) {
+						return -1;
+					}
+					return 0;
+				}
+
+				function local_update() {
+					inputs[0][0] = 0;
+					if (bots[0]) {
+						inputs[0][0] = bot_sim(current_state.p1_height, current_state.ball_y, current_state.ball_x);
+					} else {
+						if (keys.has("KeyW")) {
+							inputs[0][0] = -1;
+						} else if (keys.has("KeyS")) {
+							inputs[0][0] = 1;
+						}
+						if (bots[1]) {
+							if (keys.has("ArrowUp")) {
+								inputs[0][0] = -1;
+							} else if (keys.has("ArrowDown")) {
+								inputs[0][0] = 1;
+							}
+						}
+					}
+					inputs[0][1] = 0;
+					if (bots[1]) {
+						inputs[0][1] = bot_sim(current_state.p2_height, current_state.ball_y, GAME_DIMENSIONS[0] - current_state.ball_x);
+					} else {
+						if (keys.has("ArrowUp")) {
+							inputs[0][1] = -1;
+						} else if (keys.has("ArrowDown")) {
+							inputs[0][1] = 1;
+						}
+						if (bots[0]) {
+							if (keys.has("KeyW")) {
+								inputs[0][1] = -1;
+							} else if (keys.has("KeyS")) {
+								inputs[0][1] = 1;
+							}
+						}
+					}
+					tick_move_paddle(current_state, inputs[0])
+					tick_move_ball(current_state, inputs[0])
+					tick_bounce_vertical(current_state, inputs[0]);
+					local_bounce_horizontal(current_state, inputs[0])
+					draw()
+				}
 				function draw() {
-					//TODO: draw score somewhere
 					let state = current_state
 					reset()
 					//draw paddle 1
@@ -292,7 +384,9 @@
 						state.ball_x + GAME_SETTINGS.ball_size,
 						state.ball_y + GAME_SETTINGS.ball_size
 						)
-					buff_ctx.fillText(scores[0] + " - " + scores[1], (VIEW_DIMENSIONS[0] / 2) | 0, (VIEW_DIMENSIONS[1] / 2) | 0)
+					buff_ctx.fillText(scores[0] + " - " + scores[1], (VIEW_DIMENSIONS[0] / 2) | 0, (VIEW_DIMENSIONS[1] / 3) | 0)
+					if (state.countdown_frames > 0)
+						buff_ctx.fillText((state.countdown_frames + 59)/60 | 0, (VIEW_DIMENSIONS[0] / 2) | 0, (VIEW_DIMENSIONS[1] * 2 / 3) | 0)
 					ctx.drawImage(BUFF, 0, 0);
 				}
 				sock.onmessage = function(object) {
@@ -306,6 +400,7 @@
 							}
 						} else if (inner.type == "score") {
 							//console.log("received score update ", inner);
+							game_ongoing = true;
 							scores[0] = inner.p1;
 							scores[1] = inner.p2;
 							clearInterval(interval);
@@ -324,6 +419,7 @@
 					}
 				}
 
+
 				// HACK: debug features
 				document.getElementById("the_button").onclick = function() {console.log("TEST")}
 				document.getElementById("send_score_0").onclick = function() {sock.send('{"type":"score","p1":0, "p2": 0}')}
@@ -333,9 +429,54 @@
 				document.getElementById("shutup").onclick = function() {clearTimeout(interval)}
 				document.getElementById("disconnect").onclick = function() {sock.close()}
 				//HACK: temporary ""thing"" to see if game started yet, will be replaced with an intro screen
-				draw_rect(200, 150, 380, 280)
 				console.log("display ", VIEW_DIMENSIONS)
 				console.log("game ", GAME_DIMENSIONS)
+
+				function draw_main_screen() {
+					let half_x = (GAME_DIMENSIONS[0] / 2) | 0;
+
+					let quarter_x = (VIEW_DIMENSIONS[0] / 4) | 0;
+					let half_y = (VIEW_DIMENSIONS[1] / 2) | 0;
+
+					let line_width = 8;
+
+
+					reset();
+					draw_rect(half_x - line_width, 0, half_x + line_width, GAME_DIMENSIONS[1]);
+					buff_ctx.fillText("1P Game", quarter_x, half_y)
+					buff_ctx.fillText("2P Game", quarter_x * 3, half_y)
+					ctx.drawImage(BUFF, 0, 0);
+				}
+				draw_main_screen();
+
+				function game_selector(param) {
+					if (game_ongoing)
+						return;
+					let clickx = param.clientX - VIEW.getBoundingClientRect().left;
+					init();
+					scores = [0, 0]
+					if (clickx < VIEW_DIMENSIONS[0] / 2) {
+						bots = [0, 1];
+						if (keys.has("Space"))
+							bots = [1, 0];
+						clearInterval(interval);
+						interval = setInterval(local_update, 1000/60)
+						game_ongoing = true
+					} else {
+						bots = [0, 0];
+						if (keys.has("Space"))
+							bots = [1, 1];
+						clearInterval(interval);
+						interval = setInterval(local_update, 1000/60)
+						game_ongoing = true
+					}
+				}
+				VIEW.onclick = game_selector;
+				
+				document.getElementById("mainmenu").onclick = function() {
+					clearInterval(interval);
+					game_ongoing = false;
+					draw_main_screen()}
 //			}
 		</script>
 	</body>
