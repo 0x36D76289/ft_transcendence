@@ -1,5 +1,5 @@
 import { loadPage } from '../spa.js';
-import { initSidebar, siderbarEvent } from '../utils/sidebar.js';
+import { initSidebar, sidebarEvent } from '../utils/sidebar.js';
 import { initBackground } from '../utils/background.js';
 
 const HTML = `
@@ -25,7 +25,7 @@ const CSS = `
 		border: none;
 		z-index: 0;
 		transition: background-color var(--transition), transform var(--transition);
-		background-color: transparent;
+		background-color: var(--colora);
 		user-select: none;
 
 		button {
@@ -71,5 +71,5 @@ export function hub() {
 	`
 
 	loadPage(loadHTML, loadCSS);
-	siderbarEvent();
+	sidebarEvent();
 }
