@@ -29,7 +29,7 @@
 	--padding-xl: 1.75rem;
 	--padding-xxl: 2.5rem;
 
-	/* colors */
+	/* Colors */
 	--dark: hsl(0, 0%, 0%);
 	--gray10: hsl(0, 0%, 10%);
 	--gray20: hsl(0, 0%, 20%);
@@ -40,14 +40,22 @@
 	--gray70: hsl(0, 0%, 70%);
 	--gray80: hsl(0, 0%, 80%);
 	--gray90: hsl(0, 0%, 90%);
-	--colora: #FDAC53;
-	/* Marigold */
-	--colora2: #0072B5;
-	/* French Blue */
+	--colora: #d92e2e; /* Red */
+	--colora2: #0072B5; /* French Blue */
+	--color-primary: var(--colora);
+	--color-secondary: var(--colora2);
 
-	/* landing page */
+	/* Dark Mode */
+	--bg-light: var(--gray10);
+	--text-light: var(--gray90);
+	--bg-dark: var(--gray90);
+	--text-dark: var(--gray10);
+
+	/* Font families */
 	--ff: "Monocraft", sans-serif;
 	--ff2: "JetBrains Mono", monospace;
+
+	/* Typography */
 	--h1: bold 4rem/1em var(--ff);
 	--h2: bold 3rem/1.2em var(--ff);
 	--h3: bold 2.25rem/1.2em var(--ff);
@@ -76,8 +84,25 @@
 	--b-large: 1200px;
 
 	--sidebar-width: 256px;
-	/* --sidebar-min-width: 80px; */
 	--transition: 0.3s ease;
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg-light: var(--gray90);
+		--text-light: var(--gray10);
+	}
+}
+
+body.light-mode {
+	--bg-light: var(--gray10);
+	--text-light: var(--gray90);
+}
+
+body.dark-mode {
+	--bg-light: var(--gray90);
+	--text-light: var(--gray10);
 }
 
 /* Reset CSS */
@@ -87,6 +112,9 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+}
+
+* {
 	cursor: none !important;
 }
 
@@ -100,46 +128,31 @@ body {
 	font-family: var(--ff);
 	font-size: 1rem;
 	line-height: 1.6;
-	color: var(--gray90);
-	background-color: var(--gray10);
+	color: var(--text-light);
+	background-color: var(--bg-light);
+	transition: background-color var(--transition), color var(--transition);
 }
 
 html, body {
 	overflow: hidden;
 }
 
-/* Typographie globale */
-h1,
-h2,
-h3,
-h4 {
-	color: var(--gray90);
+/* Global Typography */
+h1, h2, h3, h4 {
+	color: var(--text-light);
 }
 
-h1 {
-	font: var(--h1);
-}
-
-h2 {
-	font: var(--h2);
-}
-
-h3 {
-	font: var(--h3);
-}
-
-h4 {
-	font: var(--h4);
-}
+h1 { font: var(--h1); }
+h2 { font: var(--h2); }
+h3 { font: var(--h3); }
+h4 { font: var(--h4); }
 
 p {
 	font: var(--p);
 	margin-bottom: var(--margin-m);
 }
 
-small {
-	font: var(--small);
-}
+small { font: var(--small); }
 
 a {
 	text-decoration: none;
@@ -148,4 +161,40 @@ a {
 
 a:hover {
 	color: var(--color-secondary);
+}
+
+/* Responsive Adjustments */
+@media (max-width: var(--b-tablet)) {
+	:root {
+		font-size: 18px;
+	}
+
+	h1 { font-size: 3rem; }
+	h2 { font-size: 2.5rem; }
+	h3 { font-size: 2rem; }
+	h4 { font-size: 1.25rem; }
+}
+
+@media (max-width: var(--b-mobile)) {
+	:root {
+		font-size: 16px;
+	}
+
+	h1 { font-size: 2.5rem; }
+	h2 { font-size: 2rem; }
+	h3 { font-size: 1.75rem; }
+	h4 { font-size: 1.1rem; }
+}
+
+/* Fallback for older Firefox versions */
+@supports not (scroll-behavior: smooth) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+@supports not (display: flex) {
+	body {
+		display: block;
+	}
 }
