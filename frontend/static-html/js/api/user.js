@@ -9,8 +9,7 @@ import { readCookie, createCookie, eraseCookie } from "../cookie.js";
  * @returns {Promise<Object>} - The response data from the API.
  */
 export async function registerUser(username, password, bio = "") {
-	const body = { username, password, bio };
-	return await postData("/user/register", {}, body);
+	return await postData("/user/register", {}, { username, password, bio });
 }
 
 /**
@@ -20,11 +19,11 @@ export async function registerUser(username, password, bio = "") {
 * @returns {Promise<Object>} - The response data from the API, including token.
 */
 export async function loginUser(username, password) {
-	const body = { username, password };
-	const response = await postData("/user/login", {}, body);
+	const response = await postData("/user/login", {}, { username, password });
 
 	if (response.token) {
-		createCookie("authToken", response.token, 7);
+		createCookie("token", response.token, 7);
+		createCookie("username", username, 7);
 	}
 
 	return response;
@@ -35,11 +34,9 @@ export async function loginUser(username, password) {
 * @returns {Promise<Object>} - The response data from the API.
 */
 export async function logoutUser() {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	const response = await postData("/user/logout", headers);
+	const response = await postData("/user/logout", { Authorization: `Token ${readCookie("token")}` });
 
-	eraseCookie("authToken"); // Clear token from cookies
+	eraseCookie("token");
 	return response;
 }
 
@@ -48,9 +45,7 @@ export async function logoutUser() {
 * @returns {Promise<Object>} - The response data from the API, including user details if valid.
 */
 export async function isTokenValid() {
-	const token = readCookie("authToken");
-	const body = { token };
-	return await postData("/user/is_token_valid", {}, body);
+	return await postData("/user/is_token_valid", {}, { token: readCookie("token") });
 }
 
 /**
@@ -60,10 +55,7 @@ export async function isTokenValid() {
 * @returns {Promise<Object>} - The response data from the API.
 */
 export async function updateUser(username, bio = "") {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	const body = { username, bio };
-	return await postData("/user/update_user", headers, body);
+	return await postData("/user/update_user", { Authorization: `Token ${readCookie("token")}` }, { username, bio });
 }
 
 /**
@@ -72,9 +64,7 @@ export async function updateUser(username, bio = "") {
 * @returns {Promise<Object>} - The response data from the API, including profile details.
 */
 export async function getUserProfile(username) {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	return await getData(`/user/profile/${username}`, headers);
+	return await getData(`/user/profile/${username}`, { Authorization: `Token ${readCookie("token")}` });
 }
 
 /**
@@ -83,9 +73,7 @@ export async function getUserProfile(username) {
 * @returns {Promise<Object>} - The response data from the API, including game stats.
 */
 export async function getUserStats(username) {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	return await getData(`/user/stats/${username}`, headers);
+	return await getData(`/user/stats/${username}`, { Authorization: `Token ${readCookie("token")}` });
 }
 
 /**
@@ -93,9 +81,7 @@ export async function getUserStats(username) {
 * @returns {Promise<Array>} - The response data from the API, including a list of users.
 */
 export async function listUsers() {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	return await getData("/user/list", headers);
+	return await getData("/user/list", { Authorization: `Token ${readCookie("token")}` });
 }
 
 /**
@@ -104,10 +90,7 @@ export async function listUsers() {
 * @returns {Promise<Object>} - The response data from the API.
 */
 export async function sendFriendRequest(username) {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	const body = { username };
-	return await postData("/user/send_friend_request", headers, body);
+	return await postData("/user/send_friend_request", { Authorization: `Token ${readCookie("token")}` }, { username });
 }
 
 /**
@@ -116,10 +99,7 @@ export async function sendFriendRequest(username) {
 * @returns {Promise<Object>} - The response data from the API.
 */
 export async function removeFriendRequest(username) {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	const body = { username };
-	return await postData("/user/remove_friend_request", headers, body);
+	return await postData("/user/remove_friend_request", { Authorization: `Token ${readCookie("token")}` }, { username });
 }
 
 /**
@@ -128,8 +108,5 @@ export async function removeFriendRequest(username) {
 * @returns {Promise<Object>} - The response data from the API, including friendship status.
 */
 export async function getFriendshipStatus(username) {
-	const token = readCookie("authToken");
-	const headers = { Authorization: `Token ${token}` };
-	const body = { username };
-	return await postData("/user/get_friendship", headers, body);
+	return await postData("/user/get_friendship", { Authorization: `Token ${readCookie("token")}` }, { username });
 }
