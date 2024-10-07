@@ -1,15 +1,21 @@
+// JavaScript
 import { loadPage } from '../spa.js';
-import { initSidebar, siderbarEvent } from '../utils/sidebar.js';
+import { initSidebar, sidebarEvent } from '../utils/sidebar.js';
 import { getData } from '../api/utils.js';
 
 const HTML = `
 <div class="friends-page">
-  <div class="search-bar">
-    <input type="text" placeholder="Rechercher" />
+  <div class="central-element">
+    <h1>My Friends</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Search friends..." />
+    </div>
   </div>
-  <div class="friends-list">
-    <div class="friends-header">EN LIGNE — 21</div>
-    <!-- Friend items will be dynamically added here -->
+  <div class="friends-grid"></div>
+  <div class="pagination">
+    <button class="prev-page">←</button>
+    <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
+    <button class="next-page">→</button>
   </div>
 </div>
 `;
@@ -18,204 +24,299 @@ const CSS = `
 .friends-page {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom, #36393f, #2f3136);
-  color: var(--gray90);
-  font-family: var(--ff2);
-}
-
-.search-bar {
-  padding: var(--padding-m);
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-.search-bar input {
   width: 100%;
-  padding: var(--padding-s);
-  background-color: rgba(0, 0, 0, 0.3);
-  border: none;
-  border-radius: 4px;
-  color: var(--gray90);
-  font: var(--pui);
-}
-
-.search-bar input::placeholder {
-  color: var(--gray60);
-}
-
-.friends-list {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: var(--padding-s);
-}
-
-.friends-header {
-  font: var(--smallui);
-  color: var(--gray60);
-  margin-bottom: var(--margin-s);
-  padding-left: var(--padding-s);
-}
-
-.friend-item {
-  display: flex;
-  align-items: center;
-  padding: var(--padding-s);
-  border-radius: 4px;
-  margin-bottom: 2px;
-  transition: background-color 0.2s ease;
-}
-
-.friend-item:hover {
-  background-color: rgba(79, 84, 92, 0.3);
-}
-
-.friend-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  margin-right: var(--margin-s);
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  overflow: hidden;
   position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, var(--colora) 0%, transparent 70%);
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .central-element {
+    backdrop-filter: blur(8px);
+    background-color: rgba(var(--colora-rgb), 0.1);
+    border-radius: 64px;
+    padding: var(--padding-xl);
+    margin-bottom: var(--padding-xxl);
+    text-align: center;
+    z-index: 1;
+
+    h1 {
+      font: var(--h1);
+      color: var(--text-light);
+      margin-bottom: var(--padding-l);
+    }
+
+    .search-bar {
+      input {
+        width: 300px;
+        padding: var(--padding-s) var(--padding-m);
+        border-radius: 32px;
+        border: 2px solid var(--gray50);
+        background-color: rgba(var(--bg-dark-rgb), 0.5);
+        color: var(--text-light);
+        font: var(--pui);
+        transition: all var(--transition);
+
+        &:focus {
+          outline: none;
+          border-color: var(--colora);
+          box-shadow: 0 0 20px rgba(var(--colora-rgb), 0.3);
+          width: 350px;
+        }
+      }
+    }
+  }
+
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--padding-l);
+    max-width: 80%;
+    z-index: 1;
+  }
+
+  .friend-card {
+    backdrop-filter: blur(4px);
+    background-color: rgba(var(--bg-light-rgb), 0.1);
+    border-radius: 32px;
+    padding: var(--padding-m);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-10px) rotateX(10deg) rotateY(10deg);
+      box-shadow: 0 30px 50px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: var(--padding-s);
+      border: 3px solid var(--colora);
+      transition: all var(--transition);
+    }
+
+    .friend-username {
+      font: var(--h4ui);
+      color: var(--text-light);
+      margin-bottom: var(--padding-s);
+    }
+
+    .friend-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--padding-xs);
+      
+      button {
+        padding: var(--padding-xs) var(--padding-s);
+        border: none;
+        border-radius: 20px;
+        background-color: var(--colora);
+        color: var(--gray10);
+        font: var(--smallui);
+        transition: all var(--transition);
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--colora2);
+          transform: scale(1.05);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+
+  .pagination {
+    margin-top: var(--padding-xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--padding-m);
+    z-index: 1;
+
+    button {
+      padding: var(--padding-xs) var(--padding-m);
+      border: none;
+      border-radius: 20px;
+      background-color: var(--colora);
+      color: var(--gray10);
+      font: var(--pui);
+      transition: all var(--transition);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--colora2);
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-info {
+      font: var(--pui);
+      color: var(--text-light);
+    }
+  }
 }
 
-.friend-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.friend-status {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid #36393f;
-}
-
-.friend-status.online {
-  background-color: #43b581;
-}
-
-.friend-status.offline {
-  background-color: #747f8d;
-}
-
-.friend-info {
-  flex-grow: 1;
-}
-
-.friend-username {
-  font: var(--pui);
-  color: var(--gray90);
-}
-
-.friend-activity {
-  font: var(--smallui);
-  color: var(--gray60);
-}
-
-.friend-actions {
-  display: flex;
-  align-items: center;
-}
-
-.friend-action {
-  width: 24px;
-  height: 24px;
-  margin-left: var(--margin-xs);
-  color: var(--gray60);
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.friend-action:hover {
-  color: var(--gray90);
-}
-
-/* Scrollbar styles */
-.friends-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.friends-list::-webkit-scrollbar-thumb {
-  background-color: rgba(79, 84, 92, 0.3);
-  border-radius: 4px;
-}
-
-.friends-list::-webkit-scrollbar-track {
-  background-color: transparent;
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
 `;
 
 export function friends() {
-	const [sidebarHTML, sidebarCSS] = initSidebar();
+  const [sidebarHTML, sidebarCSS] = initSidebar();
 
-	const loadHTML = `
-	${sidebarHTML}
-	${HTML}
-	`;
-	const loadCSS = `
-	${sidebarCSS}
-	${CSS}
-	`;
+  const loadHTML = `
+  ${sidebarHTML}
+  ${HTML}
+  `;
+  const loadCSS = `
+  ${sidebarCSS}
+  ${CSS}
+  `;
 
-	loadPage(loadHTML, loadCSS);
-	siderbarEvent();
+  loadPage(loadHTML, loadCSS);
+  sidebarEvent();
 
-	// getData('/friends/list')
-	// 	.then(response => {
-	// 		try {
-	// 			const friendsData = JSON.parse(response);
-	// 			const friendsList = document.querySelector('.friends-list');
+  const friendsGrid = document.querySelector('.friends-grid');
+  const searchInput = document.querySelector('.search-bar input');
+  const prevPageBtn = document.querySelector('.prev-page');
+  const nextPageBtn = document.querySelector('.next-page');
+  const currentPageSpan = document.querySelector('.current-page');
+  const totalPagesSpan = document.querySelector('.total-pages');
 
-	// 			friendsData.forEach(friend => {
-	// 				const friendCard = document.createElement('div');
-	// 				friendCard.classList.add('friend-card');
-	// 				if (friend.online) friendCard.classList.add('online');
+  let friends_data = {};
+  let filteredFriendsData = {};
+  let currentPage = 1;
+  let itemsPerPage = 8;
 
-	// 				friendCard.innerHTML = `
-  //           <img class="friend-pp" src="${friend.profile_picture_url}" alt="${friend.username}'s profile picture">
-  //           <div class="friend-info">
-  //             <p class="friend-username">${friend.username}</p>
-  //             <p class="friend-status">${friend.online ? 'Online' : 'Offline'}</p>
-  //           </div>
-  //         `;
+  for (let i = 0; i < 20; i++) {
+    friends_data[i] = {
+      username: `username${i}`,
+      avatar: `https://randomuser.me/api/portraits/lego/${i % 10}.jpg`
+    };
+  }
 
-	// 				friendsList.appendChild(friendCard);
-	// 			});
-	// 		} catch (error) {
-	// 			console.error('Failed to parse friends data:', error);
-	// 		}
-	// 	})
-	// 	.catch(error => {
-	// 		console.error('Failed to fetch friends list:', error);
-	// 	});
+  filteredFriendsData = { ...friends_data };
 
-	const friendsList = document.querySelector('.friends-list');
+  function renderFriends(page = 1) {
+    friendsGrid.innerHTML = '';
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const friendsToShow = Object.values(filteredFriendsData).slice(startIndex, endIndex);
 
-	// Temporary random friends data
-	const randomFriends = [
-		{ username: 'Alice', profile_picture_url: 'https://via.placeholder.com/80', online: true },
-		{ username: 'Bob', profile_picture_url: 'https://via.placeholder.com/80', online: false },
-		{ username: 'Charlie', profile_picture_url: 'https://via.placeholder.com/80', online: true },
-	];
+    friendsToShow.forEach((friend, index) => {
+      const friendElement = document.createElement('div');
+      friendElement.classList.add('friend-card');
+      friendElement.innerHTML = `
+        <img src="${friend.avatar}" alt="avatar" />
+        <div class="friend-username">${friend.username}</div>
+        <div class="friend-actions">
+          <button class="message-btn">Message</button>
+          <button class="play-btn">Play</button>
+          <button class="block-btn">Block</button>
+          <button class="unfriend-btn">Unfriend</button>
+        </div>
+      `;
+      friendsGrid.appendChild(friendElement);
 
-	randomFriends.forEach(friend => {
-		const friendCard = document.createElement('div');
-		friendCard.classList.add('friend-card');
-		if (friend.online) friendCard.classList.add('online');
+      // Add animation to friend cards
+      friendElement.style.animation = `fadeInScale 0.5s ease forwards ${index * 0.1}s`;
+      friendElement.style.opacity = '0';
 
-		friendCard.innerHTML = `
-      <img class="friend-pp" src="${friend.profile_picture_url}" alt="${friend.username}'s profile picture">
-      <div class="friend-info">
-        <p class="friend-username">${friend.username}</p>
-        <p class="friend-status">${friend.online ? 'Online' : 'Offline'}</p>
-      </div>
-		`;
+      // Add click event to redirect to user's page
+      friendElement.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('message-btn') && 
+            !e.target.classList.contains('play-btn') && 
+            !e.target.classList.contains('block-btn') && 
+            !e.target.classList.contains('unfriend-btn')) {
+          window.location.href = `/user/${friend.username}`;
+        }
+      });
+    });
 
-		friendsList.appendChild(friendCard);
-	});
+    updatePagination();
+  }
+
+  function updatePagination() {
+    const totalPages = Math.ceil(Object.keys(filteredFriendsData).length / itemsPerPage);
+    currentPageSpan.textContent = currentPage;
+    totalPagesSpan.textContent = totalPages;
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages;
+  }
+
+  renderFriends();
+
+  searchInput.addEventListener('input', (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    filteredFriendsData = Object.fromEntries(
+      Object.entries(friends_data).filter(([_, friend]) =>
+        friend.username.toLowerCase().includes(searchValue)
+      )
+    );
+    currentPage = 1;
+    renderFriends();
+  });
+
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderFriends(currentPage);
+    }
+  });
+
+  nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(Object.keys(filteredFriendsData).length / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderFriends(currentPage);
+    }
+  });
+
+  // Add event listeners for friend actions
+  friendsGrid.addEventListener('click', (e) => {
+    if (e.target.classList.contains('message-btn')) {
+      console.log('Message friend');
+    } else if (e.target.classList.contains('play-btn')) {
+      console.log('Play with friend');
+    } else if (e.target.classList.contains('block-btn')) {
+      console.log('Block friend');
+    } else if (e.target.classList.contains('unfriend-btn')) {
+      console.log('Unfriend');
+    }
+  });
 }
