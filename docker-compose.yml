@@ -6,6 +6,8 @@ services:
       - "8443:443"
     depends_on:
       - backend
+    volumes:
+      - media:/media/
 
   backend:
     build: ./backend/
