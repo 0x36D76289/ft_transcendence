@@ -1,4 +1,4 @@
-import { getData } from '../api/utils.js';
+import { getUserProfile } from '../api/user.js';
 import { readCookie, eraseCookie } from '../cookie.js';
 import { navigate } from '../spa.js';
 
@@ -202,7 +202,7 @@ const CSS = `
 	}
 }
 `
-export function siderbarEvent() {
+export function sidebarEvent() {
 	document.querySelector('.logout-btn').addEventListener('click', () => {
 		eraseCookie('token');
 		eraseCookie('username');
@@ -227,18 +227,14 @@ export function siderbarEvent() {
 	const username = readCookie('username');
 
 	if (username) {
-		getData(`/users/profile/${username}`)
+		getUserProfile(username)
 			.then(response => {
-				try {
-					const data = JSON.parse(response);
-					document.querySelector('.user-pp').src = data.profile_picture_url;
-					document.querySelector('.user-username').textContent = data.username;
-					document.querySelector('.user-creation-date').textContent = `Joined: ${new Date(data.date_joined).toLocaleDateString()}`;
-				} catch (error) {
-					console.error('Failed to parse JSON response:', error);
-
-				}
-			}).catch(error => {
+				const data = response;
+				document.querySelector('.user-pp').src = data.pfp;
+				document.querySelector('.user-username').textContent = data.username;
+				document.querySelector('.user-creation-date').textContent = `Joined: ${new Date(data.date_joined).toLocaleDateString()}`;
+			})
+			.catch(error => {
 				console.error('Failed to fetch user profile:', error);
 				document.querySelector('.user-username').textContent = 'Guest';
 				document.querySelector('.user-creation-date').textContent = 'Please log in';
