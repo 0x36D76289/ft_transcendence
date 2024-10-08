@@ -9,6 +9,7 @@ class User(AbstractBaseUser):
 	is_online = models.BooleanField(default=False)
 	last_login = models.DateTimeField(null=True)
 	is_guest = models.BooleanField(default=False)
+	secret_2fa = models.CharField(max_length=100, blank=True, null=True)
 
 	USERNAME_FIELD = "username"
 

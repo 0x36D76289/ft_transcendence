@@ -8,6 +8,10 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q, F
 from game.models import Game
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from qrcode import QRCode
+from django_otp import user_has_device
+import qrcode
 
 # USER
 @api_view(['POST'])
@@ -18,8 +22,13 @@ def login(request):
 		user = User.objects.get(username=request.data.get('username'))
 	except:
 		user = None
-	if not user or not user.check_password(request.data.get('password')):
-		return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+	# if not user or not user.check_password(request.data.get('password')):
+		# return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+	if user_has_device(user):
+		device = user.totpdevice_set.get(confirmed=True)
+		if not device.verify_token(request.data.get('password')):
+			return Response({'detail': 'Invalid 2FA'}, status=status.HTTP_400_BAD_REQUEST)
+
 	token, created = Token.objects.get_or_create(user=user)
 	user.is_online = True
 	user.last_login = now()
@@ -42,8 +51,13 @@ def register(request):
 		serializer = UserSerializer(data=request.data)
 	if not serializer.is_valid():
 		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
-	serializer.save(password=request.data.get('password'))
-	return Response({'detail': 'Account created', 'username': serializer.data['username']})
+	user = serializer.save(password=request.data.get('password'))
+	
+	device = TOTPDevice.objects.create(user=user, confirmed=False)
+	uri = device.config_url
+	qr_code_img = qrcode.make(uri)
+	qr_code_img.save("qr_code.png")
+	return Response({'detail': 'Account created', 'username': serializer.data['username'], 'qr_code_uri': uri})
 
 @api_view(['POST'])
 def logout(request):

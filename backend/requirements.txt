@@ -6,3 +6,5 @@ Pillow
 channels
 channels_redis
 daphne
+django_otp
+qrcode
