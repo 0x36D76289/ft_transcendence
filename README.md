@@ -104,12 +104,14 @@ All API requests are either **GET** or **POST**. POST requests should use the ap
 | `/user/is_token_valid`        | **POST**   | Check if a token is valid                                                | `token` in body                                           | `detail`, `username` on success                                    |
 | `/user/update_user`           | **POST**   | Update user information                                                  | Authorization in header, `username`, `bio` in body        | `detail` in body                                                   |
 | `/user/delete_user`           | **POST**   | Delete user                                                              | Authorization in header                                   | `detail` in body                                                   |
+| `/user/create_guest`           | **POST**   | Creates a guest a guest user, returns a token. If this token is used to log out, the guest account is deleted. This token can be also used to register and change this account to a real one | | `token`, `username` and `detail` in body                                                   |
 | `/user/profile/<username>`    | **GET**    | Get public information of a user                                         | Authorization in header                                   | `id`, `username`, `bio`, `date_joined`, `is_online`, `last_online` |
 | `/user/stats/<username>`      | **GET**    | Get public game stats of a user                                          | Authorization in header                                   | `games_played`, `win_rate` in body                                 |
 | `/user/list`                  | **GET**    | List the last 20 registered users                                        | Authorization in header                                   | List of users                                                      |
 | `/user/send_friend_request`   | **POST**   | Send a friend request, or accept if the user already sent you one        | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
 | `/user/remove_friend_request` | **POST**   | Remove a friend request, decline a request, or unfriend                  | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
-| `/user/get_friendship`        | **POST**   | Get friendship status with a user (FRIEND, REQ_SENT, REQ_RECEIVED, NONE) | Authorization in header, `username` in body               | `detail` in body                                                   |
+| `/user/get_friendship`        | **GET**   | Get friendship status with a user (FRIEND, REQ_SENT, REQ_RECEIVED, NONE) | Authorization in header, `username` in body               | `detail` in body                                                   |
+| `/user/get_friends`        | **GET**   | Get friends of a user | Authorization in header, `username` in body               | list of friends,`detail` if failed |
 
 ### Game Endpoints
 
@@ -122,8 +124,10 @@ All API requests are either **GET** or **POST**. POST requests should use the ap
 
 | **Endpoint**            | **Method** | **Description**                    | **Request**                                            | **Response**                                                       |
 | ----------------------- | ---------- | ---------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------ |
-| `/chat/get/<user>`      | **GET**    | Get chat history with another user | Authorization in header                                | List of messages (`sender`, `receiver`, `content`, `time_created`) |
-| `/chat/send`            | **POST**   | Send a message to another user     | Authorization in header, `username`, `message` in body | `detail` in body                                                   |
+| `/chat/<int:convo_id>`      | **GET**    | Get conversation of the corresponding id | Authorization in header                                | `id`, `initiator`, `receiver` and `message_set` (list of message). `detail` if error |
+| `/chat`            | **GET**   | Get all the convesations of the user | Authorization in header | list of {`id`, `initiator`, `receiver` and `last_message`}. `detail` if error |
+| `/chat/start`            | **POST**   | Start and/or get conversation with another user     | Authorization in header, `username` in body | `id`, `initiator`, `receiver` and `message_set` (list of message). `detail` if error |
+| `/ws/chat/<int:convo_id>`            | **WEBSOCKET**   | Open a websocket to the conversation id, the user must be in the conversation to join. Messages are sent in json form like this: {"message": "this is a message"} | Authorization in header | |
 | `/chat/block`           | **POST**   | Block another user                 | Authorization in header, `username` in body            | `detail` in body                                                   |
 | `/chat/unblock`         | **POST**   | Unblock another user               | Authorization in header, `username` in body            | `detail` in body                                                   |
 | `/chat/is_user_blocked` | **GET**    | Check if a user is blocked         | Authorization in header                                | `detail` in body                                                   |
