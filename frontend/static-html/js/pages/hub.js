@@ -1,6 +1,6 @@
 import { loadPage } from '../spa.js';
 import { initSidebar, sidebarEvent } from '../utils/sidebar.js';
-import { initBackground } from '../utils/background.js';
+import { eventBackground, initBackground } from '../utils/background.js';
 
 const HTML = `
 <div class="main-content">
@@ -72,4 +72,5 @@ export function hub() {
 
 	loadPage(loadHTML, loadCSS);
 	sidebarEvent();
+	eventBackground/);
 }
