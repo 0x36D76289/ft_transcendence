@@ -6,13 +6,13 @@ const HTML = `
 <div class="sidebar" id="sidebar">
 	<div class="user-profile">
 		<div class="user-pp-container">
-			<img class="user-pp"
-				src=""
-				alt="">
+			<img class="user-pp" src="" alt="">
 		</div>
 		<div class="user-info">
 			<p class="user-username"></p>
+			<p class="user-bio"></p>
 			<p class="user-creation-date"></p>
+			<p class="user-status"></p>
 		</div>
 	</div>
 
@@ -44,25 +44,25 @@ const HTML = `
 		</button>
 	</div>
 </div>
-`
-
+`;
 
 const CSS = `
 .sidebar {
-	left: var(--padding-xs);
-	top: var(--padding-xs);
-	bottom: var(--padding-xs);
-	width: var(--sidebar-width);
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: var(--sidebar-width, 256px);
 	background-color: rgba(0, 0, 0, 0.5);
-	padding: var(--padding-m);
-	border-radius: calc(var(--padding-m) * 1.5);
+	padding: 16px;
+	border-radius: 24px;
 	position: fixed;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	box-shadow: 0 0 var(--padding-m) rgba(0, 0, 0, 0.1);
-	transition: all 0.3s ease-in-out;
-	z-index: 1;
+	box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s ease-in-out;
+	z-index: 1000;
+	-webkit-backdrop-filter: blur(10px);
 	backdrop-filter: blur(10px);
 	transform: translateX(-100%);
 }
@@ -75,57 +75,44 @@ const CSS = `
 .user-profile {
 	display: flex;
 	align-items: center;
-	border: 2px solid var(--gray30);
-	padding: var(--padding-xs);
-	border-radius: calc(var(--padding-xs) * 2);
-	transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
+	border: 2px solid #4d4d4d;
+	padding: 8px;
+	border-radius: 16px;
+	transition: all 0.3s ease;
 	user-select: none;
-	background: linear-gradient(145deg, var(--gray20), var(--gray10));
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-
-	.user-pp {
-		width: 60px;
-		height: 60px;
-		border-radius: 50%;
-		overflow: hidden;
-		display: block;
-		align-self: center;
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-	}
-
-	.user-info {
-		margin-left: var(--margin-s);
-		margin-top: var(--margin-xxs);
-		margin-bottom: var(--margin-xxs);
-
-		.user-username {
-			margin-bottom: var(--margin-xxs);
-		}
-
-		.user-creation-date {
-			font-size: small;
-			color: var(--gray60);
-		}
-	}
-
-	.user-info p {
-		font-size: smaller;
-		color: var(--gray80);
-	}
+	background: linear-gradient(145deg, #333333, #1a1a1a);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover state */
-.user-profile:hover {
-	background-color: var(--gray20);
-	transform: scale(1.05);
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+.user-pp {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
-/* Active state */
-.user-profile:active {
-	background-color: var(--gray30);
-	transform: scale(0.98);
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.user-info {
+	margin-left: 12px;
+}
+
+.user-username {
+	margin-bottom: 4px;
+	color: #cccccc;
+}
+
+.user-bio {
+	margin-bottom: 4px;
+	color: #999999;
+}
+
+.user-creation-date {
+	font-size: 12px;
+	color: #999999;
+}
+
+.user-status {
+	font-size: 12px;
+	color: #999999;
 }
 
 /* Navigation Buttons */
@@ -133,113 +120,152 @@ const CSS = `
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-
-	.nav-button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: var(--padding-s);
-		margin-bottom: var(--margin-m);
-		border: 2px solid var(--gray10);
-		border-radius: 16px;
-		/* cursor: pointer; */
-		user-select: none;
-		background-color: var(--gray20);
-		color: var(--gray90);
-		transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-		box-shadow: 0px 4px 0 0 var(--gray10);
-		/* Shadow from bottom to top */
-		text-align: center;
-
-		img {
-			width: var(--padding-m);
-			height: var(--padding-m);
-			filter: invert(100%);
-			margin-right: var(--margin-s);
-		}
-
-		.nav-text {
-			font-size: 1.1rem;
-			flex-grow: 1;
-		}
-	}
-
-	.nav-button:active {
-		box-shadow: 0px 0px 0 0 var(--gray10);
-		transform: translateY(4px);
-	}
 }
 
+.nav-button {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 12px;
+	margin-bottom: 16px;
+	border: 2px solid #1a1a1a;
+	border-radius: 16px;
+	user-select: none;
+	background-color: #333333;
+	color: #e6e6e6;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 0 0 #1a1a1a;
+	text-align: left;
+}
+
+.nav-button img {
+	width: 24px;
+	height: 24px;
+	filter: invert(100%);
+	margin-right: 12px;
+}
+
+.nav-text {
+	font-size: 18px;
+	flex-grow: 1;
+}
+
+.nav-button:active {
+	box-shadow: 0 0 0 0 #1a1a1a;
+	transform: translateY(4px);
+}
+
+/* Action Buttons */
 .action-buttons {
 	display: flex;
 	justify-content: center;
+}
 
-	button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: var(--padding-xs);
-		border-radius: 50%;
-		transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
+.action-buttons button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
 
-		img {
-			width: var(--padding-m);
-			height: var(--padding-m);
-			filter: invert(100%);
-		}
+.action-buttons button img {
+	width: 24px;
+	height: 24px;
+	filter: invert(100%);
+}
 
-		&:hover {
-			background-color: var(--gray20);
-			transform: scale(1.1);
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-		}
+.action-buttons button:hover {
+	background-color: #333333;
+	transform: scale(1.1);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-		&:active {
-			background-color: var(--gray30);
-			transform: scale(0.95);
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		}
+.action-buttons button:active {
+	background-color: #4d4d4d;
+	transform: scale(0.95);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+	.sidebar {
+		width: 100%;
+		border-radius: 0;
 	}
 }
-`
-export function sidebarEvent() {
-	document.querySelector('.logout-btn').addEventListener('click', () => {
-		eraseCookie('token');
-		eraseCookie('username');
-		navigate('/login');
-	});
+`;
 
-	document.querySelector('.settings-btn').addEventListener('click', () => {
-		navigate('/settings');
-	});
+export async function sidebarEvent() {
+	const sidebar = document.getElementById('sidebar');
+	if (!sidebar) return;
 
-	document.querySelectorAll('.nav-button').forEach(button => {
-		button.addEventListener('click', event => {
-			const nav = event.currentTarget.dataset.nav;
-			navigate(`/${nav}`);
+	const logoutBtn = sidebar.querySelector('.logout-btn');
+	const settingsBtn = sidebar.querySelector('.settings-btn');
+	const navButtons = sidebar.querySelectorAll('.nav-button');
+	const userProfile = sidebar.querySelector('.user-profile');
+
+	if (logoutBtn) {
+		logoutBtn.addEventListener('click', function () {
+			eraseCookie('token');
+			eraseCookie('username');
+			navigate('/login');
+		});
+	}
+
+	if (settingsBtn) {
+		settingsBtn.addEventListener('click', function () {
+			navigate('/settings');
+		});
+	}
+
+	navButtons.forEach(function (button) {
+		button.addEventListener('click', function (event) {
+			const nav = this.getAttribute('data-nav');
+			if (nav) {
+				navigate('/' + nav);
+			}
 		});
 	});
 
-	document.querySelector('.user-profile').addEventListener('click', () => {
-		navigate('/profile');
-	});
+	if (userProfile) {
+		userProfile.addEventListener('click', function () {
+			navigate('/profile');
+		});
+	}
 
 	const username = readCookie('username');
-
 	if (username) {
-		getUserProfile(username)
-			.then(response => {
-				const data = response;
-				document.querySelector('.user-pp').src = data.pfp;
-				document.querySelector('.user-username').textContent = data.username;
-				document.querySelector('.user-creation-date').textContent = `Joined: ${new Date(data.date_joined).toLocaleDateString()}`;
-			})
-			.catch(error => {
-				console.error('Failed to fetch user profile:', error);
-				document.querySelector('.user-username').textContent = 'Guest';
-				document.querySelector('.user-creation-date').textContent = 'Please log in';
-				document.querySelector('.user-pp').src = 'https://api.iconify.design/mdi:account-circle.svg';
-			});
+		const userJSON = await getUserProfile(username);
+
+		if (userJSON) {
+			const userPP = sidebar.querySelector('.user-pp');
+			const userUsername = sidebar.querySelector('.user-username');
+			const userBio = sidebar.querySelector('.user-bio');
+			const userCreationDate = sidebar.querySelector('.user-creation-date');
+			const userStatus = sidebar.querySelector('.user-status');
+
+			if (userPP) {
+				userPP.src = userJSON.pfp;
+			}
+
+			if (userUsername) {
+				userUsername.textContent = userJSON.username;
+			}
+
+			if (userBio) {
+				userBio.textContent = userJSON.bio || 'No bio available';
+			}
+
+			if (userCreationDate) {
+				userCreationDate.textContent = `Member since ${new Date(userJSON.date_joined).toLocaleDateString()}`;
+			}
+
+			if (userStatus) {
+				userStatus.textContent = userJSON.is_online ? 'Online' : `Last login: ${new Date(userJSON.last_login).toLocaleString()}`;
+			}
+		}
+
 	}
 }
 

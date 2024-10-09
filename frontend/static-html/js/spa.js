@@ -1,5 +1,6 @@
 import { flashlightEvent, initflashlight } from "./utils/flashlight.js";
 import { pixelBreakerEvent, initPixelBreaker } from "./utils/pixelbreaker.js";
+import { initBlurCircle } from "./utils/blurcircle.js";
 import { readCookie } from "./cookie.js";
 
 let routes = {};
@@ -17,17 +18,20 @@ export function removeRoute(path) {
 function injectContent(htmlContent, cssContent = "") {
   const [pixelbreakerHTML, pixelbreakerCSS] = initPixelBreaker();
   const [flashlightHTML, flashlightCSS] = initflashlight();
+  const [blurCircleHTML, blurCircleCSS] = initBlurCircle();
+  
   document.body.innerHTML = `
   ${htmlContent}
   ${pixelbreakerHTML}
   ${flashlightHTML}
+  ${blurCircleHTML}
   <audio id="clickSound">
     <source src="assets/sounds/click.mp3" type="audio/mp3">
     Your browser does not support the audio element.
   </audio>
   `;
 
-  document.querySelectorAll('.nav-button, .settings-btn, .logout-btn, .play-btn, .user-profile').forEach(element => {
+  document.querySelectorAll('button, .nav-button, .settings-btn, .logout-btn, .play-btn, .user-profile').forEach(element => {
     element.addEventListener('click', () => {
       clickSound.play();
     });
@@ -38,6 +42,7 @@ function injectContent(htmlContent, cssContent = "") {
   ${cssContent}
   ${pixelbreakerCSS}
   ${flashlightCSS}
+  ${blurCircleCSS}
   `;
 
   document.head.appendChild(styleElement);
