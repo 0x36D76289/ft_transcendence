@@ -42,14 +42,6 @@
 	--gray90: hsl(0, 0%, 90%);
 	--colora: #d92e2e; /* Red */
 	--colora2: #0072B5; /* French Blue */
-	--color-primary: var(--colora);
-	--color-secondary: var(--colora2);
-
-	/* Dark Mode */
-	--bg-light: var(--gray10);
-	--text-light: var(--gray90);
-	--bg-dark: var(--gray90);
-	--text-dark: var(--gray10);
 
 	/* Font families */
 	--ff: "Monocraft", sans-serif;
@@ -85,24 +77,6 @@
 
 	--sidebar-width: 256px;
 	--transition: 0.3s ease;
-}
-
-/* Dark Theme */
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg-light: var(--gray90);
-		--text-light: var(--gray10);
-	}
-}
-
-body.light-mode {
-	--bg-light: var(--gray10);
-	--text-light: var(--gray90);
-}
-
-body.dark-mode {
-	--bg-light: var(--gray90);
-	--text-light: var(--gray10);
 }
 
 /* Reset CSS */
@@ -161,40 +135,4 @@ a {
 
 a:hover {
 	color: var(--color-secondary);
-}
-
-/* Responsive Adjustments */
-@media (max-width: var(--b-tablet)) {
-	:root {
-		font-size: 18px;
-	}
-
-	h1 { font-size: 3rem; }
-	h2 { font-size: 2.5rem; }
-	h3 { font-size: 2rem; }
-	h4 { font-size: 1.25rem; }
-}
-
-@media (max-width: var(--b-mobile)) {
-	:root {
-		font-size: 16px;
-	}
-
-	h1 { font-size: 2.5rem; }
-	h2 { font-size: 2rem; }
-	h3 { font-size: 1.75rem; }
-	h4 { font-size: 1.1rem; }
-}
-
-/* Fallback for older Firefox versions */
-@supports not (scroll-behavior: smooth) {
-	html {
-		scroll-behavior: auto;
-	}
-}
-
-@supports not (display: flex) {
-	body {
-		display: block;
-	}
 }

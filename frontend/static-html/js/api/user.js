@@ -59,6 +59,30 @@ export async function updateUser(username, bio = "") {
 }
 
 /**
+* Deletes the user.
+* @returns {Promise<Object>} - The response data from the API.
+*/
+export async function deleteUser() {
+	return await postData("/user/delete_user", { Authorization: `Token ${readCookie("token")}` });
+}
+
+/**
+* Creates a guest user.
+* @returns {Promise<Object>} - The response data from the API, including token and username.
+*/
+export async function createGuest() {
+	const response = await postData("/user/create_guest", {});
+
+	if (response.token) {
+		createCookie("token", response.token, 7);
+		createCookie("username", response.username, 7);
+		console.log(response.detail);
+	}
+
+	return response;
+}
+
+/**
 * Gets the public profile of a user.
 * @param {string} username - The username of the user to fetch.
 * @returns {Promise<Object>} - The response data from the API, including profile details.
@@ -108,5 +132,14 @@ export async function removeFriendRequest(username) {
 * @returns {Promise<Object>} - The response data from the API, including friendship status.
 */
 export async function getFriendshipStatus(username) {
-	return await postData("/user/get_friendship", { Authorization: `Token ${readCookie("token")}` }, { username });
+	return await getData("/user/get_friendship", { Authorization: `Token ${readCookie("token")}` }, { username });
+}
+
+/**
+* Gets the friends of a user.
+* @param {string} username - The username of the user to fetch friends for.
+* @returns {Promise<Array>} - The response data from the API, including a list of friends.
+*/
+export async function getFriends(username) {
+	return await getData("/user/get_friends", { Authorization: `Token ${readCookie("token")}` }, { username });
 }
