@@ -1,56 +1,47 @@
 const HTML = `
-<div class="blur-circle"></div>
+<div class="blur-circle-container">
+	<div class="blur-circle blur-circle-1"></div>
+	<div class="blur-circle blur-circle-2"></div>
+</div>
 `;
 
 const CSS = `
+.blur-circle-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	z-index: -1;
+}
+
 .blur-circle {
 	position: absolute;
-	background-color: hsl(0, 100%, 50%, 0.5);
 	border-radius: 50%;
-	filter: blur(10rem);
-	z-index: -2;
+	filter: blur(100px);
+	opacity: 0.6;
+	transition: transform 1s linear;
+}
+
+.blur-circle-1 {
+	width: 300px;
+	height: 300px;
+	background-color: var(--colora);
+	top: 10%;
+	left: 20%;
+}
+
+.blur-circle-2 {
+	width: 400px;
+	height: 400px;
+	background-color: var(--colora2);
+	top: 50%;
+	left: 70%;
 }
 `;
 
-export function createBlurCircle() {
-	const circle = document.querySelector(".blur-circle");
 
-	const size = 1000;
-	circle.style.width = `${size}px`;
-	circle.style.height = `${size}px`;
-
-	let posX = Math.random() * (window.innerWidth - size);
-	let posY = Math.random() * (window.innerHeight - size);
-	let speedX = 0.9;
-	let speedY = 0.9;
-
-	function updatePosition() {
-		posX += speedX;
-		posY += speedY;
-
-		if (posX <= 0 || posX + size >= window.innerWidth) {
-			speedX *= -1;
-		}
-		if (posY <= 0 || posY + size >= window.innerHeight) {
-			speedY *= -1;
-		}
-
-		circle.style.left = `${posX}px`;
-		circle.style.top = `${posY}px`;
-
-		requestAnimationFrame(updatePosition);
-	}
-
-	function handleResize() {
-		posX = Math.min(posX, window.innerWidth - size);
-		posY = Math.min(posY, window.innerHeight - size);
-	}
-
-	window.addEventListener('resize', handleResize);
-
-	updatePosition();
-}
-
-export function initBlurCicle() {
+export function initBlurCircle() {
 	return [HTML, CSS];
 }

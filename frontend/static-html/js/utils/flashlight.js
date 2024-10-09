@@ -1,4 +1,3 @@
-import { breakPixel } from "./pixelbreaker.js";
 
 const HTML = `
 <div class="flashlight"></div>
@@ -33,7 +32,6 @@ export function flashlightEvent() {
 
 	document.addEventListener("mousedown", (event) => {
 		flashlight.classList.add("active");
-		breakPixel(event.clientX, event.clientY);
 	});
 	document.addEventListener("mouseup", () => {
 		flashlight.classList.remove("active");
