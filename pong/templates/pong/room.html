@@ -25,7 +25,7 @@
 				'/ws/pong/' +
 				ROOM_NAME +
 				'/'
-				)
+				);
 
 			//TODO: wait for socket to connect ?
 			//TODO: error on enemy socket close ?
@@ -37,7 +37,6 @@
 				const ctx = VIEW.getContext("2d", { alpha: false })
 				const buff_ctx = BUFF.getContext("2d", { alpha: false })
 				let keys = new Set();
-				let game_ongoing = false;
 				let bots = [0, 0]
 				window.addEventListener('keydown', function (e) {keys.add(e.code)})
 				window.addEventListener('keyup', function (e) {keys.delete(e.code)})
@@ -47,6 +46,15 @@
 				buff_ctx.textAlign = "center"
 				buff_ctx.textBaseline = "middle"
 				buff_ctx.font = "50px Arial";
+
+				const States = {
+  					SP_Game: Symbol('sp_game'),
+  					MP_Game: Symbol('mp_game'),
+  					Tournament : Symbol('tournament'),
+  					Menu : Symbol('menu'),
+  					Scores : Symbol('scores'),
+				}
+				let page_state = States.Menu;
 
 				function draw_rect(x1, y1, x2, y2) {
 					buff_ctx.fillRect(
@@ -400,7 +408,7 @@
 							}
 						} else if (inner.type == "score") {
 							//console.log("received score update ", inner);
-							game_ongoing = true;
+							page_state = States.MP_Game
 							scores[0] = inner.p1;
 							scores[1] = inner.p2;
 							clearInterval(interval);
@@ -450,7 +458,7 @@
 				draw_main_screen();
 
 				function game_selector(param) {
-					if (game_ongoing)
+					if (page_state != States.Menu)
 						return;
 					let clickx = param.clientX - VIEW.getBoundingClientRect().left;
 					init();
@@ -461,21 +469,21 @@
 							bots = [1, 0];
 						clearInterval(interval);
 						interval = setInterval(local_update, 1000/60)
-						game_ongoing = true
+						page_state = States.SP_Game
 					} else {
 						bots = [0, 0];
 						if (keys.has("Space"))
 							bots = [1, 1];
 						clearInterval(interval);
 						interval = setInterval(local_update, 1000/60)
-						game_ongoing = true
+						page_state = States.SP_Game
 					}
 				}
 				VIEW.onclick = game_selector;
 				
 				document.getElementById("mainmenu").onclick = function() {
 					clearInterval(interval);
-					game_ongoing = false;
+					game_ongoing = true
 					draw_main_screen()}
 //			}
 		</script>

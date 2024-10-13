@@ -11,6 +11,8 @@
 				const GAME_DIMENSIONS = [400, 300]
 				const ctx = VIEW.getContext("2d", { alpha: false })
 				const buff_ctx = BUFF.getContext("2d", { alpha: false })
+				BUFF.width = VIEW_DIMENSIONS[0];
+				BUFF.height = VIEW_DIMENSIONS[1];
 				buff_ctx.fillStyle = "white"
 				buff_ctx.textAlign = "center"
 				buff_ctx.textBaseline = "middle"
@@ -28,10 +30,12 @@
 				let current_round = 0;
 
 				function play_game(p1, p2) {
-					if (Math.random() < 0.5) {
-						return p1;
-					}
-					return p2
+					let winner;
+					if (Math.random() < 0.5)
+						winner = p1;
+					else
+						winner = p2
+					game_end_callback(winner)
 				}
 
 				function next_power_of_2(n) {
@@ -57,15 +61,13 @@
 					}
 				}
 				function start_tournament() {
-					rounds = []
+					rounds = [];
 					//TODO: registration
-					players = ["p1", "p2", "p3"]
-					fill_rounds()
-					//FIXME: launch round 1
-					//CHANGE PLAY GAME TO PROMISE FUNCTION
-					//def p1 and p2 win functions and settimeout ?
+					players = ["p1", "p2", "p3"];
+					fill_rounds();
 					current_game = 0;
 					current_round = 0;
+					next_round();
 				}
 
 				function print_rounds() {
@@ -94,12 +96,10 @@
 					let p2 = rounds[current_round][current_game * 2 + 1]
 					winner = ""
 					console.log("round " + current_round + " game " + current_game + ": " + p1 + " vs " + p2)
-					if (p2)
-						winner = play_game(p1, p2)
+					if (p2 === null)
+						game_end_callback(p1);
 					else
-						winner = p1
-					//end game is called somewhere else
-					game_end_callback(winner)
+						play_game(p1, p2)
 				}
 				function game_end_callback(winner) {
 					rounds[current_round + 1][current_game] = winner
@@ -107,13 +107,25 @@
 					current_game %= rounds[current_round].length / 2
 					if (current_game == 0)
 						current_round += 1
+					next_round()
 				}
+				function render_rounds() {
+					reset()
+					for (let i = 0; i < rounds.length; i++) {
+						round = rounds[i]
+						for (let j = 0; j < round.length; j++) {
+							let content = round[j]
+							if (content === null)
+								content = "ø"
+							buff_ctx.fillText(content, VIEW_DIMENSIONS[0] * (i + 1) / (rounds.length + 1), VIEW_DIMENSIONS[1] * (j + 1) / (round.length + 1));
+						}
+					}
+					ctx.drawImage(BUFF, 0, 0);
+				}
+				start_tournament();
+				print_rounds();
 
-				start_tournament()
-				print_rounds()
-				while (!next_round())
-					print_rounds()
-				print_rounds()
+				render_rounds();
 		</script>
 	</body>
 </html>
