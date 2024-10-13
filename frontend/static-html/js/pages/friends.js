@@ -1,7 +1,7 @@
 // JavaScript
 import { loadPage } from '../spa.js';
 import { initSidebar, sidebarEvent } from '../utils/sidebar.js';
-import { getData } from '../api/utils.js';
+import { eventBackground, initBackground } from '../utils/background.js';
 
 const HTML = `
 <div class="friends-page">
@@ -197,19 +197,23 @@ const CSS = `
 `;
 
 export function friends() {
+  const [backgroundHTML, backgroundCSS] = initBackground();
   const [sidebarHTML, sidebarCSS] = initSidebar();
 
   const loadHTML = `
   ${sidebarHTML}
+  ${backgroundHTML}
   ${HTML}
   `;
   const loadCSS = `
   ${sidebarCSS}
+  ${backgroundCSS}
   ${CSS}
   `;
 
   loadPage(loadHTML, loadCSS);
   sidebarEvent();
+  eventBackground();
 
   const friendsGrid = document.querySelector('.friends-grid');
   const searchInput = document.querySelector('.search-bar input');

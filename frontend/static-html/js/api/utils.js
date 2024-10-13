@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://localhost/api";
 
 function logCurlCommand(url, method, headers, body) {
 	let curl = `curl -X ${method} "${API_BASE_URL}${url}"`;
