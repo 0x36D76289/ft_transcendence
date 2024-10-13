@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+		<canvas id="game" width="600" height="450" style="border:1px solid #CCC;">you're not supposed to see this</canvas>
+		<script>
+				const VIEW = document.getElementById("game");
+				const BUFF = document.createElement("canvas")
+				const VIEW_DIMENSIONS = [VIEW.width, VIEW.height]
+				const GAME_DIMENSIONS = [400, 300]
+				const ctx = VIEW.getContext("2d", { alpha: false })
+				const buff_ctx = BUFF.getContext("2d", { alpha: false })
+				buff_ctx.fillStyle = "white"
+				buff_ctx.textAlign = "center"
+				buff_ctx.textBaseline = "middle"
+				buff_ctx.font = "50px Arial";
+				function reset() {
+					buff_ctx.clearRect(0, 0, VIEW_DIMENSIONS[0], VIEW_DIMENSIONS[1]);
+				}
+				// buff_ctx.fillText(text,x,y)
+				// ctx.drawImage(BUFF, 0, 0);
+
+
+				let rounds = [];
+				let players = [];
+				let current_game = 0;
+				let current_round = 0;
+
+				function play_game(p1, p2) {
+					if (Math.random() < 0.5) {
+						return p1;
+					}
+					return p2
+				}
+
+				function next_power_of_2(n) {
+					ret = 1;
+					while (ret < n)
+						ret <<= 1;
+					return ret;
+				}
+				function fill_rounds(title) {
+					rounds.push([])
+					for (let i = 0; i < next_power_of_2(players.length); i++) {
+						if (i < players.length) {
+							rounds[0][i] = players[i];
+						} else {
+							rounds[0][i] = null;
+						}
+					}
+					while (rounds[rounds.length - 1].length > 1) {
+						rounds.push([])
+						for (let i = 0; i < rounds[rounds.length - 2].length / 2; i++) {
+							rounds[rounds.length - 1].push(null);
+						}
+					}
+				}
+				function start_tournament() {
+					rounds = []
+					//TODO: registration
+					players = ["p1", "p2", "p3"]
+					fill_rounds()
+					//FIXME: launch round 1
+					//CHANGE PLAY GAME TO PROMISE FUNCTION
+					//def p1 and p2 win functions and settimeout ?
+					current_game = 0;
+					current_round = 0;
+				}
+
+				function print_rounds() {
+					let arr;
+					let line = "";
+					for (let i = 0; i < rounds.length; i++) {
+						line = i + ":"
+						arr = rounds[i];
+						for (let j = 0; j < arr.length; j++) {
+							if (arr[j] === null) {
+								line += " empty";
+							} else {
+								line += " " + arr[j]
+							}
+						}
+						console.log(line)
+					}
+					console.log()
+				}
+
+				function next_round() {
+					if (current_round >= rounds.length - 1)
+						return rounds[rounds.length - 1][0]
+					//start game
+					let p1 = rounds[current_round][current_game * 2]
+					let p2 = rounds[current_round][current_game * 2 + 1]
+					winner = ""
+					console.log("round " + current_round + " game " + current_game + ": " + p1 + " vs " + p2)
+					if (p2)
+						winner = play_game(p1, p2)
+					else
+						winner = p1
+					//end game is called somewhere else
+					game_end_callback(winner)
+				}
+				function game_end_callback(winner) {
+					rounds[current_round + 1][current_game] = winner
+					current_game += 1
+					current_game %= rounds[current_round].length / 2
+					if (current_game == 0)
+						current_round += 1
+				}
+
+				start_tournament()
+				print_rounds()
+				while (!next_round())
+					print_rounds()
+				print_rounds()
+		</script>
+	</body>
+</html>

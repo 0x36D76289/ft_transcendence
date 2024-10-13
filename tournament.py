@@ -6,6 +6,15 @@ def play_game(p1: str, p2: str) -> str:
 
 players = ["p" + str(i) for i in range(13)]
 
+
+def nex(n: int) -> int:
+    if (n == 0):
+        return 0
+    ret = 1
+    while (ret < n):
+        ret <<= 1
+    return ret
+
 def next_power_of_2(n: int) -> int:
     """
     Return next power of 2 greater than or equal to n
