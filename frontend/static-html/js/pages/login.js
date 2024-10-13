@@ -24,8 +24,8 @@ const HTML = `
                 </button>
             </div>
         </form>
+        <div class="message"></div>
     </div>
-    <div class="message"></div>
 </div>
 `;
 
@@ -122,64 +122,65 @@ const CSS = `
             }
         }
     }
-}
 
-.message {
-    margin-top: var(--margin-m);
-    color: var(--colora);
-    font-size: 1rem;
-    text-align: center;
+    .message {
+        margin-top: var(--margin-m);
+        color: var(--colora);
+        font-size: 1rem;
+        text-align: center;
+    }
 }
 `;
 
 export function login() {
-	// const [backgroundHTML, backgroundCSS] = initBackground();
+    const [backgroundHTML, backgroundCSS] = initBackground();
 
-	const loadHTML = `
+    const loadHTML = `
+    ${backgroundHTML}
     ${HTML}
     `;
-	const loadCSS = `
+    const loadCSS = `
+    ${backgroundCSS}
     ${CSS}
     `;
 
-	loadPage(loadHTML, loadCSS);
+    loadPage(loadHTML, loadCSS);
+    eventBackground();
 
-	// Initialize background events after the page is loaded
+    document.querySelector(".login-btn").addEventListener("click", async (event) => {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const messageDiv = document.querySelector(".message");
 
-	document.querySelector(".login-btn").addEventListener("click", async (event) => {
-		event.preventDefault();
-		const username = document.getElementById("username").value;
-		const password = document.getElementById("password").value;
-		const messageDiv = document.querySelector(".message");
+        try {
+            const response = await postData("/user/login", {}, { username, password });
+            if (response.token) {
+                createCookie("token", response.token, 7);
+                createCookie("username", response.username, 7);
+                navigate("/");
+            } else {
+                messageDiv.textContent = response.detail || "Login failed";
+            }
+        } catch (error) {
+            messageDiv.textContent = "An error occurred during login";
+        }
+    });
 
-		try {
-			const response = await postData("/user/login", {}, { username, password });
-			if (response.token) {
-				createCookie("token", response.token, 7);
-				createCookie("username", response.username, 7);
-				navigate("/");
-			} else {
-				messageDiv.textContent = response.detail || "Login failed";
-			}
-		} catch (error) {
-			messageDiv.textContent = "An error occurred during login";
-		}
-	});
+    document.querySelector(".register-btn").addEventListener("click", async () => {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const messageDiv = document.querySelector(".message");
 
-	document.querySelector(".register-btn").addEventListener("click", async () => {
-		const username = document.getElementById("username").value;
-		const password = document.getElementById("password").value;
-		const messageDiv = document.querySelector(".message");
-
-		try {
-			const response = await postData("/user/register", {}, { username, password });
-			if (response.username) {
-				messageDiv.textContent = "Registration successful. Please log in.";
-			} else {
-				messageDiv.textContent = response.detail || "Registration failed";
-			}
-		} catch (error) {
-			messageDiv.textContent = "An error occurred during registration";
-		}
-	});
+        try {
+            const response = await postData("/user/register", {}, { username, password });
+            if (response.username) {
+                messageDiv.textContent = "Registration successful. Please log in.";
+            } else {
+                messageDiv.textContent = response.detail || "Registration failed";
+            }
+        } catch (error) {
+            messageDiv.textContent = "An error occurred during registration";
+        }
+    });
 }

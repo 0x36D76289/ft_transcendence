@@ -72,5 +72,5 @@ export function hub() {
 
 	loadPage(loadHTML, loadCSS);
 	sidebarEvent();
-	eventBackground/);
+	eventBackground();
 }

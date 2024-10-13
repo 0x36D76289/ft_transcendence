@@ -1,107 +1,87 @@
-const HTML = `
-<div id="pixelBreaker"></div>
-`;
-
 const CSS = `
-#pixelBreaker {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  pointer-events: none;
+.broken-pixel {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	background-color: white;
+	animation: breakPixel 5s ease-in-out forwards;
+	z-index: -1;
 }
 
-.pixel {
-  position: absolute;
-  background-color: var(--colora);
-  transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+@keyframes breakPixel {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(0.5);
+	}
 }
 `;
 
-class Pixel {
-  constructor(x, y, size) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.el = document.createElement('div');
-    this.el.classList.add('pixel');
-    this.el.style.width = `${size}px`;
-    this.el.style.height = `${size}px`;
-    this.el.style.left = `${x}px`;
-    this.el.style.top = `${y}px`;
-    this.targetX = x;
-    this.targetY = y;
-  }
+const GRID_SIZE = 16; 
+const brokenPixels = new Set();
+const MAX_PIXELS = 500;
+let lastPixelTime = 0;
+const PIXEL_DELAY = 10;
 
-  setPosition(x, y) {
-    this.targetX = x;
-    this.targetY = y;
-    this.el.style.transform = `translate(${x - this.x}px, ${y - this.y}px)`;
-  }
+export function breakPixel(x, y) {
+	const gridX = Math.floor(x / GRID_SIZE) * GRID_SIZE;
+	const gridY = Math.floor(y / GRID_SIZE) * GRID_SIZE;
+	const pixelKey = `${gridX},${gridY}`;
 
-  reset() {
-    this.el.style.transform = 'translate(0, 0)';
-  }
-}
+	if (brokenPixels.has(pixelKey)) {
+		return;
+	}
 
-let pixels = [];
-const pixelSize = 10;
-let isBreaking = false;
+	if (brokenPixels.size >= MAX_PIXELS) {
+		const firstPixelKey = brokenPixels.values().next().value;
+		brokenPixels.delete(firstPixelKey);
+		document.querySelector(`[data-key="${firstPixelKey}"]`)?.remove();
+	}
 
-function createPixels() {
-  const container = document.getElementById('pixelBreaker');
-  container.innerHTML = '';
-  pixels = [];
+	brokenPixels.add(pixelKey);
 
-  const cols = Math.ceil(window.innerWidth / pixelSize);
-  const rows = Math.ceil(window.innerHeight / pixelSize);
+	const pixel = document.createElement('div');
+	pixel.classList.add('broken-pixel');
+	pixel.style.top = `${gridY}px`;
+	pixel.style.left = `${gridX}px`;
+	pixel.setAttribute('data-key', pixelKey);
 
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      const pixel = new Pixel(x * pixelSize, y * pixelSize, pixelSize);
-      container.appendChild(pixel.el);
-      pixels.push(pixel);
-    }
-  }
-}
+	document.body.appendChild(pixel);
 
-function breakPixels(centerX, centerY) {
-  if (isBreaking) return;
-  isBreaking = true;
-
-  pixels.forEach(pixel => {
-    const dx = pixel.x - centerX;
-    const dy = pixel.y - centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const maxDistance = Math.max(window.innerWidth, window.innerHeight);
-    const factor = Math.min(1, distance / maxDistance);
-
-    const angle = Math.atan2(dy, dx);
-    const targetDistance = factor * maxDistance * 0.5;
-    const targetX = centerX + Math.cos(angle) * targetDistance;
-    const targetY = centerY + Math.sin(angle) * targetDistance;
-
-    pixel.setPosition(targetX, targetY);
-  });
-
-  setTimeout(() => {
-    pixels.forEach(pixel => pixel.reset());
-    isBreaking = false;
-  }, 1000);
-}
-
-export function initPixelBreaker() {
-  return [HTML, CSS];
+	setTimeout(() => {
+		pixel.remove();
+		brokenPixels.delete(pixelKey);
+	}, 6000);
 }
 
 export function pixelBreakerEvent() {
-  createPixels();
+	let isMouseDown = false;
 
-  window.addEventListener('resize', createPixels);
+	document.addEventListener("mousedown", (event) => {
+		isMouseDown = true;
+		breakPixel(event.clientX, event.clientY);
+	});
 
-  document.addEventListener('click', (e) => {
-    breakPixels(e.clientX, e.clientY);
-  });
+	document.addEventListener("mousemove", (event) => {
+		// Ajouter un délai pour limiter la fréquence des pixels
+		if (isMouseDown) {
+			const currentTime = Date.now();
+			if (currentTime - lastPixelTime > PIXEL_DELAY) {
+				breakPixel(event.clientX, event.clientY);
+				lastPixelTime = currentTime;
+			}
+		}
+	});
+
+	document.addEventListener("mouseup", () => {
+		isMouseDown = false;
+	});
+}
+
+export function initPixelBreaker() {
+	return [``, CSS];
 }
