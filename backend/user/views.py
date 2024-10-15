@@ -11,6 +11,9 @@ from game.models import Game
 import requests
 from os import getenv
 from ft_transcendence.utils import clean_serializer_errors
+from django.core.files import File
+from urllib.request import urlopen
+from tempfile import NamedTemporaryFile
 
 # USER
 @api_view(['POST'])
@@ -86,26 +89,23 @@ def get_42_login(request):
 		'https://api.intra.42.fr/v2/me',
 		headers={'Authorization': f"Bearer {json['access_token']}"}
 	)
-	json = request_info_user.json()
-	print(f"response body = {json}", file=stderr)
-	login_42 = json.get('login')
-	if not login_42:
+	if request_info_user.status_code != 200:
 		return Response(
-			{'detail': 'couldnt get 42 login'},
+			{'detail': 'couldnt get 42 user informations'},
 			status=status.HTTP_500_INTERNAL_SERVER_ERROR
 		)
-	return login_42
+	return request_info_user.json()
 
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([])
 def login_with_42(request):
-	login_42 = get_42_login(request)
-	if type(login_42) == Response:
-		return login_42
+	json = get_42_login(request)
+	if type(json) == Response:
+		return json
 
 	try:
-		user = User.objects.get(login_42=login_42)
+		user = User.objects.get(login_42=json.get('login'))
 	except:
 		user = None
 
@@ -121,13 +121,17 @@ def login_with_42(request):
 		})
 	else:
 		user = User.objects.create()
-		if User.objects.filter(username=login_42).exists():
-			user.username = f"42_{login_42}"
+		if User.objects.filter(username=json.get('login')).exists():
+			user.username = f"42_{json.get('login')}"
 		else:
-			user.username = login_42
-		user.login_42 = login_42
+			user.username = json.get('login')
+		user.login_42 = json.get('login')
 		user.is_online = True
 		user.last_login = now()
+		img_temp = NamedTemporaryFile(delete=True)
+		img_temp.write(urlopen(json.get('image').get('link')).read())
+		img_temp.flush()
+		user.pfp.save(f"{user.username}.jpg", File(img_temp), save=True)
 		user.save()
 		token, created = Token.objects.get_or_create(user=user)
 		return Response({
