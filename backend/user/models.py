@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
+import pathlib
+
+def pfp_upload_name(instance, filename):
+	filename = pathlib.Path(filename)
+	return f"pfp/{instance.id}{filename.suffix}"
 
 class User(AbstractBaseUser):
 	username = models.CharField(max_length=20, unique=True)
 	bio = models.CharField(max_length=100, blank=True)
-	pfp = models.ImageField(default='pfp/default.png', upload_to='pfp')
+	pfp = models.ImageField(default='pfp/default.png', upload_to=pfp_upload_name)
 	date_joined = models.DateTimeField(auto_now_add=True)
 	is_online = models.BooleanField(default=False)
 	last_login = models.DateTimeField(null=True)
