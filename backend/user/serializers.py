@@ -24,6 +24,11 @@ class UserSerializer(serializers.ModelSerializer):
 		instance.pfp = validated_data.get('pfp', instance.pfp)
 		instance.save()
 		return instance
+	
+	def validate_username(self, username):
+		if username.startswith('guest_') or username.startswith('42_'):
+			raise serializers.ValidationError('username can not start with guest_ or 42_.')
+		return username
 
 class UserFriendSerializer(serializers.ModelSerializer):
 	uid1 = UserSerializer()
