@@ -4,7 +4,7 @@ PROJECT_NAME = ft_transcendence
 all: build up
 
 up:
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up -d --build
 
 build:
 	$(DOCKER_COMPOSE) build

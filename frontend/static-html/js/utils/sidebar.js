@@ -4,195 +4,174 @@ import { navigate } from '../spa.js';
 
 const HTML = `
 <div class="sidebar" id="sidebar">
-	<div class="user-profile">
-		<div class="user-pp-container">
-			<img class="user-pp" src="" alt="">
-		</div>
-		<div class="user-info">
-			<p class="user-username"></p>
-			<p class="user-bio"></p>
-			<p class="user-creation-date"></p>
-			<p class="user-status"></p>
-		</div>
-	</div>
-
-	<div class="nav-buttons">
-		<div class="nav-button" data-nav="hub">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:home.svg" alt="Hub Icon">
-			<span class="nav-text">Hub</span>
-		</div>
-		<div class="nav-button" data-nav="games">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:gamepad-variant.svg" alt="Games Icon">
-			<span class="nav-text">Games</span>
-		</div>
-		<div class="nav-button" data-nav="friends">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:account-group.svg" alt="Friends Icon">
-			<span class="nav-text">Friends</span>
-		</div>
-		<div class="nav-button" data-nav="tournaments">
-			<img class="nav-icon" src="https://api.iconify.design/mdi:trophy.svg" alt="Tournaments Icon">
-			<span class="nav-text">Tournaments</span>
-		</div>
-	</div>
-
-	<div class="action-buttons">
-		<button class="settings-btn">
-			<img src="https://api.iconify.design/mdi:cog.svg" alt="Settings Icon" width="24" height="24">
-		</button>
-		<button class="logout-btn">
-			<img src="https://api.iconify.design/mdi:logout.svg" alt="Logout Icon" width="24" height="24">
-		</button>
-	</div>
+    <div class="sidebar-header">
+        <img src="logo.png" alt="Logo" class="logo">
+    </div>
+    <nav class="nav-buttons">
+        <a href="#" class="nav-button" data-nav="hub">
+            <svg class="nav-icon"><use xlink:href="#icon-home"></use></svg>
+            <span class="nav-text">Hub</span>
+        </a>
+        <a href="#" class="nav-button" data-nav="games">
+            <svg class="nav-icon"><use xlink:href="#icon-games"></use></svg>
+            <span class="nav-text">Games</span>
+        </a>
+        <a href="#" class="nav-button" data-nav="friends">
+            <svg class="nav-icon"><use xlink:href="#icon-friends"></use></svg>
+            <span class="nav-text">Friends</span>
+        </a>
+        <a href="#" class="nav-button" data-nav="tournaments">
+            <svg class="nav-icon"><use xlink:href="#icon-tournaments"></use></svg>
+            <span class="nav-text">Tournaments</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="action-button settings-btn">
+            <svg class="action-icon"><use xlink:href="#icon-settings"></use></svg>
+        </button>
+        <button class="action-button logout-btn">
+            <svg class="action-icon"><use xlink:href="#icon-logout"></use></svg>
+        </button>
+        <div class="user-profile">
+            <img class="user-avatar" src="" alt="User Avatar">
+            <div class="user-info">
+                <p class="user-name"></p>
+                <p class="user-email"></p>
+            </div>
+        </div>
+    </div>
 </div>
 `;
 
 const CSS = `
 .sidebar {
-	left: 0;
-	top: 0;
-	bottom: 0;
-	width: var(--sidebar-width, 256px);
-	background-color: rgba(0, 0, 0, 0.5);
-	padding: 16px;
-	border-radius: 24px;
-	position: fixed;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
-	transition: transform 0.3s ease-in-out;
-	z-index: 1000;
-	-webkit-backdrop-filter: blur(10px);
-	backdrop-filter: blur(10px);
-	transform: translateX(-100%);
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-width, 256px);
+    background-color: var(--gray10);
+    color: var(--gray90);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar:hover {
-	transform: translateX(0);
+.sidebar-header {
+    padding: var(--padding-m);
+    text-align: center;
 }
 
-/* User Profile */
-.user-profile {
-	display: flex;
-	align-items: center;
-	border: 2px solid #4d4d4d;
-	padding: 8px;
-	border-radius: 16px;
-	transition: all 0.3s ease;
-	user-select: none;
-	background: linear-gradient(145deg, #333333, #1a1a1a);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.logo {
+    max-width: 100px;
+    height: auto;
 }
 
-.user-pp {
-	width: 60px;
-	height: 60px;
-	border-radius: 50%;
-	object-fit: cover;
-}
-
-.user-info {
-	margin-left: 12px;
-}
-
-.user-username {
-	margin-bottom: 4px;
-	color: #cccccc;
-}
-
-.user-bio {
-	margin-bottom: 4px;
-	color: #999999;
-}
-
-.user-creation-date {
-	font-size: 12px;
-	color: #999999;
-}
-
-.user-status {
-	font-size: 12px;
-	color: #999999;
-}
-
-/* Navigation Buttons */
 .nav-buttons {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
+    flex-grow: 1;
+    padding: var(--padding-s) 0;
 }
 
 .nav-button {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	padding: 12px;
-	margin-bottom: 16px;
-	border: 2px solid #1a1a1a;
-	border-radius: 16px;
-	user-select: none;
-	background-color: #333333;
-	color: #e6e6e6;
-	transition: all 0.2s ease;
-	box-shadow: 0 4px 0 0 #1a1a1a;
-	text-align: left;
+    display: flex;
+    align-items: center;
+    padding: var(--padding-s) var(--padding-m);
+    color: var(--gray80);
+    transition: background-color 0.2s ease;
+    text-decoration: none;
 }
 
-.nav-button img {
-	width: 24px;
-	height: 24px;
-	filter: invert(100%);
-	margin-right: 12px;
+.nav-button:hover,
+.nav-button:focus {
+    background-color: var(--gray20);
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: var(--margin-s);
+    fill: currentColor;
 }
 
 .nav-text {
-	font-size: 18px;
-	flex-grow: 1;
+    font: var(--pui);
 }
 
-.nav-button:active {
-	box-shadow: 0 0 0 0 #1a1a1a;
-	transform: translateY(4px);
+.sidebar-footer {
+    padding: var(--padding-m);
+    border-top: 1px solid var(--gray30);
 }
 
-/* Action Buttons */
-.action-buttons {
-	display: flex;
-	justify-content: center;
+.action-button {
+    background: none;
+    border: none;
+    color: var(--gray80);
+    cursor: pointer;
+    padding: var(--padding-xs);
+    margin-right: var(--margin-s);
 }
 
-.action-buttons button {
-	background: none;
-	border: none;
-	cursor: pointer;
-	padding: 8px;
-	border-radius: 50%;
-	transition: all 0.3s ease;
+.action-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
 }
 
-.action-buttons button img {
-	width: 24px;
-	height: 24px;
-	filter: invert(100%);
+.user-profile {
+    display: flex;
+    align-items: center;
+    margin-top: var(--margin-m);
 }
 
-.action-buttons button:hover {
-	background-color: #333333;
-	transform: scale(1.1);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: var(--margin-s);
 }
 
-.action-buttons button:active {
-	background-color: #4d4d4d;
-	transform: scale(0.95);
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.user-info {
+    font: var(--smallui);
+}
+
+.user-name {
+    font-weight: bold;
+}
+
+.user-email {
+    color: var(--gray60);
 }
 
 @media (max-width: 768px) {
-	.sidebar {
-		width: 100%;
-		border-radius: 0;
-	}
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle {
+        display: block;
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        z-index: 1001;
+        background: var(--gray20);
+        border: none;
+        color: var(--gray90);
+        padding: var(--padding-xs);
+        border-radius: 4px;
+    }
+}
+
+@media (min-width: 769px) {
+    .sidebar-toggle {
+        display: none;
+    }
 }
 `;
 
@@ -265,8 +244,16 @@ export async function sidebarEvent() {
 				userStatus.textContent = userJSON.is_online ? 'Online' : `Last login: ${new Date(userJSON.last_login).toLocaleString()}`;
 			}
 		}
-
 	}
+
+	const sidebarToggle = document.createElement('button');
+	sidebarToggle.classList.add('sidebar-toggle');
+	sidebarToggle.innerHTML = '<svg class="nav-icon"><use xlink:href="#icon-menu"></use></svg>';
+	document.body.appendChild(sidebarToggle);
+
+	sidebarToggle.addEventListener('click', () => {
+		sidebar.classList.toggle('active');
+	});
 }
 
 export function initSidebar() {
