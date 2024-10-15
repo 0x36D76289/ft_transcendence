@@ -8,6 +8,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q, F
 from game.models import Game
+import requests
+from os import getenv
+from ft_transcendence.utils import clean_serializer_errors
 
 # USER
 @api_view(['POST'])
@@ -41,7 +44,7 @@ def register(request):
 	else:
 		serializer = UserSerializer(data=request.data)
 	if not serializer.is_valid():
-		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'detail': clean_serializer_errors(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save(password=request.data.get('password'))
 	return Response({'detail': 'Account created', 'username': serializer.data['username']})
 
@@ -56,6 +59,82 @@ def logout(request):
 	user.is_online = False
 	user.save()
 	return(Response({'detail': 'Logged out!'}))
+
+from sys import stderr
+
+def get_42_login(request):
+	if not request.query_params.get('code'):
+		return Response(
+			{'detail': 'query param \'code\' is missing'},
+			status=status.HTTP_400_BAD_REQUEST
+		)
+	data = {
+		'code': request.query_params['code'],
+		'client_id': 'u-s4t2ud-2e658ba79c415d6104fcd1079864d68a3da2c86f054d28f7c5205c8d4abc1080',
+		'client_secret': getenv('API_SECRET_42'),
+		'grant_type': 'authorization_code',
+		'redirect_uri': 'https://localhost:8443/api/user/42_login'
+	}
+	request_token = requests.post('https://api.intra.42.fr/oauth/token', data=data)
+	json = request_token.json()
+	if not json.get('access_token'):
+		return Response(
+			{'detail': 'couldnt get access token'},
+			status=status.HTTP_500_INTERNAL_SERVER_ERROR
+		)
+	request_info_user = requests.get(
+		'https://api.intra.42.fr/v2/me',
+		headers={'Authorization': f"Bearer {json['access_token']}"}
+	)
+	json = request_info_user.json()
+	print(f"response body = {json}", file=stderr)
+	login_42 = json.get('login')
+	if not login_42:
+		return Response(
+			{'detail': 'couldnt get 42 login'},
+			status=status.HTTP_500_INTERNAL_SERVER_ERROR
+		)
+	return login_42
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def login_with_42(request):
+	login_42 = get_42_login(request)
+	if type(login_42) == Response:
+		return login_42
+
+	try:
+		user = User.objects.get(login_42=login_42)
+	except:
+		user = None
+
+	if user:
+		token, created = Token.objects.get_or_create(user=user)
+		user.is_online = True
+		user.last_login = now()
+		user.save()
+		return Response({
+			'token': token.key,
+			'username': user.username,
+			'detail': 'Successfuly logged in!'
+		})
+	else:
+		user = User.objects.create()
+		if User.objects.filter(username=login_42).exists():
+			user.username = f"42_{login_42}"
+		else:
+			user.username = login_42
+		user.login_42 = login_42
+		user.is_online = True
+		user.last_login = now()
+		user.save()
+		token, created = Token.objects.get_or_create(user=user)
+		return Response({
+			'token': token.key,
+			'username': user.username,
+			'detail': 'Successfuly created account and logged in!'
+		})
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -76,7 +155,7 @@ def delete_user(request):
 def update_user(request):
 	serializer = UserSerializer(request.user, data=request.data, partial=True)
 	if not serializer.is_valid():
-		return Response({'detail': f"Errors in field(s): {[k for k in serializer.errors.keys()]}"}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'detail': clean_serializer_errors(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save()
 	return Response({'detail': 'Successfuly updated user'})
 

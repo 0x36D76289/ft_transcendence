@@ -5,3 +5,4 @@ Pillow
 channels
 channels_redis
 daphne
+requests
