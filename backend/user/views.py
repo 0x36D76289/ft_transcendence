@@ -27,7 +27,6 @@ def login(request):
 	if not user or not user.check_password(request.data.get('password')):
 		return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
 	token, created = Token.objects.get_or_create(user=user)
-	user.is_online = True
 	user.last_login = now()
 	user.save()
 	return Response({'token': token.key, 'username': user.username, 'detail': 'Successfuly logged in!'})
@@ -59,7 +58,6 @@ def logout(request):
 	if user.is_guest:
 		user.delete()
 		return(Response({'detail': 'Logged out and removed guest account!'}))
-	user.is_online = False
 	user.save()
 	return(Response({'detail': 'Logged out!'}))
 
@@ -111,7 +109,6 @@ def login_with_42(request):
 
 	if user:
 		token, created = Token.objects.get_or_create(user=user)
-		user.is_online = True
 		user.last_login = now()
 		user.save()
 		return Response({
@@ -126,7 +123,6 @@ def login_with_42(request):
 		else:
 			user.username = json.get('login')
 		user.login_42 = json.get('login')
-		user.is_online = True
 		user.last_login = now()
 		img_temp = NamedTemporaryFile(delete=True)
 		img_temp.write(urlopen(json.get('image').get('link')).read())

@@ -112,6 +112,7 @@ All API requests are either **GET** or **POST**. POST requests should use the ap
 | `/user/remove_friend_request` | **POST**   | Remove a friend request, decline a request, or unfriend                  | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
 | `/user/get_friendship`        | **GET**   | Get friendship status with a user (FRIEND, REQ_SENT, REQ_RECEIVED, NONE) | Authorization in header, `username` in body               | `detail` in body                                                   |
 | `/user/get_friends`        | **GET**   | Get friends of a user | Authorization in header, `username` in body               | list of friends,`detail` if failed |
+| `/ws/user/online_status` | **WEBSOCKET** | Set is_online status to True when user is connected to this websocket | token=`token` in query string | |
 
 ### Game Endpoints
 
@@ -127,7 +128,7 @@ All API requests are either **GET** or **POST**. POST requests should use the ap
 | `/chat/<int:convo_id>`      | **GET**    | Get conversation of the corresponding id | Authorization in header                                | `id`, `initiator`, `receiver` and `message_set` (list of message). `detail` if error |
 | `/chat`            | **GET**   | Get all the convesations of the user | Authorization in header | list of {`id`, `initiator`, `receiver` and `last_message`}. `detail` if error |
 | `/chat/start`            | **POST**   | Start and/or get conversation with another user     | Authorization in header, `username` in body | `id`, `initiator`, `receiver` and `message_set` (list of message). `detail` if error |
-| `/ws/chat/<int:convo_id>`            | **WEBSOCKET**   | Open a websocket to the conversation id, the user must be in the conversation to join. Messages are sent in json form like this: {"message": "this is a message"} | Authorization in header | |
+| `/ws/chat/<int:convo_id>`            | **WEBSOCKET**   | Open a websocket to the conversation id, the user must be in the conversation to join. Messages are sent in json form like this: {"message": "this is a message"} | token=`token` in query string | |
 | `/chat/block`           | **POST**   | Block another user                 | Authorization in header, `username` in body            | `detail` in body                                                   |
 | `/chat/unblock`         | **POST**   | Unblock another user               | Authorization in header, `username` in body            | `detail` in body                                                   |
 | `/chat/is_user_blocked` | **GET**    | Check if a user is blocked         | Authorization in header                                | `detail` in body                                                   |
