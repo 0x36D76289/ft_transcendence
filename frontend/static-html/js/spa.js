@@ -16,13 +16,11 @@ export function removeRoute(path) {
 }
 
 function injectContent(htmlContent, cssContent = "") {
-  const [pixelbreakerHTML, pixelbreakerCSS] = initPixelBreaker();
   const [flashlightHTML, flashlightCSS] = initflashlight();
   const [blurCircleHTML, blurCircleCSS] = initBlurCircle();
   
   document.body.innerHTML = `
   ${htmlContent}
-  ${pixelbreakerHTML}
   ${flashlightHTML}
   ${blurCircleHTML}
   <audio id="clickSound">
@@ -40,7 +38,6 @@ function injectContent(htmlContent, cssContent = "") {
   const styleElement = document.createElement("style");
   styleElement.textContent = `
   ${cssContent}
-  ${pixelbreakerCSS}
   ${flashlightCSS}
   ${blurCircleCSS}
   `;

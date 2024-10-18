@@ -1,4 +1,4 @@
-import { loadPage } from '../spa.js';
+import { loadPage, navigate } from '../spa.js';
 import { initSidebar, sidebarEvent } from '../utils/sidebar.js';
 import { eventBackground, initBackground } from '../utils/background.js';
 
@@ -73,4 +73,8 @@ export function hub() {
 	loadPage(loadHTML, loadCSS);
 	sidebarEvent();
 	eventBackground();
+
+	document.querySelector(".play-btn").addEventListener("click", async (event) => {
+		navigate("/pong");
+	});
 }
