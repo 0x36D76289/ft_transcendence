@@ -86,7 +86,7 @@
 					ball_size: 3,
 					ball_speed: 5,
 					ball_y_speed_factor: 3,
-					win_score: 10,
+					win_score: 3,
 					countdown_length: 180,
 				}
 				let interval = undefined;
@@ -124,14 +124,6 @@
 						current_state.ball_speed_x *= -1;
 					}
 					last_processed_state = Object.assign({}, current_state);
-				}
-
-				function bound(pos, size, min, max) {
-					if (pos - size < min)
-						return min + size
-					if (pos + size > max)
-						return max - size
-					return pos
 				}
 
 				function bound(pos, size, min, max) {
