@@ -39,6 +39,7 @@ const States = {
 	Tournament: Symbol('tournament'),
 	Menu: Symbol('menu'),
 	Scores: Symbol('scores'),
+	Name_Entry: Symbol('name_entry'),
 }
 let page_state = States.Menu;
 
@@ -50,21 +51,27 @@ function initPong() {
 	ctx = VIEW.getContext("2d", { alpha: false });
 	buff_ctx = BUFF.getContext("2d", { alpha: false });
 
-	window.addEventListener('keydown', function (e) { keys.add(e.code) })
-	window.addEventListener('keyup', function (e) { keys.delete(e.code) })
+	//TODO: save event listeners so you can close them later
+	window.addEventListener('keydown', function (e) { keys.add(e.code); name_enter(e); })
+	window.addEventListener('keyup', function (e) { keys.delete(e.code); })
 	BUFF.width = VIEW_DIMENSIONS[0];
 	BUFF.height = VIEW_DIMENSIONS[1];
-	buff_ctx.fillStyle = "white"
-	buff_ctx.textAlign = "center"
-	buff_ctx.textBaseline = "middle"
-	buff_ctx.font = "50px Arial";
+	buff_ctx.fillStyle = "white";
+	buff_ctx.textAlign = "center";
+	buff_ctx.textBaseline = "middle";
+
+	function min(a, b) {
+		return a < b ? a : b;
+	}
+
+	buff_ctx.font = (min(VIEW_DIMENSIONS[0] / 12, VIEW_DIMENSIONS[1] / 9) | 0) + "px Arial";
 
 	VIEW.onclick = canvas_click;
 
-	document.getElementById("mainmenu").onclick = function () {
-		clearInterval(interval);
-		main_menu()
-	}	
+	//document.getElementById("mainmenu").onclick = function () {
+	//	clearInterval(interval);
+	//	main_menu()
+	//}	
 }
 
 function draw_rect(x1, y1, x2, y2) {
@@ -522,8 +529,69 @@ let players = []
 let current_game = 0;
 let current_round = 0;
 
+function name_enter(key_event) {
+	if (key_event.code == "Backquote") {
+		page_state = States.Name_Entry;
+		render_name();
+	}
+	if (page_state != States.Name_Entry)
+		return;
+	function isValid(str) {
+		return str.length == 1 &&
+			((str >= 'a' && str <= 'z') || 
+			 (str >= 'A' && str <= 'Z') ||
+			 (str >= "0" && str <= "9") ||
+			 str == "_" ||
+			 str == "-"
+			);
+	}
+	console.log(key_event);
+	//select index
+	let index = players.length - 1;
+	if (index == -1) index = 0;
+	//grab string/create
+	let string = players[index];
+	if (string === undefined) string = "";
+	//modify
+	if (isValid(key_event.key))
+		string += key_event.key;
+	if (key_event.key == "Backspace")
+		string = string.substring(0, string.length - 1);
+	//save
+	players[index] = string;
+	//enter handling
+	if (key_event.key == "Enter") {
+		if (string == "") {
+			if (players.length > 2) {
+				players.pop(players.length - 1);
+				start_tournament();
+				return;
+			}
+		} else {
+			players[players.length] = "";
+		}
+	}
+	//render
+	render_name();
+}
+
+function render_name() {
+	let index = players.length - 1;
+	if (index == -1) index = 0;
+	let string = players[index];
+	if (string === undefined) string = "";
+	reset();
+	if (string == "") {
+		buff_ctx.fillText("Press enter to begin", VIEW_DIMENSIONS[0] / 2, VIEW_DIMENSIONS[1] / 3)
+		buff_ctx.fillText("or type a name", VIEW_DIMENSIONS[0] / 2, VIEW_DIMENSIONS[1] * 2 / 3)
+	} else {
+		buff_ctx.fillText(string, VIEW_DIMENSIONS[0] / 2, VIEW_DIMENSIONS[1] / 2);
+	}
+	ctx.drawImage(BUFF, 0, 0);
+}
+
 function next_power_of_2(n) {
-	ret = 1;
+	let ret = 1;
 	while (ret < n)
 		ret <<= 1;
 	return ret;
@@ -547,14 +615,12 @@ function fill_rounds(title) {
 }
 
 function start_tournament() {
-	page_state = States.Tournament;
 	rounds = [];
-	//TODO: registration
-	players = ["p1", "p2", "p3"];
 	fill_rounds();
 	current_game = 0;
 	current_round = 0;
-	next_round();
+	page_state = States.Scores;
+	render_rounds();
 }
 
 function play_game(p1, p2) {
@@ -580,7 +646,6 @@ function next_round() {
 	//start game
 	let p1 = rounds[current_round][current_game * 2]
 	let p2 = rounds[current_round][current_game * 2 + 1]
-	winner = ""
 	console.log("round " + current_round + " game " + current_game + ": " + p1 + " vs " + p2)
 	if (p2 === null) {
 		page_state = States.Tournament;
@@ -615,6 +680,7 @@ function game_end_callback(winner) {
 
 function render_rounds() {
 	reset()
+	let round;
 	for (let i = 0; i < rounds.length; i++) {
 		round = rounds[i]
 		for (let j = 0; j < round.length; j++) {
