@@ -11,15 +11,35 @@ const CSS = `
 	z-index: 5;
 `;
 
+// @ts-check
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 const ROOM_NAME = "test";
 const sock = new WebSocket(
-	"ws://" +
+	"wss://" +
 	window.location.host +
-	'/ws/pong/' +
+	'/api/ws/pong/' +
 	ROOM_NAME +
-	'/'
+	'/' +
+	"?token=" +
+	getCookie("token")
 );
 
+console.log(document.cookie.split(';')[0])
 //TODO: wait for socket to connect ?
 //TODO: error on enemy socket close ?
 let VIEW;
