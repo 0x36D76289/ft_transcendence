@@ -12,6 +12,8 @@ class User(AbstractBaseUser):
 	pfp = models.ImageField(default='pfp/default.png', upload_to=pfp_upload_name)
 	date_joined = models.DateTimeField(auto_now_add=True)
 	is_online = models.BooleanField(default=False)
+	is_in_game = models.BooleanField(default=False)
+	is_in_tournament = models.BooleanField(default=False)
 	last_login = models.DateTimeField(null=True)
 	is_guest = models.BooleanField(default=False)
 	login_42 = models.CharField(max_length=20, null=True)

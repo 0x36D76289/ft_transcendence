@@ -11,4 +11,6 @@ class OnlineStatusConsumer(WebsocketConsumer):
 	def disconnect(self, code):
 		user = self.scope['user']
 		user.is_online = False
+		user.is_in_game = False
+		user.is_in_tournament = False
 		user.save()
