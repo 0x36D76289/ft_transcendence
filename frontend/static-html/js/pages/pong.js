@@ -1,14 +1,39 @@
 import { loadPage } from "../spa.js";
-import { initBackground } from "../utils/background.js";
+import { initBackground, backgroundEvent } from "../utils/background.js";
 
 const HTML = `
-<canvas class="games" id="game" width="600" height="450">you're not supposed to see this</canvas>
+<canvas class="games" id="game">you're not supposed to see this</canvas>
+<button id="upButton" style="display: none;">Up</button>
+<button id="downButton" style="display: none;">Down</button>
 `;
 
 const CSS = `
-#games {
+#game {
 	border: 1px solid #CCC;
 	z-index: 5;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+	height: 100%;
+}
+#upButton, #downButton {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	z-index: 10;
+}
+#upButton {
+	bottom: 100px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+#downButton {
+	bottom: 30px;
+	left: 50%;
+	transform: translateX(-50%);
+}
 `;
 
 // @ts-check
@@ -66,7 +91,7 @@ let page_state = States.Menu;
 function initPong() {
 	VIEW = document.getElementById("game");
 	BUFF = document.createElement("canvas");
-	VIEW_DIMENSIONS = [VIEW.width, VIEW.height];
+	VIEW_DIMENSIONS = [window.innerWidth, window.innerHeight];
 	GAME_DIMENSIONS = [400, 300];
 	ctx = VIEW.getContext("2d", { alpha: false });
 	buff_ctx = BUFF.getContext("2d", { alpha: false });
@@ -88,10 +113,43 @@ function initPong() {
 
 	VIEW.onclick = canvas_click;
 
+<<<<<<< HEAD
 	//document.getElementById("mainmenu").onclick = function () {
 	//	clearInterval(interval);
 	//	main_menu()
 	//}	
+=======
+	document.getElementById("mainmenu").onclick = function () {
+		clearInterval(interval);
+		main_menu()
+	}
+
+	// Adjust canvas size on window resize
+	window.addEventListener('resize', function () {
+		VIEW_DIMENSIONS = [window.innerWidth, window.innerHeight];
+		BUFF.width = VIEW_DIMENSIONS[0];
+		BUFF.height = VIEW_DIMENSIONS[1];
+	});
+
+	// Show buttons if on mobile or if screen width is less than 768px
+	if (/Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768) {
+		document.getElementById("upButton").style.display = "block";
+		document.getElementById("downButton").style.display = "block";
+
+		document.getElementById("upButton").addEventListener('touchstart', function () {
+			keys.add("ArrowUp");
+		});
+		document.getElementById("upButton").addEventListener('touchend', function () {
+			keys.delete("ArrowUp");
+		});
+		document.getElementById("downButton").addEventListener('touchstart', function () {
+			keys.add("ArrowDown");
+		});
+		document.getElementById("downButton").addEventListener('touchend', function () {
+			keys.delete("ArrowDown");
+		});
+	}
+>>>>>>> 641a094 (refactor: clean up imports and improve background event handling)
 }
 
 function draw_rect(x1, y1, x2, y2) {
@@ -115,7 +173,6 @@ function reset() {
 	buff_ctx.clearRect(0, 0, VIEW_DIMENSIONS[0], VIEW_DIMENSIONS[1]);
 }
 
-
 const GAME_SETTINGS = {
 	paddle_width: 5,
 	paddle_height: 20,
@@ -126,6 +183,7 @@ const GAME_SETTINGS = {
 	win_score: 10,
 	countdown_length: 180,
 }
+
 let interval = undefined;
 let player_num = 0;
 let inputs = []
@@ -144,9 +202,8 @@ let current_state = {
 };
 let last_processed_state = Object.assign({}, current_state)
 
-
 function init() {
-	//set values for current_state
+	// set values for current_state
 	inputs = [[0, 0]]
 	current_frame = 0
 	current_state.frame = current_frame
@@ -725,6 +782,7 @@ export function pong() {
 	${backgroundCSS}
 	`;
 	loadPage(loadHTML, loadCSS);
+	backgroundEvent();
 
 	initPong();
 	main_menu();

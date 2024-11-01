@@ -55,7 +55,7 @@ export function initBackground() {
 	return [HTML, CSS];
 }
 
-export function eventBackground() {
+export function backgroundEvent() {
 	const canvas = document.getElementById('backgroundCanvas');
 	const ctx = canvas.getContext('2d');
 	canvas.width = window.innerWidth;

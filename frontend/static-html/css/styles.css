@@ -30,7 +30,6 @@
 	--padding-xxl: 2.5rem;
 
 	/* Colors */
-	--dark: hsl(0, 0%, 0%);
 	--gray10: hsl(0, 0%, 10%);
 	--gray20: hsl(0, 0%, 20%);
 	--gray30: hsl(0, 0%, 30%);
@@ -100,7 +99,7 @@ body {
 	font-size: 1rem;
 	line-height: 1.6;
 	color: var(--text-light);
-	background-color: var(--bg-light);
+	background-color: black;
 	transition: background-color var(--transition), color var(--transition);
 }
 
