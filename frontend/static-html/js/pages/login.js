@@ -1,7 +1,7 @@
 import { loadPage, navigate } from "../spa.js";
 import { postData } from "../api/utils.js";
 import { createCookie } from "../cookie.js";
-import { initBackground, eventBackground } from "../utils/background.js";
+import { initBackground, backgroundEvent } from "../utils/background.js";
 
 const HTML = `
 <div class="main-content">
@@ -134,19 +134,14 @@ const CSS = `
 `;
 
 export function login() {
-	const [backgroundHTML, backgroundCSS] = initBackground();
-
 	const loadHTML = `
-	${backgroundHTML}
 	${HTML}
 	`;
 	const loadCSS = `
-	${backgroundCSS}
 	${CSS}
 	`;
 
 	loadPage(loadHTML, loadCSS);
-	eventBackground();
 
 	document.querySelector(".login-btn").addEventListener("click", async (event) => {
 		event.preventDefault();

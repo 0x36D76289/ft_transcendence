@@ -1,4 +1,4 @@
-import { start, addRoute, navigate } from "./spa.js";
+import { start, addRoute } from "./spa.js";
 import { friends } from "./pages/friends.js";
 import { login } from "./pages/login.js";
 import { hub } from "./pages/hub.js";

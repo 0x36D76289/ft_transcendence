@@ -1,9 +1,10 @@
 import { flashlightEvent, initflashlight } from "./utils/flashlight.js";
-import { pixelBreakerEvent, initPixelBreaker } from "./utils/pixelbreaker.js";
 import { initBlurCircle } from "./utils/blurcircle.js";
+import { backgroundEvent, initBackground } from "./utils/background.js";
 import { readCookie } from "./cookie.js";
 
 let routes = {};
+let currentPath = null;
 
 export function addRoute(path, handler) {
   console.log(`Adding route for ${path}`);
@@ -18,11 +19,13 @@ export function removeRoute(path) {
 function injectContent(htmlContent, cssContent = "") {
   const [flashlightHTML, flashlightCSS] = initflashlight();
   const [blurCircleHTML, blurCircleCSS] = initBlurCircle();
+	const [backgroundHTML, backgroundCSS] = initBackground();
   
   document.body.innerHTML = `
   ${htmlContent}
-  ${flashlightHTML}
   ${blurCircleHTML}
+  ${backgroundHTML}
+  ${flashlightHTML}
   <audio id="clickSound">
     <source src="assets/sounds/click.mp3" type="audio/mp3">
     Your browser does not support the audio element.
@@ -38,30 +41,36 @@ function injectContent(htmlContent, cssContent = "") {
   const styleElement = document.createElement("style");
   styleElement.textContent = `
   ${cssContent}
-  ${flashlightCSS}
   ${blurCircleCSS}
+  ${backgroundCSS}
+  ${flashlightCSS}
   `;
 
   document.head.appendChild(styleElement);
+  backgroundEvent();
   flashlightEvent();
-  pixelBreakerEvent();
 }
 
 export function navigate(path, pushState = true) {
   if (routes[path]) {
     console.log(`Navigating to ${path}`);
 
+    if (path === currentPath) {
+      console.log(`Already on ${path}, skipping content reload`);
+      return;
+    }
+
     if (readCookie("token") === null && path !== "/login" && routes["/login"] !== undefined) {
       path = "/login";
     }
 
-    setTimeout(() => {
-      routes[path]();
+    const { html, css } = routes[path]();
+    loadPage(html, css);
+    currentPath = path;
 
-      if (pushState) {
-        window.history.pushState({ path }, "", path);
-      }
-    }, 170); 
+    if (pushState) {
+      window.history.pushState({ path }, "", path);
+    }
   } else {
     console.log(`Route for ${path} not found. Redirecting to /`);
     navigate("/", pushState);

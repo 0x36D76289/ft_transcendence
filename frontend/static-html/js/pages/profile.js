@@ -1,6 +1,6 @@
 import { getUserProfile, getUserStats, sendFriendRequest } from '../api/user.js';
 import { loadPage } from '../spa.js';
-import { eventBackground, initBackground } from '../utils/background.js';
+import { backgroundEvent, initBackground } from '../utils/background.js';
 
 const HTML = `
 <div class="profile-page">
@@ -87,7 +87,7 @@ export async function profile(username) {
 	`;
 
 	loadPage(loadHTML, loadCSS);
-	eventBackground();
+	backgroundEvent();
 
 	try {
 		const profileData = await getUserProfile(username);

@@ -12,7 +12,7 @@ const CSS = `
 	border-radius: 50%;
 	pointer-events: none;
 	transition: transform 0.1s, width 0.1s, height 0.1s;
-	z-index: 2;
+	z-index: 1000;
 	transform: translate(-50%, -50%);
 }
 

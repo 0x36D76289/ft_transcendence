@@ -19,56 +19,24 @@ const HTML = `
       </div>
     </div>
 
-    <!-- Logged Out State -->
-    <div class="auth-cards">
-      <a href="#" class="auth-card login">
-        <svg xmlns="http://www.w3.org/2000/svg" class="auth-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-          <polyline points="10 17 15 12 10 7"/>
-          <line x1="15" y1="12" x2="3" y2="12"/>
-        </svg>
-        <span>Sign In</span>
-      </a>
-      <a href="#" class="auth-card register">
-        <svg xmlns="http://www.w3.org/2000/svg" class="auth-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <line x1="20" y1="8" x2="20" y2="14"/>
-          <line x1="23" y1="11" x2="17" y2="11"/>
-        </svg>
-        <span>Register</span>
-      </a>
-    </div>
-
     <ul class="nav-links">
       <li class="nav-item">
-        <a href="#" class="nav-link" title="Home">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
+        <a href="/" class="nav-link" title="Home">
+          <span class="material-icons icon">home</span>
           <span class="link-text">Home</span>
           <div class="nav-indicator"></div>
         </a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link" title="Search">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.3-4.3"/>
-          </svg>
+        <a href="/search" class="nav-link" title="Search">
+          <span class="material-icons icon">search</span>
           <span class="link-text">Search</span>
           <div class="nav-indicator"></div>
         </a>
       </li>
       <li class="nav-item">
-        <a href="#" class="nav-link" title="Friends">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
+        <a href="/friends" class="nav-link" title="Friends">
+          <span class="material-icons icon">group</span>
           <span class="link-text">Friends</span>
           <div class="nav-indicator"></div>
         </a>
@@ -85,7 +53,7 @@ const CSS = `
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all var(--transition);
-  z-index: 1000;
+  z-index: 2;
 }
 
 /* User Card Styles */
@@ -140,45 +108,6 @@ const CSS = `
 .join-date {
   color: var(--gray60);
   font-size: 0.75rem;
-}
-
-/* Auth Cards Styles */
-.auth-cards {
-  margin: var(--margin-m);
-  display: flex;
-  flex-direction: column;
-  gap: var(--margin-s);
-}
-
-.auth-card {
-  display: flex;
-  align-items: center;
-  gap: var(--margin-s);
-  padding: var(--padding-m);
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.auth-card.login {
-  background: var(--colora2);
-  color: white;
-}
-
-.auth-card.register {
-  background: transparent;
-  border: 1px solid var(--colora2);
-  color: var(--colora2);
-}
-
-.auth-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.auth-icon {
-  min-width: 20px;
 }
 
 /* Rest of the sidebar styles */
@@ -296,7 +225,7 @@ const CSS = `
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
   
-  .user-card, .auth-cards {
+  .user-card {
     display: none;
   }
   
@@ -327,7 +256,7 @@ const CSS = `
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
   }
   
-  .user-card, .auth-cards {
+  .user-card {
     display: none;
   }
   
@@ -391,245 +320,34 @@ const CSS = `
 }
 `;
 
-
-const showError = (message) => {
-	console.error(message);
-};
-
-const showSuccess = (message) => {
-	console.log(message);
-};
-
-const updateSidebarState = (isLoggedIn, userData = null) => {
-	const userCard = document.querySelector('.user-card');
-	const authCards = document.querySelector('.auth-cards');
-	const username = document.querySelector('.username');
-	const joinDate = document.querySelector('.join-date');
-	const userAvatar = document.querySelector('.user-avatar img');
-
-	if (isLoggedIn && userData) {
-		userCard.style.display = 'block';
-		authCards.style.display = 'none';
-		username.textContent = userData.username;
-		joinDate.textContent = `Member since ${new Date(userData.joinDate).toLocaleDateString('en-US', {
-			month: 'short',
-			year: 'numeric'
-		})}`;
-		if (userData.avatar) {
-			userAvatar.src = userData.avatar;
-		}
-	} else {
-		userCard.style.display = 'none';
-		authCards.style.display = 'flex';
-	}
-};
-
-const validateForm = (username, password) => {
-	const errors = [];
-	
-	if (!username || username.length < 3) {
-		errors.push('Username must be at least 3 characters long');
-	}
-	
-	if (!password || password.length < 6) {
-		errors.push('Password must be at least 6 characters long');
-	}
-	
-	return errors;
-};
-
 export async function sidebarEvent() {
-	const loginForm = document.getElementById('loginForm');
-	if (loginForm) {
-		loginForm.addEventListener('submit', async (e) => {
-			e.preventDefault();
-			
-			const username = loginForm.querySelector('input[name="username"]').value;
-			const password = loginForm.querySelector('input[name="password"]').value;
-			
-			const errors = validateForm(username, password);
-			if (errors.length > 0) {
-				showError(errors.join('\n'));
-				return;
-			}
-			
-			try {
-				const response = await loginUser(username, password);
-				if (response.token) {
-					showSuccess('Successfully logged in!');
-					updateSidebarState(true, {
-						username: username,
-						joinDate: new Date(),
-					});
-					
-					const loginModal = document.getElementById('loginModal');
-					if (loginModal) {
-						loginModal.style.display = 'none';
-					}
-				}
-			} catch (error) {
-				showError(error.message || 'Failed to login. Please try again.');
-			}
-		});
-	}
-	
-	const registerForm = document.getElementById('registerForm');
-	if (registerForm) {
-		registerForm.addEventListener('submit', async (e) => {
-			e.preventDefault();
-			
-			const username = registerForm.querySelector('input[name="username"]').value;
-			const password = registerForm.querySelector('input[name="password"]').value;
-			const bio = registerForm.querySelector('textarea[name="bio"]')?.value || '';
-			
-			const errors = validateForm(username, password);
-			if (errors.length > 0) {
-				showError(errors.join('\n'));
-				return;
-			}
-			
-			try {
-				await registerUser(username, password, bio);
-				showSuccess('Registration successful! Please log in.');
-				
-				const registerModal = document.getElementById('registerModal');
-				if (registerModal) {
-					registerModal.style.display = 'none';
-				}
-				
-				const loginModal = document.getElementById('loginModal');
-				if (loginModal) {
-					loginModal.style.display = 'block';
-				}
-			} catch (error) {
-				showError(error.message || 'Failed to register. Please try again.');
-			}
-		});
-	}
-	
-	document.querySelector('.auth-card.login')?.addEventListener('click', (e) => {
-		e.preventDefault();
-		const loginModal = document.getElementById('loginModal');
-		if (loginModal) {
-			loginModal.style.display = 'block';
-		}
-	});
-	
-	document.querySelector('.auth-card.register')?.addEventListener('click', (e) => {
-		e.preventDefault();
-		const registerModal = document.getElementById('registerModal');
-		if (registerModal) {
-			registerModal.style.display = 'block';
-		}
-	});
-	
-	const token = document.cookie
-		.split('; ')
-		.find(row => row.startsWith('token='))
-		?.split('=')[1];
-		
-	const username = document.cookie
-		.split('; ')
-		.find(row => row.startsWith('username='))
-		?.split('=')[1];
-		
-	if (token && username) {
-		updateSidebarState(true, {
-			username: decodeURIComponent(username),
-			joinDate: new Date(),
-		});
-	} else {
-		updateSidebarState(false);
-	}
+  const token = readCookie('token');
+  if (token) {
+    const user = await getUserProfile(token);
+    if (user) {
+      const username = document.querySelector('.username');
+      const joinDate = document.querySelector('.join-date');
+      const avatar = document.querySelector('.user-avatar img');
+      const statusBadge = document.querySelector('.status-badge');
+
+      username.textContent = user.username;
+      joinDate.textContent = `Member since ${new Date(user.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' })}`;
+      avatar.src = user.pfp;
+      statusBadge.style.backgroundColor = user.status === 'online' ? '#4CAF50' : 'gray';
+    }
+  }
+
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      navigate(link.href);
+    });
+  });
 }
 
 export function initSidebar() {
-	return [HTML, CSS, getModalTemplates(), getModalStyles()];
+	return [HTML, CSS];
 }
-
-const getModalTemplates = () => `
-	<div id="loginModal" class="modal" style="display: none;">
-		<div class="modal-content">
-			<h2>Login</h2>
-			<form id="loginForm">
-				<input type="text" name="username" placeholder="Username" required>
-				<input type="password" name="password" placeholder="Password" required>
-				<button type="submit">Login</button>
-			</form>
-		</div>
-	</div>
-
-	<div id="registerModal" class="modal" style="display: none;">
-		<div class="modal-content">
-			<h2>Register</h2>
-			<form id="registerForm">
-				<input type="text" name="username" placeholder="Username" required>
-				<input type="password" name="password" placeholder="Password" required>
-				<textarea name="bio" placeholder="Tell us about yourself"></textarea>
-				<button type="submit">Register</button>
-			</form>
-		</div>
-	</div>
-`;
-
-const getModalStyles = () => `
-	.modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 1001;
-	}
-
-	.modal-content {
-		background-color: var(--gray10);
-		padding: var(--padding-xl);
-		border-radius: 16px;
-		width: 90%;
-		max-width: 400px;
-		backdrop-filter: blur(10px);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.modal-content h2 {
-		margin-bottom: var(--margin-l);
-		color: var(--gray90);
-	}
-
-	.modal-content form {
-		display: flex;
-		flex-direction: column;
-		gap: var(--margin-m);
-	}
-
-	.modal-content input,
-	.modal-content textarea {
-		padding: var(--padding-m);
-		border: 1px solid var(--gray30);
-		border-radius: 8px;
-		background-color: var(--gray20);
-		color: var(--gray90);
-		font: var(--p);
-	}
-
-	.modal-content button {
-		padding: var(--padding-m);
-		background-color: var(--colora2);
-		color: white;
-		border: none;
-		border-radius: 8px;
-		font: var(--p);
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.modal-content button:hover {
-		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	}
-`;
