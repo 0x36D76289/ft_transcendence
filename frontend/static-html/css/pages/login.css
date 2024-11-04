@@ -42,20 +42,33 @@
 }
 
 .auth-button {
-	padding: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 20px;
 	border-radius: 8px;
-	border: none;
-	background: var(--accent-color);
+	border: 1.5px solid var(--border-color);
+	background: var(--bg-secondary);
 	color: var(--text-primary);
-	font: var(--pui);
 	cursor: pointer;
 	transition: var(--transition);
+	font-size: 0.9rem;
+	font-weight: 500;
 	margin-top: 16px;
 	margin-bottom: 8px;
 }
 
 .auth-button:hover {
-	background: var(--accent-hover);
+	background: var(--bg-tertiary);
+	border-color: var(--border-color);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-button.primary {
+	background: var(--accent-gradient);
+	border-color: var(--accent-color);
+	box-shadow: var(--card-shadow);
 }
 
 .auth-form p {

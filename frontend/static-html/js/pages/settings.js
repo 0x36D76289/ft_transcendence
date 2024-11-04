@@ -4,7 +4,7 @@ class SettingsController {
   constructor() {
     this.settings = {
       theme: localStorage.getItem('theme') || 'dark',
-      accent: localStorage.getItem('accent') || '#3245ff',
+      accent: localStorage.getItem('accent') || getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim(),
       notifications: localStorage.getItem('notifications') === 'true'
     };
     
