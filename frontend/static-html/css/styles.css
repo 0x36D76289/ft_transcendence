@@ -169,3 +169,24 @@ a {
 	position: relative;
 	padding-bottom: var(--margin-xxs);
 }
+
+/* mobile */
+@media screen and (max-width: 480px) {
+	main {
+		margin-left: 0;
+	}
+}
+
+/* tablet */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+	main {
+		margin-left: var(--sidebar-collapsed);
+	}
+}
+
+/* desktop */
+@media screen and (min-width: 1024px) {
+	main {
+		margin-left: var(--sidebar-width);
+	}
+}

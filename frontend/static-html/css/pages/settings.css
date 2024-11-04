@@ -1,10 +1,9 @@
 .settings-container {
-  max-width: 800px;
-  width: 100%;
-  padding: 24px;
+  padding: var(--padding-l);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   backdrop-filter: blur(var(--blur));
+  margin: var(--margin-m);
 }
 
 .settings-section {
@@ -79,7 +78,7 @@
 }
 
 /* desktop */
-@media screen and (min-width: 1024px) {
+/* @media screen and (min-width: 1024px) {
   .settings-container {
     padding: 32px;
     margin: 20px 20px 20px calc(var(--sidebar-width) + 20px);
@@ -89,19 +88,7 @@
   .setting-item {
     padding: 24px;
   }
-}
-
-/* tablet */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-  .settings-container {
-    padding: 16px;
-    margin: 20px 20px 20px calc(var(--sidebar-collapsed) + 20px);
-    width: calc(100% - var(--sidebar-collapsed) - 40px);
-  }
-  .setting-item {
-    padding: 16px;
-  }
-}
+} */
 
 /* mobile */
 @media screen and (max-width: 767px) {
