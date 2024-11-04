@@ -1,431 +1,188 @@
-// JavaScript
-import { loadPage } from '../spa.js';
-import { initSidebar, sidebarEvent } from '../utils/sidebar.js';
-import { backgroundEvent, initBackground } from '../utils/background.js';
+import { generateRandomUsers } from '../tests/createuser.js';
+// import { UserAPI } from '../api/user.js';
 
-const HTML = `
-<div class="friends-page">
-  <div class="content-wrapper">
-    <div class="central-element">
-      <h1>My Friends</h1>
-      <div class="search-bar">
-        <input type="text" placeholder="Search friends..." />
-      </div>
-    </div>
-    <div class="friends-grid"></div>
-    <div class="pagination">
-      <button class="prev-page"><span class="material-icons">navigate_before</span></button>
-      <span class="page-info">Page <span class="current-page">1</span> of <span class="total-pages">1</span></span>
-      <button class="next-page"><span class="material-icons">navigate_next</span></button>
-    </div>
-  </div>
-</div>
-`;
+function createContactCard(user) {
+	const lastActiveDate = new Date(user.lastActive);
+	const now = new Date();
+	const timeDiff = Math.abs(now - lastActiveDate);
+	const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
-const CSS = `
-.friends-page {
-  min-height: 100vh;
-  width: 100%;
-  background-color: #111111;
-  color: #ffffff;
-  position: relative;
+	return `
+			<div class="contact-card" data-user-id="${user.id}">
+					<div class="contact-avatar">
+							<img src="${user.avatar}" alt="${user.name}">
+							<div class="status-indicator status-${user.status}"></div>
+					</div>
+					<div class="contact-info">
+							<div class="contact-name">${user.name}</div>
+							<div class="contact-status">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
+							<div class="contact-last-active">Dernière activité : ${diffDays} jours</div>
+					</div>
+					<div class="contact-expanded-content">
+							<div class="contact-bio">
+									${user.bio || "Aucune biographie disponible"}
+							</div>
+							<div class="contact-actions">
+									<button class="contact-action-btn message">
+											<span class="material-icons">chat</span>
+											Message
+									</button>
+									<button class="contact-action-btn play">
+											<span class="material-icons">sports_esports</span>
+											Jouer
+									</button>
+									<button class="contact-action-btn block">
+											<span class="material-icons">block</span>
+											Bloquer
+									</button>
+									<button class="contact-action-btn remove">
+											<span class="material-icons">person_remove</span>
+											Supprimer
+									</button>
+							</div>
+					</div>
+			</div>
+	`;
 }
 
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-  padding: var(--padding-xl);
-  margin-left: var(--sidebar-width); /* Account for sidebar on desktop */
-  min-height: 100vh;
-  
-  &::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: var(--sidebar-width);
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at center, var(--colora) 0%, transparent 70%);
-    opacity: 0.1;
-    z-index: 0;
-    pointer-events: none;
-  }
+
+export function render() {
+	return `
+	<div class="app-container">
+			<main class="main-content">
+					<div class="sort-bar">
+							<input type="text" id="searchInput" placeholder="Rechercher...">
+							<button class="sort-button active" data-sort="all">Tous</button>
+							<button class="sort-button" data-sort="online">En ligne</button>
+							<button class="sort-button" data-sort="offline">Hors ligne</button>
+							<button class="sort-button" data-sort="name">Nom A-Z</button>
+							<button class="sort-button" data-sort="activity">Dernière activité</button>
+					</div>
+
+					<div class="contact-grid" id="contactGrid">
+							<!-- Les cartes de contact seront générées ici -->
+					</div>
+			</main>
+		<button id="scrollTopBtn" class="scroll-top-btn" aria-label="Retour en haut">
+			<span class="material-icons">arrow_upward</span>
+		</button>
+	</div>
+	`;
 }
 
-.central-element {
-  background-color: rgba(25, 25, 25, 0.95);
-  border-radius: 24px;
-  padding: var(--padding-xl);
-  margin-bottom: var(--padding-xl);
-  text-align: center;
-  z-index: 1;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+function initScrollTopButton() {
+	const scrollBtn = document.getElementById('scrollTopBtn');
+	const scrollThreshold = 300;
 
-  h1 {
-    font: var(--h1);
-    color: #ffffff;
-    margin-bottom: var(--padding-l);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
+	window.addEventListener('scroll', () => {
+		if (window.scrollY > scrollThreshold) {
+			scrollBtn.classList.add('visible');
+		} else {
+			scrollBtn.classList.remove('visible');
+		}
+	});
 
-  .search-bar {
-    input {
-      width: 100%;
-      max-width: 350px;
-      padding: var(--padding-s) var(--padding-m);
-      border-radius: 12px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      background-color: rgba(0, 0, 0, 0.2);
-      color: #ffffff;
-      font: var(--pui);
-      transition: all var(--transition);
-
-      &:focus {
-        outline: none;
-        border-color: var(--colora);
-        box-shadow: 0 0 20px rgba(var(--colora-rgb), 0.2);
-        background-color: rgba(0, 0, 0, 0.4);
-      }
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-      }
-    }
-  }
+	scrollBtn.addEventListener('click', () => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	});
 }
 
-.friends-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--padding-l);
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  z-index: 1;
-  padding: 0 var(--padding-m);
+function handleCardClick(event) {
+	const card = event.target.closest('.contact-card');
+	if (!card) return;
+
+	if (event.target.closest('.contact-action-btn')) {
+		handleActionButton(event);
+		return;
+	}
+
+	const wasExpanded = card.classList.contains('expanded');
+
+	document.querySelectorAll('.contact-card.expanded').forEach(expandedCard => {
+		if (expandedCard !== card) {
+			expandedCard.classList.remove('expanded');
+		}
+	});
+
+	card.classList.toggle('expanded');
+
+	if (!wasExpanded) {
+		card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}
 }
 
-.friend-card {
-  background-color: rgba(30, 30, 30, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: var(--padding-m);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform-style: preserve-3d;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  height: 100%;
+function handleActionButton(event) {
+	const button = event.target.closest('.contact-action-btn');
+	if (!button) return;
 
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-    border-color: var(--colora);
-    background-color: rgba(40, 40, 40, 0.95);
-  }
+	const card = button.closest('.contact-card');
+	const userId = card.dataset.userId;
 
-  img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: var(--padding-s);
-    border: 3px solid var(--colora);
-    transition: all var(--transition);
-    box-shadow: 0 0 20px rgba(var(--colora-rgb), 0.3);
-  }
-
-  .friend-username {
-    font: var(--h4ui);
-    color: #ffffff;
-    margin-bottom: var(--padding-s);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    word-break: break-word;
-  }
-
-  .friend-actions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--padding-xs);
-    width: 100%;
-    
-    button {
-      padding: var(--padding-xs) var(--padding-s);
-      border: none;
-      border-radius: 8px;
-      background-color: rgba(var(--colora-rgb), 0.2);
-      color: #ffffff;
-      font: var(--smallui);
-      transition: all var(--transition);
-      cursor: pointer;
-      border: 1px solid rgba(var(--colora-rgb), 0.3);
-      width: 100%;
-
-      &:hover {
-        background-color: var(--colora);
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(var(--colora-rgb), 0.4);
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-  }
+	if (button.classList.contains('message')) {
+		// Handle message action
+		console.log('Message user:', userId);
+	} else if (button.classList.contains('block')) {
+		// Handle block action
+		console.log('Block user:', userId);
+		card.remove();
+	} else if (button.classList.contains('remove')) {
+		// Handle remove action
+		console.log('Remove user:', userId);
+		card.remove();
+	} else if (button.classList.contains('play')) {
+		// Handle play action
+		console.log('Play with user:', userId);
+	}
 }
 
-.pagination {
-  margin-top: var(--padding-xl);
-  margin-bottom: var(--padding-xl);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--padding-m);
-  z-index: 1;
-  width: 100%;
+export function init() {
+	const users = generateRandomUsers(20);
 
-  button {
-    padding: var(--padding-xs) var(--padding-m);
-    border: none;
-    border-radius: 8px;
-    background-color: rgba(var(--colora-rgb), 0.2);
-    color: #ffffff;
-    font: var(--pui);
-    transition: all var(--transition);
-    cursor: pointer;
-    border: 1px solid rgba(var(--colora-rgb), 0.3);
+	// Remplir la grille avec les cartes
+	const contactGrid = document.getElementById('contactGrid');
+	contactGrid.innerHTML = users.map(user => createContactCard(user)).join('');
+	contactGrid.addEventListener('click', handleCardClick);
 
-    &:hover:not(:disabled) {
-      background-color: var(--colora);
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(var(--colora-rgb), 0.4);
-    }
 
-    &:active:not(:disabled) {
-      transform: scale(0.95);
-    }
+	const sortButtons = document.querySelectorAll('.sort-button');
+	sortButtons.forEach(button => {
+		button.addEventListener('click', () => {
+			sortButtons.forEach(btn => btn.classList.remove('active'));
+			button.classList.add('active');
 
-    &:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      border-color: rgba(255, 255, 255, 0.1);
-    }
+			const sortType = button.dataset.sort;
+			let sortedUsers = [...users];
 
-    .material-icons {
-      font-size: 1.5rem;
-    }
-  }
+			switch (sortType) {
+				case 'online':
+					sortedUsers = users.filter(user => user.status === 'online');
+					break;
+				case 'offline':
+					sortedUsers = users.filter(user => user.status === 'offline');
+					break;
+				case 'name':
+					sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
+					break;
+				case 'activity':
+					sortedUsers.sort((a, b) => {
+						return new Date(b.lastActive) - new Date(a.lastActive);
+					});
+					break;
+			}
 
-  .page-info {
-    font: var(--pui);
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-}
+			contactGrid.innerHTML = sortedUsers.map(user => createContactCard(user)).join('');
+		});
+	});
 
-/* Tablet Styles */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-  .content-wrapper {
-    margin-left: 80px; /* Account for collapsed sidebar */
-    padding: var(--padding-l);
-  }
+	const searchInput = document.getElementById('searchInput');
+	searchInput.addEventListener('input', () => {
+		const query = searchInput.value.toLowerCase();
+		const filteredUsers = users.filter(user => user.name.toLowerCase().includes(query));
+		contactGrid.innerHTML = filteredUsers.map(user => createContactCard(user)).join('');
+	});
 
-  .content-wrapper::before {
-    left: 80px;
-  }
-
-  .friends-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  }
-}
-
-/* Mobile Styles */
-@media screen and (max-width: 767px) {
-  .content-wrapper {
-    margin-left: 0;
-    padding: var(--padding-m);
-    padding-bottom: calc(64px + var(--padding-xl)); /* Account for bottom navigation */
-  }
-
-  .content-wrapper::before {
-    left: 0;
-  }
-
-  .central-element {
-    padding: var(--padding-m);
-    border-radius: 16px;
-
-    h1 {
-      font-size: 1.5rem;
-    }
-
-    .search-bar input {
-      max-width: 100%;
-    }
-  }
-
-  .friends-grid {
-    grid-template-columns: 1fr;
-    gap: var(--padding-m);
-    padding: 0;
-  }
-
-  .friend-card {
-    .friend-actions {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .pagination {
-    margin-bottom: calc(64px + var(--padding-m));
-  }
-}
-
-@keyframes fadeInScale {
-  from { 
-    opacity: 0; 
-    transform: scale(0.9); 
-  }
-  to { 
-    opacity: 1; 
-    transform: scale(1); 
-  }
-}
-`;
-
-function createTestProfiles(count) {
-  const profiles = {};
-  for (let i = 0; i < count; i++) {
-    profiles[i] = {
-      username: `testuser${i}`,
-      avatar: `https://randomuser.me/api/portraits/lego/${i % 10}.jpg`
-    };
-  }
-  return profiles;
-}
-
-export function friends() {
-  const [sidebarHTML, sidebarCSS] = initSidebar();
-
-  const loadHTML = `
-  ${sidebarHTML}
-  ${HTML}
-  `;
-  const loadCSS = `
-  ${sidebarCSS}
-  ${CSS}
-  `;
-
-  loadPage(loadHTML, loadCSS);
-  sidebarEvent();
-
-  const friendsGrid = document.querySelector('.friends-grid');
-  const searchInput = document.querySelector('.search-bar input');
-  const prevPageBtn = document.querySelector('.prev-page');
-  const nextPageBtn = document.querySelector('.next-page');
-  const currentPageSpan = document.querySelector('.current-page');
-  const totalPagesSpan = document.querySelector('.total-pages');
-
-  let friends_data = {};
-  let filteredFriendsData = {};
-  let currentPage = 1;
-  let itemsPerPage = 8;
-
-  friends_data = createTestProfiles(20);
-  filteredFriendsData = { ...friends_data };
-
-  function renderFriends(page = 1) {
-    friendsGrid.innerHTML = '';
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const friendsToShow = Object.values(filteredFriendsData).slice(startIndex, endIndex);
-
-    friendsToShow.forEach((friend, index) => {
-      const friendElement = document.createElement('div');
-      friendElement.classList.add('friend-card');
-      friendElement.innerHTML = `
-        <img src="${friend.avatar}" alt="avatar" />
-        <div class="friend-username">${friend.username}</div>
-        <div class="friend-actions">
-          <button class="message-btn">Message</button>
-          <button class="play-btn">Play</button>
-          <button class="block-btn">Block</button>
-          <button class="unfriend-btn">Unfriend</button>
-        </div>
-      `;
-      friendsGrid.appendChild(friendElement);
-
-      // Add animation to friend cards
-      friendElement.style.animation = `fadeInScale 0.5s ease forwards ${index * 0.1}s`;
-      friendElement.style.opacity = '0';
-
-      // Add click event to redirect to user's page
-      friendElement.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('message-btn') && 
-            !e.target.classList.contains('play-btn') && 
-            !e.target.classList.contains('block-btn') && 
-            !e.target.classList.contains('unfriend-btn')) {
-        }
-      });
-    });
-
-    updatePagination();
-  }
-
-  function updatePagination() {
-    const totalPages = Math.ceil(Object.keys(filteredFriendsData).length / itemsPerPage);
-    currentPageSpan.textContent = currentPage;
-    totalPagesSpan.textContent = totalPages;
-    prevPageBtn.disabled = currentPage === 1;
-    nextPageBtn.disabled = currentPage === totalPages;
-  }
-
-  renderFriends();
-
-  searchInput.addEventListener('input', (e) => {
-    const searchValue = e.target.value.toLowerCase();
-    filteredFriendsData = Object.fromEntries(
-      Object.entries(friends_data).filter(([_, friend]) =>
-        friend.username.toLowerCase().includes(searchValue)
-      )
-    );
-    currentPage = 1;
-    renderFriends();
-  });
-
-  prevPageBtn.addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderFriends(currentPage);
-    }
-  });
-
-  nextPageBtn.addEventListener('click', () => {
-    const totalPages = Math.ceil(Object.keys(filteredFriendsData).length / itemsPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderFriends(currentPage);
-    }
-  });
-
-  // Add event listeners for friend actions
-  friendsGrid.addEventListener('click', (e) => {
-    if (e.target.classList.contains('message-btn')) {
-      console.log('Message friend');
-    } else if (e.target.classList.contains('play-btn')) {
-      console.log('Play with friend');
-    } else if (e.target.classList.contains('block-btn')) {
-      console.log('Block friend');
-    } else if (e.target.classList.contains('unfriend-btn')) {
-      console.log('Unfriend');
-    }
-  });
+	initScrollTopButton();
 }
