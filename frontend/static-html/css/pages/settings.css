@@ -65,7 +65,7 @@
 
 .accent-color {
   background: var(--accent-color);
-  color: var(--text-primary);
+  color: var(--accent-color);
 }
 
 .reset-color {
