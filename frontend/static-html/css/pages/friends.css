@@ -1,16 +1,9 @@
 /* Layout principal */
 .main-content {
 	flex-grow: 1;
-	padding: 24px;
+	padding: var(--padding-l);
 	overflow: hidden;
-	margin-left: var(--sidebar-width);
-}
-
-/* Contenu principal */
-.main-content {
-	flex-grow: 1;
-	padding: 24px;
-	overflow: hidden;
+	margin-left: 0;
 }
 
 .sort-bar {
@@ -48,7 +41,7 @@
 .sort-button.active {
 	background: var(--accent-gradient);
 	border-color: var(--accent-color);
-	box-shadow: var(--card-shadow);
+	box-shadow: 0 4px 12px var(--accent-color);
 }
 
 #searchInput {
@@ -74,26 +67,19 @@
 }
 
 /* Grille de contacts */
-.contact-grid {
-	gap: var(--card-gap);
-	overflow-y: auto;
-	height: calc(100% - 84px);
-	padding-right: 8px;
-	scroll-behavior: smooth;
-}
 
 /* Carte de contact */
 .contact-card {
 	background: var(--bg-primary);
 	border: 3px solid var(--card-border);
 	border-radius: 12px;
-	padding: 20px;
+	padding: var(--padding-m);
 	display: flex;
 	align-items: center;
 	gap: 16px;
 	transition: var(--transition);
 	cursor: pointer;
-	margin: 16px;
+	margin-bottom: var(--margin-m);
 }
 
 .contact-card:hover {
@@ -137,15 +123,6 @@
 .status-offline {
 	background-color: var(--status-offline);
 	box-shadow: 0 0 8px var(--status-offline);
-}
-
-.contact-info {
-	flex-grow: 1;
-}
-
-.contact-name {
-	font-weight: 500;
-	margin-bottom: 4px;
 }
 
 .contact-status {
@@ -286,27 +263,7 @@
 	color: var(--text-primary);
 }
 
-/* Media Queries */
-@media screen and (min-width: 1024px) {
-	.contact-grid {
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	}
-
-	.main-content {
-		margin-left: var(--sidebar-width);
-	}
-}
-
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-	.contact-grid {
-		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-	}
-
-	.main-content {
-		margin-left: var(--sidebar-collapsed);
-	}
-}
-
+/* mobile */
 @media screen and (max-width: 767px) {
 	.contact-grid {
 		grid-template-columns: 1fr;
