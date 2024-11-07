@@ -23,3 +23,31 @@ export function deleteCookie(name) {
 export function getToken() {
   return getCookie('authToken');
 }
+
+export function getUsername() {
+  return getCookie('username');
+}
+
+export function getBio() {
+  return getCookie('bio');
+}
+
+export function setToken(token) {
+  setCookie('authToken', token);
+}
+
+export function setUsername(username) {
+  setCookie('username', username);
+}
+
+export function setBio(bio) {
+  setCookie('bio', bio);
+}
+
+export function deleteToken() {
+  deleteCookie('authToken');
+}
+
+export function deleteUsername() {
+  deleteCookie('username');
+}

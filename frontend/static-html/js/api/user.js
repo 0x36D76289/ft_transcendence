@@ -25,15 +25,16 @@ export const UserAPI = {
 	getProfile: (username) => get(`/user/profile/${username}`),
 	updateUser: (username, bio) => post('/user/update_user', { username, bio }),
 	deleteUser: () => post('/user/delete_user'),
-	createGuest: () => {
-		post('/user/create_guest');
-		setCookie('authToken', 'guest');
+	createGuest: async () => {
+		const data = await post('/user/create_guest');
+		setCookie('authToken', data.token);
+		return data;
 	},
 	getProfile: (token, username) => get(`/user/profile/${username}`, token),
 	getStats: (token, username) => get(`/user/stats/${username}`, token),
 	listUsers: (token) => get('/user/list', token),
 	sendFriendRequest: (token, username) => post('/user/send_friend_request', { username }, token),
 	removeFriendRequest: (token, username) => post('/user/remove_friend_request', { username }, token),
-	getFriendship: (token, username) => get(`/user/get_friendship`, token),
-	getFriends: (token, username) => get(`/user/get_friends`, token),
+	getFriendship: (token, username) => post(`/user/get_friendship`, { username }, token),
+	getFriends: (token, username) => post(`/user/get_friends`, { username }, token),
 };

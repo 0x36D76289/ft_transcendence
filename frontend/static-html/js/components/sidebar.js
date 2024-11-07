@@ -1,7 +1,9 @@
-import { generateRandomUsers } from '../tests/createuser.js';
+// import { generateRandomUsers } from '../tests/createuser.js';
+import { UserAPI } from '../api/user.js';
+import { getCookie, getToken } from '../utils/cookies.js';
 
 export function initSidebar() {
-	const user = generateRandomUsers(1)[0];
+	const data = UserAPI.getProfile(getToken(), getCookie());
 
 	const SIDEBAR = `
 <nav id="sidebar" class="sidebar">
@@ -32,17 +34,22 @@ export function initSidebar() {
 			</a>
 	</div>
 
-	<div class="profile">
-			<img src="${user.avatar}" alt="Profile" class="profile-image">
+	<a href="/user" class="profile">
+			<img src="${data.pfp}" alt="Profile" class="profile-image">
 			<div class="status-led"></div>
 			<div class="profile-info">
-				<span class="profile-name">${user.name}</span>
+				<span class="profile-name">${data.username}</span>
 			</div>
-	</div>
+	</a>
 </nav>
 `;
 
 	const sidebar = document.createElement("div");
 	sidebar.innerHTML = SIDEBAR;
 	document.body.appendChild(sidebar);
+
+	if (getCookie('guest') === 'true') {
+		const profileLink = sidebar.querySelector('.profile');
+		profileLink.href = '/login';
+	}
 }

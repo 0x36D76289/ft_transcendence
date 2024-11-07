@@ -8,65 +8,64 @@ function createContactCard(user) {
 	const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
 	return `
-			<div class="contact-card" data-user-id="${user.id}">
-					<div class="contact-avatar">
-							<img src="${user.avatar}" alt="${user.name}">
-							<div class="status-indicator status-${user.status}"></div>
-					</div>
-					<div class="contact-info">
-							<div class="contact-name">${user.name}</div>
-							<div class="contact-status">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
-							<div class="contact-last-active">Dernière activité : ${diffDays} jours</div>
-					</div>
-					<div class="contact-expanded-content">
-							<div class="contact-bio">
-									${user.bio || "Aucune biographie disponible"}
-							</div>
-							<div class="contact-actions">
-									<button class="contact-action-btn message">
-											<span class="material-icons">chat</span>
-											Message
-									</button>
-									<button class="contact-action-btn play">
-											<span class="material-icons">sports_esports</span>
-											Jouer
-									</button>
-									<button class="contact-action-btn block">
-											<span class="material-icons">block</span>
-											Bloquer
-									</button>
-									<button class="contact-action-btn remove">
-											<span class="material-icons">person_remove</span>
-											Supprimer
-									</button>
-							</div>
-					</div>
-			</div>
+<div class="contact-card" data-user-id="${user.id}">
+	<div class="contact-avatar">
+		<img src="${user.avatar}" alt="${user.name}">
+		<div class="status-indicator status-${user.status}"></div>
+	</div>
+	<div class="contact-info">
+		<div class="contact-name">${user.name}</div>
+		<div class="contact-status">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
+		<div class="contact-last-active">Dernière activité : ${diffDays} jours</div>
+	</div>
+	<div class="contact-expanded-content">
+		<div class="contact-bio">
+			${user.bio || "Aucune biographie disponible"}
+		</div>
+		<div class="contact-actions">
+			<button class="contact-action-btn message">
+				<span class="material-icons">chat</span>
+				Message
+			</button>
+			<button class="contact-action-btn play">
+				<span class="material-icons">sports_esports</span>
+				Jouer
+			</button>
+			<button class="contact-action-btn block">
+				<span class="material-icons">block</span>
+				Bloquer
+			</button>
+			<button class="contact-action-btn remove">
+				<span class="material-icons">person_remove</span>
+				Supprimer
+			</button>
+		</div>
+	</div>
+</div>
 	`;
 }
 
-
 export function render() {
 	return `
-	<div class="app-container">
-			<main class="main-content">
-					<div class="sort-bar">
-							<input type="text" id="searchInput" placeholder="Rechercher...">
-							<button class="sort-button active" data-sort="all">Tous</button>
-							<button class="sort-button" data-sort="online">En ligne</button>
-							<button class="sort-button" data-sort="offline">Hors ligne</button>
-							<button class="sort-button" data-sort="name">Nom A-Z</button>
-							<button class="sort-button" data-sort="activity">Dernière activité</button>
-					</div>
+<div class="app-container">
+		<main class="main-content">
+			<div class="sort-bar">
+				<input type="text" id="searchInput" placeholder="Rechercher...">
+				<button class="sort-button active" data-sort="all">Tous</button>
+				<button class="sort-button" data-sort="online">En ligne</button>
+				<button class="sort-button" data-sort="offline">Hors ligne</button>
+				<button class="sort-button" data-sort="name">Nom A-Z</button>
+				<button class="sort-button" data-sort="activity">Dernière activité</button>
+			</div>
 
-					<div class="contact-grid" id="contactGrid">
-							<!-- Les cartes de contact seront générées ici -->
-					</div>
-			</main>
-		<button id="scrollTopBtn" class="scroll-top-btn" aria-label="Retour en haut">
-			<span class="material-icons">arrow_upward</span>
-		</button>
-	</div>
+			<div class="contact-grid" id="contactGrid">
+				<!-- Les cartes de contact seront générées ici -->
+			</div>
+		</main>
+	<button id="scrollTopBtn" class="scroll-top-btn" aria-label="Retour en haut">
+		<span class="material-icons">arrow_upward</span>
+	</button>
+</div>
 	`;
 }
 
@@ -101,6 +100,7 @@ function handleCardClick(event) {
 
 	const wasExpanded = card.classList.contains('expanded');
 
+	// Ferme les autres cartes avec une animation
 	document.querySelectorAll('.contact-card.expanded').forEach(expandedCard => {
 		if (expandedCard !== card) {
 			expandedCard.classList.remove('expanded');
@@ -109,8 +109,14 @@ function handleCardClick(event) {
 
 	card.classList.toggle('expanded');
 
+	// Attend la fin de l'animation avant de scroll
 	if (!wasExpanded) {
-		card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		setTimeout(() => {
+			card.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest'
+			});
+		}, 50);
 	}
 }
 
@@ -145,7 +151,6 @@ export function init() {
 	const contactGrid = document.getElementById('contactGrid');
 	contactGrid.innerHTML = users.map(user => createContactCard(user)).join('');
 	contactGrid.addEventListener('click', handleCardClick);
-
 
 	const sortButtons = document.querySelectorAll('.sort-button');
 	sortButtons.forEach(button => {

@@ -1,3 +1,13 @@
+@font-face {
+	font-family: 'Minecraft';
+	src: url('../fonts/Minecraft.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('../fonts/JetBrainsMono.ttf') format('truetype');
+}
+
 :root {
 	font-size: 20px;
 
@@ -36,7 +46,7 @@
 
 	/* Font families */
 	--ff: "Minecraft", sans-serif;
-	--ff2: "Open Sans", sans-serif;
+	--ff2: "JetBrains Mono", sans-serif;
 
 	/* Typography */
 	--h1: bold 4rem/1em var(--ff);
@@ -68,8 +78,8 @@
 
 	--transition: all 0.3s ease;
 
-	--hover-bg: rgba(255, 255, 255, 0.1);
-	--active-bg: rgba(255, 255, 255, 0.15);
+	--hover-bg: var(--gray20);
+	--active-bg: var(--gray30);
 	--sidebar-width: 280px;
 	--sidebar-collapsed: 72px;
 	--mobile-height: 64px;
@@ -103,6 +113,7 @@
 	--status-offline: #ef4444;
 
 	--blur: 8px;
+	--data-theme: "dark";
 }
 
 [data-theme="light"] {
@@ -117,6 +128,9 @@
   --border-color: var(--gray60);
   --divider-color: var(--gray70);
   
+	--hover-bg: var(--gray80);
+	--active-bg: var(--gray70);
+
   --card-bg: white;
   --card-border: var(--gray60);
   --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

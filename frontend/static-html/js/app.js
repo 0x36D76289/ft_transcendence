@@ -1,23 +1,24 @@
 import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
-// import { initNotifications } from "./components/notifications.js";
-import { WebSocketAPI } from "./api/ws.js";
-import { getCookie, getToken } from "./utils/cookies.js";
+import { getCookie, getToken, setCookie } from "./utils/cookies.js";
 import { UserAPI } from "./api/user.js";
 
-const content = document.getElementById("content");
-const routes = {
-	"/": "home",
+// Constants
+const CONTENT_ELEMENT = document.getElementById("content");
+let ROUTES = {
+	"/": "friends",
 	"/settings": "settings",
 	"/friends": "friends",
 	"/tournaments": "tournaments",
 	"/messages": "messages",
 	"/game": "game",
-	"/login": "login",
+	"/user": "user",
 };
 
+// CSS Management
 function loadCSS(filename) {
-	if (!document.querySelector(`link[href="${filename}"]`)) {
+	const cssLink = `link[href="${filename}"]`;
+	if (!document.querySelector(cssLink)) {
 		const link = document.createElement('link');
 		link.rel = 'stylesheet';
 		link.href = filename;
@@ -25,55 +26,65 @@ function loadCSS(filename) {
 	}
 }
 
-async function render(path) {
-	const pageModule = routes[path];
-	if (pageModule) {
-		try {
-			console.log(`Loading page: ${pageModule}`);
-			loadCSS(`./css/pages/${pageModule}.css`);
+// Page Navigation
+async function renderPage(path) {
+	const pageModule = ROUTES[path];
+	if (!pageModule) {
+		renderError("404", "Page non trouvée.");
+		return;
+	}
 
-			const { render, init } = await import(`./pages/${pageModule}.js`);
-			content.innerHTML = "";
-			const pageContent = document.createElement("div");
-			pageContent.classList.add("page-transition");
-			pageContent.innerHTML = render();
-			content.appendChild(pageContent);
+	try {
+		console.log(`Loading page: ${pageModule}`);
+		loadCSS(`./css/pages/${pageModule}.css`);
 
-			requestAnimationFrame(() => pageContent.classList.add("fade-in"));
-			init && init();
-		} catch (error) {
-			console.error(error);
-			content.innerHTML = "<h1>Erreur de chargement</h1><p>Impossible de charger la page demandée.</p>";
-		}
-	} else {
-		content.innerHTML = "<h1>404</h1><p>Page non trouvée.</p>";
+		const { render, init } = await import(`./pages/${pageModule}.js`);
+		const pageContent = createPageContent(render());
+
+		CONTENT_ELEMENT.innerHTML = "";
+		CONTENT_ELEMENT.appendChild(pageContent);
+
+		requestAnimationFrame(() => pageContent.classList.add("fade-in"));
+		if (init) init();
+	} catch (error) {
+		console.error(error);
+		renderError("Erreur de chargement", "Impossible de charger la page demandée.");
 	}
 }
 
+function createPageContent(html) {
+	const pageContent = document.createElement("div");
+	pageContent.classList.add("page-transition");
+	pageContent.innerHTML = html;
+	return pageContent;
+}
+
+function renderError(title, message) {
+	CONTENT_ELEMENT.innerHTML = `<h1>${title}</h1><p>${message}</p>`;
+}
+
 function updateActiveNavItem(path) {
-	const navItems = document.querySelectorAll(".nav-item");
-	navItems.forEach(item => {
+	document.querySelectorAll(".nav-item").forEach(item => {
 		const href = item.getAttribute("href");
-		if (href === path) {
-			item.classList.add("active");
-		} else {
-			item.classList.remove("active");
-		}
+		item.classList.toggle("active", href === path);
 	});
 }
 
 export function navigate(path) {
 	history.pushState({}, "", path);
 	updateActiveNavItem(path);
-	render(path);
+	renderPage(path);
 }
 
 function initTheme() {
 	const savedTheme = getCookie('theme');
-	const savedAccent = getCookie('accent');
+	const savedAccent = getCookie('accentColor');
 
 	if (savedTheme) {
-		document.documentElement.setAttribute('data-theme', savedTheme);
+		const theme = savedTheme === 'system'
+			? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+			: savedTheme;
+		document.documentElement.setAttribute('data-theme', theme);
 	}
 
 	if (savedAccent) {
@@ -81,43 +92,50 @@ function initTheme() {
 	}
 }
 
-window.addEventListener("popstate", () => render(location.pathname));
-
-document.addEventListener("DOMContentLoaded", () => {
-	initTheme();
-	render(location.pathname);
-	initBackground();
-	initSidebar();
-
+function initSidebarNavigation() {
 	document.getElementById("sidebar").addEventListener("click", (event) => {
 		const target = event.target.closest("a");
-		if (target && target.getAttribute("href")) {
+		if (target?.getAttribute("href")) {
 			event.preventDefault();
-			const path = target.getAttribute("href");
-			navigate(path);
+			navigate(target.getAttribute("href"));
 		}
 	});
+}
 
+function userManager() {
+	const token = getToken();
+
+	if (token === null) {
+		ROUTES = {
+			"/": "user",
+		};
+	}
+
+	if (token !== null) {
+		ROUTES = {
+			"/": "friends",
+			"/settings": "settings",
+			"/friends": "friends",
+			"/tournaments": "tournaments",
+			"/messages": "messages",
+			"/game": "game",
+			"/user": "user",
+		};
+	}
+}
+
+// Event Listeners
+window.addEventListener("popstate", () => renderPage(location.pathname));
+
+document.addEventListener("DOMContentLoaded", () => {
+
+
+	initTheme();
+	renderPage(location.pathname);
+	initBackground();
+	initSidebar();
+	initSidebarNavigation();
 	updateActiveNavItem(location.pathname);
 
-	const token = getToken();
-	if (token) {
-		const ws = WebSocketAPI.onlineStatus(token);
-		ws.onopen = () => {
-			console.log("WebSocket connection established for online status.");
-		};
-		ws.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			console.log("Online status update:", data);
-			// Update the UI with the online status data
-		};
-		ws.onerror = (error) => {
-			console.error("WebSocket error:", error);
-		};
-		ws.onclose = () => {
-			console.log("WebSocket connection closed for online status.");
-		};
-	} else {
-		UserAPI.createGuest();
-	}
+
 });
