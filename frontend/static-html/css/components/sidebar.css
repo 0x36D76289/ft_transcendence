@@ -46,7 +46,7 @@
 
 .nav-item.active {
 	border: 1px solid var(--accent-color);
-	background: var(--hover-bg);
+	background: var(--active-bg);
 }
 
 .nav-text {

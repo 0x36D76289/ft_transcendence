@@ -20,7 +20,7 @@
 
 .sort-button {
 	min-width: 120px;
-	padding: 10px 20px;
+	padding: var(--padding-s) var(--padding-m);
 	border: 1.5px solid var(--border-color);
 	background: var(--bg-secondary);
 	color: var(--text-primary);

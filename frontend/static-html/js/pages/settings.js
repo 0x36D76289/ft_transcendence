@@ -1,61 +1,5 @@
 import { setCookie } from '../utils/cookies.js';
 
-class SettingsController {
-  constructor() {
-    this.settings = {
-      theme: localStorage.getItem('theme') || 'dark',
-      accent: localStorage.getItem('accent') || getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim(),
-      notifications: localStorage.getItem('notifications') === 'true'
-    };
-    
-    this.init();
-  }
-
-  init() {
-    this.loadSettings();
-    this.bindEvents();
-  }
-
-  loadSettings() {
-    document.getElementById('theme').value = this.settings.theme;
-    document.getElementById('accent').value = this.settings.accent;
-    document.getElementById('notifications').checked = this.settings.notifications;
-    
-    this.applySettings();
-  }
-
-  bindEvents() {
-    // Thème
-    document.getElementById('theme').addEventListener('change', (e) => {
-      this.updateSetting('theme', e.target.value);
-    });
-
-    // Couleur d'accent
-    document.getElementById('accent').addEventListener('change', (e) => {
-      this.updateSetting('accent', e.target.value);
-    });
-
-    // Notifications
-    document.getElementById('notifications').addEventListener('change', (e) => {
-      this.updateSetting('notifications', e.target.checked);
-    });
-  }
-
-  updateSetting(key, value) {
-    this.settings[key] = value;
-    localStorage.setItem(key, value);
-    this.applySettings();
-  }
-
-  applySettings() {
-    document.documentElement.setAttribute('data-theme', this.settings.theme);
-    document.documentElement.style.setProperty('--accent-color', this.settings.accent);
-    
-    setCookie('theme', this.settings.theme, 365);
-    setCookie('accent', this.settings.accent, 365);
-  }
-}
-
 export function render() {
   return `
     <div class="settings-container">
@@ -77,7 +21,6 @@ export function render() {
               <select id="theme" class="setting-control">
                 <option value="dark">Sombre</option>
                 <option value="light">Clair</option>
-                <option value="system">Système</option>
               </select>
             </div>
 
@@ -88,7 +31,7 @@ export function render() {
               </div>
               <div class="color-picker">
                 <input type="color" id="accent" value="#3245ff">
-                <button class="reset-color">Réinitialiser</button>
+                <button id="reset-accent" class="button">Réinitialiser</button>
               </div>
             </div>
           </div>
@@ -110,11 +53,98 @@ export function render() {
             </div>
           </div>
         </section>
+
+        <!-- Bouton Réinitialiser -->
+        <div class="settings-actions">
+          <button id="reset-settings" class="button">Réinitialiser</button>
+        </div>
       </div>
     </div>
   `;
 }
 
+const DEFAULT_SETTINGS = {
+  theme: 'dark',
+  accentColor: '#3245ff',
+  notifications: false
+};
+
+function saveSettings(settings) {
+  localStorage.setItem('userSettings', JSON.stringify(settings));
+  setCookie('theme', settings.theme, 365);
+}
+
+function loadSettings() {
+  const savedSettings = localStorage.getItem('userSettings');
+  return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelector('#theme').value = theme;
+}
+
+function applyAccentColor(color) {
+  document.documentElement.style.setProperty('--accent-color', color);
+  document.querySelector('#accent').value = color;
+}
+
+async function handleNotifications(enabled) {
+  if (enabled) {
+    try {
+      const permission = await Notification.requestPermission();
+      return permission === 'granted';
+    } catch (error) {
+      console.error('Erreur lors de la demande de permission:', error);
+      return false;
+    }
+  }
+  return enabled;
+}
+
 export function init() {
-  new SettingsController();
+  const currentSettings = loadSettings();
+
+  applyTheme(currentSettings.theme);
+  applyAccentColor(currentSettings.accentColor);
+  document.querySelector('#notifications').checked = currentSettings.notifications;
+
+  document.querySelector('#theme').addEventListener('change', (e) => {
+    const newTheme = e.target.value;
+    applyTheme(newTheme);
+    saveSettings({ ...currentSettings, theme: newTheme });
+  });
+
+  document.querySelector('#accent').addEventListener('input', (e) => {
+    const newColor = e.target.value;
+    applyAccentColor(newColor);
+    saveSettings({ ...currentSettings, accentColor: newColor });
+  });
+
+  document.querySelector('#reset-accent').addEventListener('click', () => {
+    applyAccentColor(DEFAULT_SETTINGS.accentColor);
+    saveSettings({ ...currentSettings, accentColor: DEFAULT_SETTINGS.accentColor });
+  });
+
+  document.querySelector('#notifications').addEventListener('change', async (e) => {
+    const enabled = e.target.checked;
+    const notificationsEnabled = await handleNotifications(enabled);
+    e.target.checked = notificationsEnabled;
+    saveSettings({ ...currentSettings, notifications: notificationsEnabled });
+  });
+
+  document.querySelector('#reset-settings').addEventListener('click', () => {
+    applyTheme(DEFAULT_SETTINGS.theme);
+    applyAccentColor(DEFAULT_SETTINGS.accentColor);
+    document.querySelector('#notifications').checked = DEFAULT_SETTINGS.notifications;
+    saveSettings(DEFAULT_SETTINGS);
+  });
+
+  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const handleSystemThemeChange = (e) => {
+    if (currentSettings.theme === 'system') {
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  };
+  darkModeMediaQuery.addEventListener('change', handleSystemThemeChange);
 }
