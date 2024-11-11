@@ -1,22 +1,22 @@
 import { get, post } from './api.js';
-import { setCookie, deleteCookie, getToken } from '../utils/cookies.js';
+import { deleteAllCookies, getToken } from '../utils/cookies.js';
 
 export const UserAPI = {
 	register: async (username, password, bio = '') => {
 		const data = await post('/user/register', { username, password, bio });
-		setCookie('authToken', data.token);
+		setToken(data.token);
 		return data;
 	},
 
 	login: async (username, password) => {
 		const data = await post('/user/login', { username, password });
-		setCookie('authToken', data.token);
+		setToken(data.token);
 		return data;
 	},
 
 	logout: async () => {
 		const data = await post('/user/logout');
-		deleteCookie('authToken');
+		deleteAllCookies();
 		return data;
 	},
 
@@ -27,14 +27,14 @@ export const UserAPI = {
 	deleteUser: () => post('/user/delete_user'),
 	createGuest: async () => {
 		const data = await post('/user/create_guest');
-		setCookie('authToken', data.token);
+		setToken(data.token);
 		return data;
 	},
-	getProfile: (token, username) => get(`/user/profile/${username}`, token),
-	getStats: (token, username) => get(`/user/stats/${username}`, token),
-	listUsers: (token) => get('/user/list', token),
-	sendFriendRequest: (token, username) => post('/user/send_friend_request', { username }, token),
-	removeFriendRequest: (token, username) => post('/user/remove_friend_request', { username }, token),
-	getFriendship: (token, username) => post(`/user/get_friendship`, { username }, token),
-	getFriends: (token, username) => post(`/user/get_friends`, { username }, token),
+	getProfile: (username) => get(`/user/profile/${username}`, getToken()),
+	getStats: (username) => get(`/user/stats/${username}`, getToken()),
+	listUsers: () => get('/user/list', getToken()),
+	sendFriendRequest: (username) => post('/user/send_friend_request', { username }, getToken()),
+	removeFriendRequest: (username) => post('/user/remove_friend_request', { username }, getToken()),
+	getFriendship: (username) => post(`/user/get_friendship`, { username }, getToken()),
+	getFriends: (username) => post(`/user/get_friends`, { username }, getToken()),
 };

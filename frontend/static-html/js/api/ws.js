@@ -1,6 +1,7 @@
 import { WS_BASE_URL } from "./api.js";
+import { getToken } from "../utils/cookies.js";
 
 export const WebSocketAPI = {
-  onlineStatus: (token) => new WebSocket(`${WS_BASE_URL}/user/online_status?token=${token}`),
-  chat: (token, convoId) => new WebSocket(`${WS_BASE_URL}/chat/${convoId}?token=${token}`),
+  onlineStatus: () => new WebSocket(`${WS_BASE_URL}/user/online_status?token=${getToken()}`),
+  chat: (convoId) => new WebSocket(`${WS_BASE_URL}/chat/${convoId}?token=${getToken()}`),
 };

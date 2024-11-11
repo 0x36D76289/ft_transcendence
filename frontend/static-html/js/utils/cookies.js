@@ -20,6 +20,7 @@ export function deleteCookie(name) {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;Secure`;
 }
 
+/* GET */
 export function getToken() {
   return getCookie('authToken');
 }
@@ -32,6 +33,7 @@ export function getBio() {
   return getCookie('bio');
 }
 
+/* SET */
 export function setToken(token) {
   setCookie('authToken', token);
 }
@@ -44,10 +46,21 @@ export function setBio(bio) {
   setCookie('bio', bio);
 }
 
+/* DELETE */
 export function deleteToken() {
   deleteCookie('authToken');
 }
 
 export function deleteUsername() {
   deleteCookie('username');
+}
+
+export function deleteBio() {
+  deleteCookie('bio');
+}
+
+export function deleteAllCookies() {
+  deleteToken();
+  deleteUsername();
+  deleteBio();
 }

@@ -18,6 +18,7 @@ export function render() {
 					<button type="submit" class="auth-button">Se connecter</button>
 				</form>
 				<p>Pas encore de compte ? <a href="#" id="showRegister">S'enregistrer</a></p>
+				<button id="guestButton" class="auth-button">Se connecter en tant qu'invité</button>
 			</div>
 			<div class="auth-form" style="display: none;">
 				<h1>Enregistrement</h1>
@@ -35,7 +36,34 @@ export function render() {
 				<p>Déjà un compte ? <a href="#" id="showLogin">Se connecter</a></p>
 			</div>
 		</div>
+		<div id="popup" class="popup" style="display: none;">
+			<div class="popup-content">
+				<span id="popupMessage"></span>
+				<button id="closePopup" class="auth-button">Fermer</button>
+			</div>
+		</div>
 	`;
+}
+
+function showPopup(message) {
+	const popup = document.getElementById('popup');
+	const popupMessage = document.getElementById('popupMessage');
+	popupMessage.textContent = message;
+	popup.style.display = 'flex';
+
+	document.body.style.overflow = 'hidden';
+
+	popup.addEventListener('click', (e) => {
+		if (e.target === popup) {
+			closePopup();
+		}
+	});
+}
+
+function closePopup() {
+	const popup = document.getElementById('popup');
+	popup.style.display = 'none';
+	document.body.style.overflow = 'auto';
 }
 
 export function init() {
@@ -44,14 +72,10 @@ export function init() {
 		const username = document.getElementById('loginUsername').value;
 		const password = document.getElementById('loginPassword').value;
 		try {
-			const data = await UserAPI.login(username, password);
-			setCookie('authToken', data.token);
-			setCookie('username', data.username);
-			setCookie('bio', data.bio);
-			alert('Connexion réussie');
+			await UserAPI.login(username, password);
 			navigate('/');
 		} catch (error) {
-			alert('Erreur de connexion');
+			showPopup('Erreur de connexion');
 		}
 	});
 
@@ -60,16 +84,22 @@ export function init() {
 		const username = document.getElementById('registerUsername').value;
 		const password = document.getElementById('registerPassword').value;
 		try {
-			const data = await UserAPI.register(username, password);
-			setCookie('authToken', data.token);
-			setCookie('username', data.username);
-			setCookie('bio', data.bio);
-			alert('Compte créé avec succès');
+			await UserAPI.register(username, password);
+			navigate('/');
 		} catch (error) {
-			alert('Erreur d\'enregistrement');
+			showPopup('Erreur d\'enregistrement');
 		}
 	});
 
+	document.getElementById('guestButton').addEventListener('click', async (event) => {
+		event.preventDefault();
+		try {
+			await UserAPI.createGuest();
+			navigate('/');
+		} catch (error) {
+			showPopup('Erreur de connexion en tant qu\'invité');
+		}
+	});
 
 	document.getElementById('showRegister').addEventListener('click', (event) => {
 		event.preventDefault();
@@ -82,4 +112,6 @@ export function init() {
 		document.querySelector('.auth-form:nth-child(1)').style.display = 'block';
 		document.querySelector('.auth-form:nth-child(2)').style.display = 'none';
 	});
+
+	document.getElementById('closePopup').addEventListener('click', closePopup);
 }
