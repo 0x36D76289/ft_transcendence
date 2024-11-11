@@ -93,12 +93,8 @@ export function init() {
 
 	document.getElementById('guestButton').addEventListener('click', async (event) => {
 		event.preventDefault();
-		try {
-			await UserAPI.createGuest();
-			navigate('/');
-		} catch (error) {
-			showPopup('Erreur de connexion en tant qu\'invité');
-		}
+		await UserAPI.createGuest();
+		navigate('/');
 	});
 
 	document.getElementById('showRegister').addEventListener('click', (event) => {
