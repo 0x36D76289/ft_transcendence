@@ -1,20 +1,25 @@
+main { 
+  margin-left: 0;
+}
+
 .auth-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--bg-primary);
   padding: var(--padding-l);
+  position: relative;
+  border-color: var(--accent-color);
 }
 
 .auth-form {
-  background: var(--bg-secondary);
   border-radius: 12px;
   padding: var(--padding-l);
   width: 100%;
   max-width: 400px;
   border: 1.5px solid var(--border-color);
   backdrop-filter: blur(var(--blur));
+  margin: var(--margin-m);
 }
 
 .auth-form h1 {
@@ -24,14 +29,16 @@
 }
 
 .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-xxs);
   margin-bottom: var(--margin-m);
 }
 
 .form-group label {
   font-weight: 500;
-  margin-bottom: var(--margin-xxs);
-  display: block;
   color: var(--text-secondary);
+  font: var(--pui);
 }
 
 .form-group input {
@@ -58,19 +65,28 @@
 .auth-button {
   width: 100%;
   padding: var(--padding-s) var(--padding-m);
-  margin-top: var(--margin-m);
   border-radius: 8px;
-  border: 1.5px solid var(--accent-color);
-  background: var(--accent-gradient);
-  color: var(--text-primary);
-  font: var(--bigui);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   cursor: pointer;
   transition: var(--transition);
+  font: var(--pui);
 }
 
 .auth-button:hover {
   background: var(--bg-tertiary);
   border-color: var(--accent-color);
+}
+
+form .auth-button {
+  margin-top: var(--margin-m);
+  background: var(--accent-gradient);
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+form .auth-button:hover {
   box-shadow: 0 4px 12px var(--accent-color);
   transform: translateY(-2px);
 }
@@ -78,7 +94,7 @@
 .auth-form p {
   text-align: center;
   margin-top: var(--margin-m);
-  font: var(--smallui);
+  font: var(--pui);
   color: var(--text-secondary);
 }
 
@@ -93,45 +109,37 @@
 }
 
 #guestButton {
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border: 1.5px solid var(--border-color);
   margin-top: var(--margin-m);
-  padding: var(--padding-s) var(--padding-m);
-  border-radius: 8px;
-  width: 100%;
-  cursor: pointer;
-  transition: var(--transition);
-  font: var(--bigui);
 }
 
-#guestButton:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--border-color);
-}
-
+/* Popup */
 .popup {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(var(--blur));
 }
 
 .popup-content {
+  position: absolute;
   background: var(--bg-secondary);
   padding: var(--padding-l);
   border-radius: 12px;
   text-align: center;
-  border: 1.5px solid var(--border-color);
-  max-width: 90%;
+  border: 1.5px solid var(--accent-color);
   width: 300px;
+  max-width: calc(100% - 40px);
+  margin: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .popup-content span {
@@ -141,21 +149,6 @@
   color: var(--text-primary);
 }
 
-/* Responsive design */
-@media screen and (max-width: 767px) {
-  .auth-container {
-    padding: 16px;
-  }
-  
-  .auth-form {
-    padding: var(--padding-m);
-    margin: 20px;
-    width: calc(100% - 40px);
-  }
-  
-  .form-group input,
-  .auth-button,
-  #guestButton {
-    width: 100%;
-  }
+.popup-content .auth-button {
+  margin-top: var(--margin-m);
 }

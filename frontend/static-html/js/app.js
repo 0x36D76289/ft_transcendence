@@ -1,11 +1,11 @@
 import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
-import { getCookie, getToken, setCookie } from "./utils/cookies.js";
-import { UserAPI } from "./api/user.js";
+import { getCookie, getToken } from "./utils/cookies.js";
 
+/* ******************** SPA ******************** */
 // Constants
 const CONTENT_ELEMENT = document.getElementById("content");
-let ROUTES = {
+const ROUTES = {
 	"/": "friends",
 	"/settings": "settings",
 	"/friends": "friends",
@@ -13,6 +13,7 @@ let ROUTES = {
 	"/messages": "messages",
 	"/game": "game",
 	"/user": "user",
+	"/login": "login",
 };
 
 // CSS Management
@@ -63,17 +64,24 @@ function renderError(title, message) {
 	CONTENT_ELEMENT.innerHTML = `<h1>${title}</h1><p>${message}</p>`;
 }
 
+export function navigate(path) {
+	if (path !== "/login" && !getToken()) {
+		navigate("/login");
+		return;
+	}
+
+	history.pushState({}, "", path);
+	updateActiveNavItem(path);
+	renderPage(path);
+}
+
+/* ******************** SPA ******************** */
+
 function updateActiveNavItem(path) {
 	document.querySelectorAll(".nav-item").forEach(item => {
 		const href = item.getAttribute("href");
 		item.classList.toggle("active", href === path);
 	});
-}
-
-export function navigate(path) {
-	history.pushState({}, "", path);
-	updateActiveNavItem(path);
-	renderPage(path);
 }
 
 function initTheme() {
@@ -102,40 +110,16 @@ function initSidebarNavigation() {
 	});
 }
 
-function userManager() {
-	const token = getToken();
-
-	if (token === null) {
-		ROUTES = {
-			"/": "user",
-		};
-	}
-
-	if (token !== null) {
-		ROUTES = {
-			"/": "friends",
-			"/settings": "settings",
-			"/friends": "friends",
-			"/tournaments": "tournaments",
-			"/messages": "messages",
-			"/game": "game",
-			"/user": "user",
-		};
-	}
-}
-
 // Event Listeners
-window.addEventListener("popstate", () => renderPage(location.pathname));
+window.addEventListener("popstate", () => navigate(location.pathname));
 
-document.addEventListener("DOMContentLoaded", () => {
+initTheme();
+initBackground();
 
-
-	initTheme();
-	renderPage(location.pathname);
-	initBackground();
+if (getToken()) {
 	initSidebar();
 	initSidebarNavigation();
-	updateActiveNavItem(location.pathname);
+}
 
-
-});
+updateActiveNavItem(location.pathname);
+navigate(location.pathname);

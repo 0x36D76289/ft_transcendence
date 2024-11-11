@@ -1,6 +1,7 @@
 import { get } from './api.js';
+import { getToken } from '../utils/cookies.js';
 
 export const GameAPI = {
-  getHistory: (token) => get('/game/history', token),
-  getUserHistory: (token, username) => get(`/game/history/${username}`, token),
+  getHistory: () => get('/game/history', getToken()),
+  getUserHistory: (username) => get(`/game/history/${username}`, getToken()),
 };
