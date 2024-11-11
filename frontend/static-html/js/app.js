@@ -69,6 +69,11 @@ export function navigate(path) {
 		navigate("/login");
 		return;
 	}
+	if (getToken())
+	{
+		initSidebar();
+		initSidebarNavigation();
+	}
 
 	history.pushState({}, "", path);
 	updateActiveNavItem(path);

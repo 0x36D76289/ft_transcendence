@@ -1,5 +1,5 @@
 import { get, post } from './api.js';
-import { deleteAllCookies, getToken } from '../utils/cookies.js';
+import { deleteAllCookies, getToken, setToken } from '../utils/cookies.js';
 
 export const UserAPI = {
 	register: async (username, password, bio = '') => {
