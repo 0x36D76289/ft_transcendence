@@ -21,6 +21,8 @@ export function deleteCookie(name) {
 }
 
 /* GET */
+
+/* User */
 export function getToken() {
   return getCookie('authToken');
 }
@@ -33,7 +35,22 @@ export function getBio() {
   return getCookie('bio');
 }
 
+/* Settings */
+export function getLanguages() {
+  return getCookie('languages') || 'en';
+}
+
+export function getTheme() {
+  return getCookie('theme') || 'light';
+}
+
+export function getAccentColor() {
+  return getCookie('accent') || document.documentElement.style.getPropertyValue('--accent-color') || '#3245ff';
+}
+
 /* SET */
+
+/* User */
 export function setToken(token) {
   setCookie('authToken', token);
 }
@@ -46,7 +63,22 @@ export function setBio(bio) {
   setCookie('bio', bio);
 }
 
+/* Settings */
+export function setLanguages(languages) {
+  setCookie('languages', languages);
+}
+
+export function setTheme(theme) {
+  setCookie('theme', theme);
+}
+
+export function setAccentColor(accent) {
+  setCookie('accent', accent);
+}
+
 /* DELETE */
+
+/* User */
 export function deleteToken() {
   deleteCookie('authToken');
 }
@@ -59,8 +91,24 @@ export function deleteBio() {
   deleteCookie('bio');
 }
 
+/* Settings */
+export function deleteLanguages() {
+  deleteCookie('languages');
+}
+
+export function deleteTheme() {
+  deleteCookie('theme');
+}
+
+export function deleteAccentColor() {
+  deleteCookie('accent');
+}
+
 export function deleteAllCookies() {
   deleteToken();
   deleteUsername();
   deleteBio();
+  deleteLanguages();
+  deleteTheme();
+  deleteAccentColor();
 }

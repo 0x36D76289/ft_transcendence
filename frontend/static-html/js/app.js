@@ -1,19 +1,21 @@
 import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
 import { getCookie, getToken } from "./utils/cookies.js";
+import { Settings } from "./pages/settings.js";
+
 
 /* ******************** SPA ******************** */
 // Constants
 const CONTENT_ELEMENT = document.getElementById("content");
 const ROUTES = {
-	"/": "friends",
+	"/": "home",
 	"/settings": "settings",
 	"/friends": "friends",
 	"/tournaments": "tournaments",
 	"/messages": "messages",
 	"/game": "game",
 	"/user": "user",
-	"/login": "login",
+	"/auth": "auth",
 };
 
 // CSS Management
@@ -24,6 +26,7 @@ function loadCSS(filename) {
 		link.rel = 'stylesheet';
 		link.href = filename;
 		document.head.appendChild(link);
+		console.log(`Loaded CSS: ${filename}`);
 	}
 }
 
@@ -65,14 +68,9 @@ function renderError(title, message) {
 }
 
 export function navigate(path) {
-	if (path !== "/login" && !getToken()) {
-		navigate("/login");
+	if (path !== "/auth" && !getToken()) {
+		navigate("/auth");
 		return;
-	}
-	if (getToken())
-	{
-		initSidebar();
-		initSidebarNavigation();
 	}
 
 	history.pushState({}, "", path);
@@ -89,22 +87,6 @@ function updateActiveNavItem(path) {
 	});
 }
 
-function initTheme() {
-	const savedTheme = getCookie('theme');
-	const savedAccent = getCookie('accentColor');
-
-	if (savedTheme) {
-		const theme = savedTheme === 'system'
-			? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-			: savedTheme;
-		document.documentElement.setAttribute('data-theme', theme);
-	}
-
-	if (savedAccent) {
-		document.documentElement.style.setProperty('--accent-color', savedAccent);
-	}
-}
-
 function initSidebarNavigation() {
 	document.getElementById("sidebar").addEventListener("click", (event) => {
 		const target = event.target.closest("a");
@@ -118,13 +100,14 @@ function initSidebarNavigation() {
 // Event Listeners
 window.addEventListener("popstate", () => navigate(location.pathname));
 
-initTheme();
-initBackground();
 
-if (getToken()) {
-	initSidebar();
-	initSidebarNavigation();
-}
+// Initialization
+export let currentSettings = new Settings();
+currentSettings.applyToDOM();
+
+initBackground();
+await initSidebar();
+initSidebarNavigation();
 
 updateActiveNavItem(location.pathname);
 navigate(location.pathname);

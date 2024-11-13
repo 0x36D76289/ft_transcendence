@@ -1,0 +1,73 @@
+{
+	"sidebar": {
+		"title": "ft_transcendance",
+		"home": "Welcome",
+		"friends": "Friends",
+		"tournaments": "Tournaments",
+		"messages": "Messages",
+		"settings": "Settings",
+		"profile": {
+			"alt": "Profile picture",
+			"status": {
+				"online": "Online",
+				"offline": "Offline"
+			}
+		}
+	},
+	"settings": {
+		"title": "Settings",
+		"subtitle": "Customize your experience",
+		"language": {
+			"title": "Language",
+			"label": "Language",
+			"description": "Choose the interface language"
+		},
+		"appearance": {
+			"title": "Appearance",
+			"theme": {
+				"label": "Theme",
+				"description": "Choose the interface theme",
+				"options": {
+					"dark": "Dark",
+					"light": "Light"
+				}
+			},
+			"accentColor": {
+				"label": "Accent Color",
+				"description": "Main interface color",
+				"reset": "Reset"
+			}
+		},
+		"notifications": {
+			"title": "Notifications",
+			"push": {
+				"label": "Push Notifications",
+				"description": "Receive notifications"
+			}
+		},
+		"actions": {
+			"reset": "Reset settings"
+		}
+	},
+	"auth": {
+		"login": {
+			"title": "Login",
+			"username": "Username",
+			"password": "Password",
+			"submit": "Login",
+			"noAccount": "No account yet?",
+			"register": "Register",
+			"guest": "Login as guest",
+			"error": "Login error"
+		},
+		"register": {
+			"title": "Register",
+			"username": "Username",
+			"password": "Password",
+			"submit": "Register",
+			"hasAccount": "Already have an account?",
+			"login": "Login",
+			"error": "Registration error"
+		}
+	}
+}

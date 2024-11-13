@@ -13,8 +13,6 @@ services:
     build: ./backend/
     container_name: django-backend
     env_file: .env
-    environment:
-      - DJANGO_SETTINGS_MODULE=ft_transcendence.settings
     volumes:
       - media:/media/
     depends_on:
