@@ -1,0 +1,73 @@
+{
+	"sidebar": {
+		"title": "ft_transcendance",
+		"home": "Bienvenue",
+		"friends": "Amis",
+		"tournaments": "Tournois",
+		"messages": "Messages",
+		"settings": "Paramètres",
+		"profile": {
+			"alt": "Photo de profil",
+			"status": {
+				"online": "En ligne",
+				"offline": "Hors ligne"
+			}
+		}
+	},
+	"settings": {
+		"title": "Paramètres",
+		"subtitle": "Personnalisez votre expérience",
+		"language": {
+			"title": "Langue",
+			"label": "Langue",
+			"description": "Choisissez la langue de l'interface"
+		},
+		"appearance": {
+			"title": "Apparence",
+			"theme": {
+				"label": "Thème",
+				"description": "Choisissez le thème de l'interface",
+				"options": {
+					"dark": "Sombre",
+					"light": "Clair"
+				}
+			},
+			"accentColor": {
+				"label": "Couleur d'accent",
+				"description": "Couleur principale de l'interface",
+				"reset": "Réinitialiser"
+			}
+		},
+		"notifications": {
+			"title": "Notifications",
+			"push": {
+				"label": "Notifications push",
+				"description": "Recevoir des notifications"
+			}
+		},
+		"actions": {
+			"reset": "Réinitialiser les paramètres"
+		}
+	},
+	"auth": {
+		"login": {
+			"title": "Connexion",
+			"username": "Nom d'utilisateur",
+			"password": "Mot de passe",
+			"submit": "Connexion",
+			"noAccount": "Pas encore de compte?",
+			"register": "S'inscrire",
+			"guest": "Connexion en tant qu'invité",
+			"error": "Erreur de connexion"
+		},
+		"register": {
+			"title": "Inscription",
+			"username": "Nom d'utilisateur",
+			"password": "Mot de passe",
+			"submit": "Inscription",
+			"hasAccount": "Vous avez déjà un compte?",
+			"login": "Connexion",
+			"error": "Erreur d'inscription"
+		}
+	}
+}

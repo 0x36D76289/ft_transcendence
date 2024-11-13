@@ -1,37 +1,56 @@
-import { setCookie } from '../utils/cookies.js';
+import { setCookie, getLanguages, getTheme, getAccentColor, setLanguages, setTheme, setAccentColor } from '../utils/cookies.js';
+import { i18n } from '../services/i18n.js';
+import { currentSettings } from '../app.js';
 
 export function render() {
   return `
     <div class="settings-container">
       <header class="settings-header">
-        <h1>Paramètres</h1>
-        <p class="settings-subtitle">Personnalisez votre expérience</p>
+        <h1>${i18n.t('settings.title')}</h1>
+        <p class="settings-subtitle">${i18n.t('settings.subtitle')}</p>
       </header>
 
       <div class="settings-grid">
-        <!-- Apparence -->
+        <!-- Langue -->
         <section class="settings-section">
-          <h2>Apparence</h2>
+          <h2>${i18n.t('settings.language.title')}</h2>
           <div class="settings-group">
             <div class="setting-item">
               <div class="setting-info">
-                <label for="theme">Thème</label>
-                <span class="setting-description">Choisissez le thème de l'interface</span>
+                <label for="language">${i18n.t('settings.language.label')}</label>
+                <span class="setting-description">${i18n.t('settings.language.description')}</span>
+              </div>
+              <select id="language" class="setting-control">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Apparence -->
+        <section class="settings-section">
+          <h2>${i18n.t('settings.appearance.title')}</h2>
+          <div class="settings-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="theme">${i18n.t('settings.appearance.theme.label')}</label>
+                <span class="setting-description">${i18n.t('settings.appearance.theme.description')}</span>
               </div>
               <select id="theme" class="setting-control">
-                <option value="dark">Sombre</option>
-                <option value="light">Clair</option>
+                <option value="dark">${i18n.t('settings.appearance.theme.options.dark')}</option>
+                <option value="light">${i18n.t('settings.appearance.theme.options.light')}</option>
               </select>
             </div>
 
             <div class="setting-item">
               <div class="setting-info">
-                <label for="accent">Couleur d'accent</label>
-                <span class="setting-description">Couleur principale de l'interface</span>
+                <label for="accent">${i18n.t('settings.appearance.accentColor.label')}</label>
+                <span class="setting-description">${i18n.t('settings.appearance.accentColor.description')}</span>
               </div>
               <div class="color-picker">
                 <input type="color" id="accent" value="#3245ff">
-                <button id="reset-accent" class="button">Réinitialiser</button>
+                <button id="reset-accent" class="button">${i18n.t('settings.appearance.accentColor.reset')}</button>
               </div>
             </div>
           </div>
@@ -39,12 +58,12 @@ export function render() {
 
         <!-- Notifications -->
         <section class="settings-section">
-          <h2>Notifications</h2>
+          <h2>${i18n.t('settings.notifications.title')}</h2>
           <div class="settings-group">
             <div class="setting-item">
               <div class="setting-info">
-                <label for="notifications">Notifications push</label>
-                <span class="setting-description">Recevoir des notifications</span>
+                <label for="notifications">${i18n.t('settings.notifications.push.label')}</label>
+                <span class="setting-description">${i18n.t('settings.notifications.push.description')}</span>
               </div>
               <label class="switch">
                 <input type="checkbox" id="notifications">
@@ -56,7 +75,7 @@ export function render() {
 
         <!-- Bouton Réinitialiser -->
         <div class="settings-actions">
-          <button id="reset-settings" class="button">Réinitialiser</button>
+          <button id="reset-settings" class="button">${i18n.t('settings.actions.reset')}</button>
         </div>
       </div>
     </div>
@@ -64,29 +83,62 @@ export function render() {
 }
 
 const DEFAULT_SETTINGS = {
-  theme: 'dark',
-  accentColor: '#3245ff',
+  language: getLanguages(),
+  theme: getTheme(),
+  accentColor: getAccentColor(),
   notifications: false
 };
 
-function saveSettings(settings) {
-  localStorage.setItem('userSettings', JSON.stringify(settings));
-  setCookie('theme', settings.theme, 365);
-}
+export class Settings {
+  constructor(settings = DEFAULT_SETTINGS) {
+    this.language = settings.language;
+    this.theme = settings.theme;
+    this.accentColor = settings.accentColor;
+    this.notifications = settings.notifications;
+  }
 
-function loadSettings() {
-  const savedSettings = localStorage.getItem('userSettings');
-  return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
-}
+  static getCurrentFromCookies() {
+    const settings = new Settings({
+      language: getLanguages(),
+      theme: getTheme(),
+      accentColor: getAccentColor(),
+      notifications: false
+    });
+    return settings;
+  }
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  document.querySelector('#theme').value = theme;
-}
+  applyToDOM() {
+    document.documentElement.setAttribute('data-theme', this.theme);
+    document.documentElement.style.setProperty('--accent-color', this.accentColor);
+  }
 
-function applyAccentColor(color) {
-  document.documentElement.style.setProperty('--accent-color', color);
-  document.querySelector('#accent').value = color;
+  updateSettingsPage() {
+    if (window.location.pathname === '/settings') {
+      const themeSelect = document.querySelector('#theme');
+      const accentInput = document.querySelector('#accent');
+      const languageSelect = document.querySelector('#language');
+      const notificationsCheckbox = document.querySelector('#notifications');
+
+      if (themeSelect) themeSelect.value = this.theme;
+      if (accentInput) accentInput.value = this.accentColor;
+      if (languageSelect) languageSelect.value = this.language;
+      if (notificationsCheckbox) notificationsCheckbox.checked = this.notifications;
+    }
+  }
+
+  set() {
+    setLanguages(this.language);
+    setTheme(this.theme);
+    setAccentColor(this.accentColor);
+
+    this.applyToDOM();
+    this.updateSettingsPage();
+  }
+
+  reset() {
+    Object.assign(this, DEFAULT_SETTINGS);
+    this.set();
+  }
 }
 
 async function handleNotifications(enabled) {
@@ -102,48 +154,49 @@ async function handleNotifications(enabled) {
   return enabled;
 }
 
-export function init() {
-  const currentSettings = loadSettings();
+export async function init() {
+  await i18n.init(currentSettings.language);
+  currentSettings.updateSettingsPage();
+  currentSettings.applyToDOM();
 
-  applyTheme(currentSettings.theme);
-  applyAccentColor(currentSettings.accentColor);
-  document.querySelector('#notifications').checked = currentSettings.notifications;
+  document.querySelector('#language').addEventListener('change', async (e) => {
+    currentSettings.language = e.target.value;
+    await i18n.setLanguage(currentSettings.language);
+    currentSettings.set();
+    window.location.reload();
+  });
 
   document.querySelector('#theme').addEventListener('change', (e) => {
-    const newTheme = e.target.value;
-    applyTheme(newTheme);
-    saveSettings({ ...currentSettings, theme: newTheme });
+    currentSettings.theme = e.target.value;
+    currentSettings.set();
   });
 
   document.querySelector('#accent').addEventListener('input', (e) => {
-    const newColor = e.target.value;
-    applyAccentColor(newColor);
-    saveSettings({ ...currentSettings, accentColor: newColor });
+    currentSettings.accentColor = e.target.value;
+    currentSettings.set();
   });
 
   document.querySelector('#reset-accent').addEventListener('click', () => {
-    applyAccentColor(DEFAULT_SETTINGS.accentColor);
-    saveSettings({ ...currentSettings, accentColor: DEFAULT_SETTINGS.accentColor });
+    currentSettings.accentColor = DEFAULT_SETTINGS.accentColor;
+    currentSettings.set();
   });
 
   document.querySelector('#notifications').addEventListener('change', async (e) => {
     const enabled = e.target.checked;
-    const notificationsEnabled = await handleNotifications(enabled);
-    e.target.checked = notificationsEnabled;
-    saveSettings({ ...currentSettings, notifications: notificationsEnabled });
+    currentSettings.notifications = await handleNotifications(enabled);
+    currentSettings.set();
   });
 
   document.querySelector('#reset-settings').addEventListener('click', () => {
-    applyTheme(DEFAULT_SETTINGS.theme);
-    applyAccentColor(DEFAULT_SETTINGS.accentColor);
-    document.querySelector('#notifications').checked = DEFAULT_SETTINGS.notifications;
-    saveSettings(DEFAULT_SETTINGS);
+    currentSettings.reset();
+    window.location.reload();
   });
 
   const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   const handleSystemThemeChange = (e) => {
     if (currentSettings.theme === 'system') {
-      applyTheme(e.matches ? 'dark' : 'light');
+      currentSettings.theme = e.matches ? 'dark' : 'light';
+      currentSettings.set();
     }
   };
   darkModeMediaQuery.addEventListener('change', handleSystemThemeChange);

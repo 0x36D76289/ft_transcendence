@@ -1,5 +1,6 @@
 import { UserAPI } from '../api/user.js';
 import { navigate } from '../app.js';
+import { getToken } from '../utils/cookies.js';
 
 export function render() {
 	return `
