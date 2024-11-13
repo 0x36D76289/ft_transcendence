@@ -43,7 +43,11 @@ def conversations(request):
 	conversations_list = Conversation.objects.filter(
 		Q(initiator=request.user) | Q(receiver=request.user)
 	)
-	serializer = ConversationListSerializer(conversations_list, many=True)
+	serializer = ConversationListSerializer(
+		conversations_list,
+		many=True,
+		context={'current_user': request.user}
+	)
 	return Response(serializer.data)
 
 @api_view(['POST'])
