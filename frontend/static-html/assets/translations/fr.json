@@ -14,6 +14,9 @@
 			}
 		}
 	},
+	"home": {
+		"play": "Jouer"
+	},
 	"settings": {
 		"title": "Paramètres",
 		"subtitle": "Personnalisez votre expérience",
