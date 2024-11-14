@@ -1,15 +1,7 @@
 import { getToken } from '../utils/cookies.js';
 
 export const API_BASE_URL = 'https://localhost:8443/api';
-export const WS_BASE_URL = 'wss://localhost:8443/ws';
-
-// function handleResponse(response) {
-//   console.log(response);
-//   if (response.ok == false) {
-// 	throw new Error(`Error: ${response.status}`);
-//   }
-//   return response.json();
-// }
+export const WS_BASE_URL = 'wss://localhost:8443/api/ws';
 
 function displayCurlEquivalent(method, endpoint, body = {}) {
   console.log(`curl -X ${method} ${API_BASE_URL}${endpoint} -H "Content-Type: application/json" -d '${JSON.stringify(body)}'`);
