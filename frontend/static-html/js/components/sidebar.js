@@ -37,7 +37,7 @@ export async function initSidebar() {
 
   <a href="/user" class="profile">
       <img src="${data.pfp}" alt="${i18n.t('sidebar.profile.alt')}" class="profile-image">
-      <div class="status-led"></div>
+      <div class="status-led ${data.is_online ? 'online' : 'offline'}"></div>
       <div class="profile-info">
         <span class="profile-name">${data.username}</span>
       </div>
@@ -55,4 +55,12 @@ export async function initSidebar() {
             profileElement.style.display = 'none';
         }
     }
+}
+
+export async function refreshSidebar() {
+    const oldSidebar = document.querySelector('#sidebar')?.parentElement;
+    if (oldSidebar) {
+    oldSidebar.remove();
+    }
+    await initSidebar();
 }

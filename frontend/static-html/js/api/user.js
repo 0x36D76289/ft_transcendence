@@ -1,16 +1,16 @@
 import { get, post } from './api.js';
-import { deleteAllCookies, getToken, setToken } from '../utils/cookies.js';
+import { deleteAllCookies, getToken, setToken, setUsername } from '../utils/cookies.js';
 
 export const UserAPI = {
 	register: async (username, password, bio = '') => {
 		const data = await post('/user/register', { username, password, bio });
-		setToken(data.token);
 		return data;
 	},
 
 	login: async (username, password) => {
 		const data = await post('/user/login', { username, password });
 		setToken(data.token);
+		setUsername(data.username);
 		return data;
 	},
 
@@ -22,12 +22,22 @@ export const UserAPI = {
 
 	isTokenValid: () => post('/user/is_token_valid', { token: getToken() }),
 
-	getProfile: (username) => get(`/user/profile/${username}`),
-	updateUser: (username, bio) => post('/user/update_user', { username, bio }),
-	deleteUser: () => post('/user/delete_user'),
+	updateUser: (username, bio) => {
+		const data = post('/user/update_user', { username, bio });
+		setUsername(username);
+		return data;
+	},
+
+	deleteUser: () => {
+		const data = post('/user/delete_user');
+		deleteAllCookies();
+		return data;
+	},
+
 	createGuest: async () => {
 		const data = await post('/user/create_guest');
 		setToken(data.token);
+		setUsername(data.username);
 		return data;
 	},
 	getProfile: (username) => get(`/user/profile/${username}`, getToken()),

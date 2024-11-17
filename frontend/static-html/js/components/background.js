@@ -5,7 +5,10 @@ export function initBackground() {
 
 	const ctx = canvas.getContext("2d");
 	let particles = [];
-	let mouseParticle = { x: 0, y: 0, vx: 0, vy: 0, radius: 1.5 };
+	let mouseParticle = { x: 0, y: 0, vx: 0, vy: 0, radius: 0 };
+
+	const circleRadius = 1;
+	const lineWidth = 0.1;
 
 	function createParticles() {
 		const numParticles = Math.floor((canvas.width * canvas.height) / 10000);
@@ -14,7 +17,7 @@ export function initBackground() {
 			y: Math.random() * canvas.height,
 			vx: (Math.random() - 0.5) * 0.5,
 			vy: (Math.random() - 0.5) * 0.5,
-			radius: 1.5
+			radius: circleRadius
 		}));
 		particles.push(mouseParticle);
 	}
@@ -34,7 +37,7 @@ export function initBackground() {
 	});
 
 	function animate() {
-		const color = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+		let color = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		particles.forEach(p => {
 			if (p !== mouseParticle) {
@@ -54,7 +57,7 @@ export function initBackground() {
 				const dy = other.y - p.y;
 				const distance = Math.sqrt(dx * dx + dy * dy);
 				if (distance < 200) {
-					ctx.lineWidth = 0.1;
+					ctx.lineWidth = lineWidth;
 					ctx.strokeStyle = color;
 					ctx.beginPath();
 					ctx.moveTo(p.x, p.y);

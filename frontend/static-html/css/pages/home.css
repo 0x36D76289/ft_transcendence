@@ -4,22 +4,17 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  padding: 0 24px;
-  margin-left: var(--sidebar-expanded);
-  transition: var(--transition);
 }
 
 .play-button {
-  font-family: var(--ff);
-  padding: 20px 60px;
+  padding: var(--padding-l) var(--padding-xxl);
   font-size: 5rem;
-  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
   border: 3px solid var(--accent-color);
   background: transparent;
   color: var(--text-primary);
-  border-radius: 50px;
+  border-radius: 50rem;
   cursor: pointer;
   transition: var(--transition);
   backdrop-filter: blur(var(--blur));
@@ -27,25 +22,9 @@
 
 .play-button:hover {
   background: var(--accent-gradient);
-  transform: scale(1.05);
-  box-shadow: var(--card-shadow);
+  transform: scale(1.1);
 }
 
-/* Responsive design */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-  .home-container {
-    margin-left: var(--sidebar-collapsed);
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .home-container {
-    margin-left: 0;
-    padding-bottom: calc(var(--mobile-height) + 24px);
-  }
-
-  .play-button {
-    padding: 16px 48px;
-    font-size: 1.5rem;
-  }
+.play-button:active {
+  transform: scale(1);
 }

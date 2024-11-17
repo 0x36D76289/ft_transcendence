@@ -1,9 +1,8 @@
 import { UserAPI } from '../api/user.js';
 import { navigate } from '../app.js';
-import { getToken } from '../utils/cookies.js';
 
 export function render() {
-	return `
+    return `
 		<div class="auth-container">
 			<div class="auth-form">
 				<h1>Connexion</h1>
@@ -47,68 +46,76 @@ export function render() {
 }
 
 function showPopup(message) {
-	const popup = document.getElementById('popup');
-	const popupMessage = document.getElementById('popupMessage');
-	popupMessage.textContent = message;
-	popup.style.display = 'flex';
+    const popup = document.getElementById('popup');
+    const popupMessage = document.getElementById('popupMessage');
+    popupMessage.textContent = message;
+    popup.style.display = 'flex';
 
-	document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
 
-	popup.addEventListener('click', (e) => {
-		if (e.target === popup) {
-			closePopup();
-		}
-	});
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            closePopup();
+        }
+    });
 }
 
 function closePopup() {
-	const popup = document.getElementById('popup');
-	popup.style.display = 'none';
-	document.body.style.overflow = 'auto';
+    const popup = document.getElementById('popup');
+    popup.style.display = 'none';
+    document.body.style.overflow = 'auto';
 }
 
 export function init() {
-	document.getElementById('loginForm').addEventListener('submit', async (event) => {
-		event.preventDefault();
-		const username = document.getElementById('loginUsername').value;
-		const password = document.getElementById('loginPassword').value;
-		try {
-			await UserAPI.login(username, password);
-			navigate('/');
-		} catch (error) {
-			showPopup('Erreur de connexion');
-		}
-	});
+    const mainElement = document.querySelector('main');
+    const originalMarginLeft = getComputedStyle(mainElement).marginLeft;
+    mainElement.style.marginLeft = '0';
 
-	document.getElementById('registerForm').addEventListener('submit', async (event) => {
-		event.preventDefault();
-		const username = document.getElementById('registerUsername').value;
-		const password = document.getElementById('registerPassword').value;
-		try {
-			await UserAPI.register(username, password);
-			navigate('/');
-		} catch (error) {
-			showPopup('Erreur d\'enregistrement');
-		}
-	});
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+        try {
+            await UserAPI.login(username, password);
+            mainElement.style.marginLeft = originalMarginLeft;
+            navigate('/');
+        } catch (error) {
+            showPopup('Erreur de connexion');
+        }
+    });
 
-	document.getElementById('guestButton').addEventListener('click', async (event) => {
-		event.preventDefault();
-		await UserAPI.createGuest();
-		navigate('/');
-	});
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('registerUsername').value;
+        const password = document.getElementById('registerPassword').value;
+        try {
+            await UserAPI.register(username, password);
+            mainElement.style.marginLeft = originalMarginLeft;
+            navigate('/');
+        } catch (error) {
+            showPopup('Erreur d\'enregistrement');
+        }
+    });
 
-	document.getElementById('showRegister').addEventListener('click', (event) => {
-		event.preventDefault();
-		document.querySelector('.auth-form:nth-child(1)').style.display = 'none';
-		document.querySelector('.auth-form:nth-child(2)').style.display = 'block';
-	});
+    document.getElementById('guestButton').addEventListener('click', async (event) => {
+        event.preventDefault();
+        await UserAPI.createGuest();
+        mainElement.style.marginLeft = originalMarginLeft;
+        window.location.reload();
+        navigate('/');
+    });
 
-	document.getElementById('showLogin').addEventListener('click', (event) => {
-		event.preventDefault();
-		document.querySelector('.auth-form:nth-child(1)').style.display = 'block';
-		document.querySelector('.auth-form:nth-child(2)').style.display = 'none';
-	});
+    document.getElementById('showRegister').addEventListener('click', (event) => {
+        event.preventDefault();
+        document.querySelector('.auth-form:nth-child(1)').style.display = 'none';
+        document.querySelector('.auth-form:nth-child(2)').style.display = 'block';
+    });
 
-	document.getElementById('closePopup').addEventListener('click', closePopup);
+    document.getElementById('showLogin').addEventListener('click', (event) => {
+        event.preventDefault();
+        document.querySelector('.auth-form:nth-child(1)').style.display = 'block';
+        document.querySelector('.auth-form:nth-child(2)').style.display = 'none';
+    });
+
+    document.getElementById('closePopup').addEventListener('click', closePopup);
 }

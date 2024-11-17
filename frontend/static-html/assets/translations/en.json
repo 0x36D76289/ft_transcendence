@@ -58,7 +58,7 @@
 			"username": "Username",
 			"password": "Password",
 			"submit": "Login",
-			"noAccount": "No account yet?",
+			"noAccount": "No account yet?",	
 			"register": "Register",
 			"guest": "Login as guest",
 			"error": "Login error"
@@ -72,5 +72,34 @@
 			"login": "Login",
 			"error": "Registration error"
 		}
+	},
+	"messages": {
+		"friends": "Friends",
+		"search": "Search friends...",
+		"welcome": "Welcome to your messages",
+		"select_friend": "Select a friend to start chatting",
+		"type_message": "Type a message...",
+		"send": "Send"
+	},
+	"profile": {
+		"title": "Profile",
+		"stats": "Statistics",
+		"games_played": "Games Played",
+		"win_rate": "Win Rate",
+		"edit_profile": "Edit Profile",
+		"username": "Username",
+		"bio": "Bio",
+		"save": "Save",
+		"save_success": "Profile updated successfully",
+		"save_error": "Failed to update profile",
+		"danger_zone": "Danger Zone",
+		"logout": "Logout",
+		"logout_error": "Failed to logout",
+		"delete_account": "Delete Account",
+		"confirm_delete": "Confirm Account Deletion",
+		"delete_warning": "Are you sure you want to delete your account? This action cannot be undone.",
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"delete_error": "Failed to delete account"
 	}
 }
