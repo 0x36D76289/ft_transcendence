@@ -72,5 +72,34 @@
 			"login": "Connexion",
 			"error": "Erreur d'inscription"
 		}
+	},
+	"messages": {
+		"friends": "Amis",
+		"search": "Rechercher des amis",
+		"welcome": "Bienvenue dans le chat",
+		"select_friend": "Sélectionnez un ami pour commencer à discuter",
+		"type_message": "Tapez votre message ici...",
+		"send": "Envoyer"
+	},
+	"profile": {
+		"title": "Profil",
+		"stats": "Statistiques",
+		"games_played": "Parties jouées",
+		"win_rate": "Taux de victoire",
+		"edit_profile": "Modifier le profil",
+		"username": "Nom d'utilisateur",
+		"bio": "Biographie",
+		"save": "Enregistrer",
+		"save_success": "Profil mis à jour avec succès",
+		"save_error": "Erreur lors de la mise à jour du profil",
+		"danger_zone": "Zone dangereuse",
+		"logout": "Déconnexion",
+		"logout_error": "Erreur lors de la déconnexion",
+		"delete_account": "Supprimer le compte",
+		"confirm_delete": "Confirmer la suppression",
+		"delete_warning": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer votre compte?",
+		"cancel": "Annuler",
+		"confirm": "Confirmer",
+		"delete_error": "Erreur lors de la suppression du compte"
 	}
 }

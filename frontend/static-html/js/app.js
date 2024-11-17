@@ -1,8 +1,7 @@
 import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
-import { getCookie, getToken } from "./utils/cookies.js";
+import { getToken } from "./utils/cookies.js";
 import { Settings } from "./pages/settings.js";
-
 
 /* ******************** SPA ******************** */
 // Constants
@@ -106,8 +105,12 @@ export let currentSettings = new Settings();
 currentSettings.applyToDOM();
 
 initBackground();
-await initSidebar();
-initSidebarNavigation();
-
-updateActiveNavItem(location.pathname);
-navigate(location.pathname);
+if (getToken() != null) {
+	await initSidebar();
+	initSidebarNavigation();
+	if (location.pathname === "/auth") navigate("/");
+	updateActiveNavItem(location.pathname);
+	renderPage(location.pathname);
+} else {
+	navigate("/auth");
+}

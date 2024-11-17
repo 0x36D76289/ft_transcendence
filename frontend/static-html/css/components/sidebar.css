@@ -4,13 +4,17 @@
 	transition: var(--transition);
 	z-index: 1000;
 	box-shadow: var(--card-shadow);
+	position: fixed;
+	left: 0;
+	width: var(--sidebar-width);
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 /* Logo and header */
 .sidebar-header {
 	padding: var(--padding-m);
-	display: flex;
-	align-items: center;
 	gap: var(--margin-s);
 	border-bottom: 1px solid var(--border-color);
 }
@@ -21,7 +25,7 @@
 
 /* Navigation */
 .nav-items {
-	margin-top: var(--margin-xl);
+	margin-top: var(--margin-xxl);
 }
 
 .nav-item {
@@ -30,22 +34,20 @@
 	padding: var(--padding-s) var(--padding-m);
 	margin: var(--margin-xxs) var(--margin-xs);
 	border-radius: var(--margin-xs);
-	border: 1px solid transparent;
 	cursor: pointer;
 	transition: var(--transition);
-	text-decoration: none;
 	color: var(--text-primary);
-	position: relative;
-	overflow: hidden;
+	border: 1px solid transparent;
 }
 
 .nav-item:hover {
-	border: 1px solid var(--accent-color);
+	border-color: var(--accent-color);
 	background: var(--hover-bg);
+	transition: var(--transition);
 }
 
 .nav-item.active {
-	border: 1px solid var(--accent-color);
+	border-color: var(--accent-color);
 	background: var(--active-bg);
 }
 
@@ -68,6 +70,7 @@
 
 .profile:hover {
 	background-color: var(--hover-bg);
+	border-color: var(--border-color);
 	cursor: pointer;
 }
 
@@ -90,7 +93,7 @@
 	border: 2px solid var(--sidebar-bg);
 	bottom: var(--margin-m);
 	left: 44px;
-	box-shadow: 0 0 8px var(--accent-color);
+	/* box-shadow: 0 0 8px var(--accent-color); */
 }
 
 .status-led.offline {
@@ -112,14 +115,13 @@
 	opacity: 0.7;
 }
 
-/* Desktop */
 @media screen and (min-width: 1024px) {
 	.sidebar {
 		position: fixed;
 		left: 0;
 		top: 0;
 		width: var(--sidebar-width);
-		height: 100vh;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
 	}
