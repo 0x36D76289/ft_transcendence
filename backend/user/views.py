@@ -35,6 +35,7 @@ def login(request):
 @authentication_classes([])
 @permission_classes([])
 def register(request):
+	guest = None
 	if request.data.get('token'):
 		try:
 			guest = Token.objects.get(key=request.data['token']).user
@@ -42,12 +43,17 @@ def register(request):
 			return Response({'detail': 'Token is not valid'}, status=status.HTTP_404_NOT_FOUND)
 		if not guest.is_guest:
 			return Response({'detail': 'Token corresponds to a non guest user'}, status=status.HTTP_400_BAD_REQUEST)
+		if not request.data.get('password'):
+			return Response({'detail': 'You must include a password'}, status=status.HTTP_400_BAD_REQUEST)
 		serializer = UserSerializer(guest, data=request.data)
 	else:
 		serializer = UserSerializer(data=request.data)
 	if not serializer.is_valid():
 		return Response({'detail': clean_serializer_errors(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save(password=request.data.get('password'))
+	if guest:
+		guest.is_guest = False
+		guest.save()
 	return Response({'detail': 'Account created', 'username': serializer.data['username']})
 
 @api_view(['POST'])
@@ -157,15 +163,16 @@ def update_user(request):
 	if not serializer.is_valid():
 		return Response({'detail': clean_serializer_errors(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
 	serializer.save()
-	return Response({'detail': 'Successfuly updated user'})
+	return Response(serializer.data)
 
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
 def create_guest(request):
 	guest = User.objects.create()
-	guest.username = f"guest_{guest.id}"
+	guest.username = f"noob_{guest.id}"
 	guest.is_guest = True
+	guest.bio = "humain super cool ^^"
 	guest.save()
 	token, created = Token.objects.get_or_create(user=guest)
 	return Response({'token': token.key, 'username': guest.username, 'detail': 'Successfuly created guest account!'})
