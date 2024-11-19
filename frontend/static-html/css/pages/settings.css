@@ -1,9 +1,5 @@
 .settings-container {
   padding: var(--padding-l);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  backdrop-filter: blur(var(--blur));
-  margin: var(--margin-m);
 }
 
 .settings-section {
@@ -12,6 +8,7 @@
   margin: 16px 0;
   cursor: pointer;
   border: 1px solid var(--border-color);
+  backdrop-filter: blur(var(--blur));
 }
 
 .setting-item {

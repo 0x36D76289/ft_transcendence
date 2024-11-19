@@ -81,25 +81,21 @@
 		"type_message": "Type a message...",
 		"send": "Send"
 	},
-	"profile": {
+	"user": {
 		"title": "Profile",
-		"stats": "Statistics",
-		"games_played": "Games Played",
-		"win_rate": "Win Rate",
-		"edit_profile": "Edit Profile",
 		"username": "Username",
 		"bio": "Bio",
+		"joined": "Joined on",
+		"edit": "Edit",
 		"save": "Save",
-		"save_success": "Profile updated successfully",
-		"save_error": "Failed to update profile",
-		"danger_zone": "Danger Zone",
+		"stats": "Statistics",
+		"gamesPlayed": "Games played",
+		"winRate": "Win rate",
+		"accountActions": "Account Actions",
 		"logout": "Logout",
-		"logout_error": "Failed to logout",
-		"delete_account": "Delete Account",
-		"confirm_delete": "Confirm Account Deletion",
-		"delete_warning": "Are you sure you want to delete your account? This action cannot be undone.",
-		"cancel": "Cancel",
-		"confirm": "Confirm",
-		"delete_error": "Failed to delete account"
+		"deleteAccount": "Delete Account",
+		"deleteConfirmation": "Are you sure you want to delete your account? This action cannot be undone.",
+		"confirmDelete": "Confirm Delete",
+		"cancel": "Cancel"
 	}
 }

@@ -81,25 +81,21 @@
 		"type_message": "Tapez votre message ici...",
 		"send": "Envoyer"
 	},
-	"profile": {
+	"user": {
 		"title": "Profil",
-		"stats": "Statistiques",
-		"games_played": "Parties jouées",
-		"win_rate": "Taux de victoire",
-		"edit_profile": "Modifier le profil",
 		"username": "Nom d'utilisateur",
-		"bio": "Biographie",
+		"bio": "Bio",
+		"joined": "Inscrit le",
+		"edit": "Modifier",
 		"save": "Enregistrer",
-		"save_success": "Profil mis à jour avec succès",
-		"save_error": "Erreur lors de la mise à jour du profil",
-		"danger_zone": "Zone dangereuse",
-		"logout": "Déconnexion",
-		"logout_error": "Erreur lors de la déconnexion",
-		"delete_account": "Supprimer le compte",
-		"confirm_delete": "Confirmer la suppression",
-		"delete_warning": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer votre compte?",
-		"cancel": "Annuler",
-		"confirm": "Confirmer",
-		"delete_error": "Erreur lors de la suppression du compte"
+		"stats": "Statistiques",
+		"gamesPlayed": "Parties jouées",
+		"winRate": "Taux de victoire",
+		"accountActions": "Actions du compte",
+		"logout": "Se déconnecter",
+		"deleteAccount": "Supprimer le compte",
+		"deleteConfirmation": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.",
+		"confirmDelete": "Confirmer la suppression",
+		"cancel": "Annuler"
 	}
 }

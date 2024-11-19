@@ -50,7 +50,7 @@
 	/* French Blue */
 
 	/* Font families */
-	--ff: "Monocraft", sans-serif;
+	--ff: "JetBrains Mono", sans-serif;
 	--ff2: "JetBrains Mono", sans-serif;
 
 	/* Typography */
@@ -163,7 +163,7 @@ html {
 /* Fond de la page */
 body {
 	background-color: var(--bg-primary);
-	font-family: 'Roboto', sans-serif;
+	font-family: 'JetBrains Mono', sans-serif;
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
