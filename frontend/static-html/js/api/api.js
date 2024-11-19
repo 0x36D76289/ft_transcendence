@@ -17,9 +17,11 @@ export async function get(endpoint, token = null) {
   });
 
   console.log(`curl -X GET "${API_BASE_URL}${endpoint}" -H "Content-Type: application/json"${token ? ` -H "Authorization: Token ${token}"` : ''}`);
-  console.log(response);
 
-  return response.json();
+  const jsonResponse = await response.json();
+  console.log('Response JSON:', jsonResponse);
+
+  return jsonResponse;
 }
 
 export async function post(endpoint, body = {}, token = null) {
@@ -37,7 +39,9 @@ export async function post(endpoint, body = {}, token = null) {
   });
 
   console.log(`curl -X POST "${API_BASE_URL}${endpoint}" -H "Content-Type: application/json"${token ? ` -H "Authorization: Token ${token}"` : ''} -d '${JSON.stringify(body)}'`);
-  console.log(response);
 
-  return response.json();
+  const jsonResponse = await response.json();
+  console.log('Response JSON:', jsonResponse);
+
+  return jsonResponse;
 }

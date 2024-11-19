@@ -7,7 +7,6 @@ export function render() {
     <div class="settings-container">
       <header class="settings-header">
         <h1>${i18n.t('settings.title')}</h1>
-        <p class="settings-subtitle">${i18n.t('settings.subtitle')}</p>
       </header>
 
       <div class="settings-grid">

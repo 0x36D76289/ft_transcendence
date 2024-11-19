@@ -75,6 +75,8 @@ export function navigate(path) {
 	history.pushState({}, "", path);
 	updateActiveNavItem(path);
 	renderPage(path);
+
+	console.log(`Navigated to: ${path}`);
 }
 
 /* ******************** SPA ******************** */
