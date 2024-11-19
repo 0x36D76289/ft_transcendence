@@ -28,16 +28,41 @@ function getCookie(name) {
     return cookieValue;
 }
 
-const ROOM_NAME = "test";
-const sock = new WebSocket(
-	"wss://" +
+function game_url(room_name) {
+	return "wss://" +
 	window.location.host +
 	'/api/ws/pong/' +
-	ROOM_NAME +
+	room_name +
 	'/' +
 	"?token=" +
+	getCookie("token");
+}
+let game_sock = new WebSocket(game_url("test"))
+
+
+const online_sock = new WebSocket(
+	"wss://" +
+	window.location.host +
+	'/api/ws/user/online_status?token=' +
 	getCookie("token")
 );
+
+online_sock.onmessage = function (object) {
+	try {
+		console.log("received ", object, " from online_sock");
+		let inner = JSON.parse(object.data);
+		if (inner.type == "game_start") {
+			let room = inner.value;
+			game_sock.close();
+			game_sock = new WebSocket(game_url(room));
+			game_sock.onmessage = game_sock_receive;
+		}
+	} catch (e) {
+		console.log("[online_sock] couldn't parse: ", object.data);
+		return
+	}
+}
+
 
 console.log(document.cookie.split(';')[0])
 //TODO: wait for socket to connect ?
@@ -230,7 +255,7 @@ function multiplayer_tick_bounce_horizontal(state, input) {
 	if (is_ball_on_left(state)) {
 		if (player_num == 1 && !is_ball_bouncing(state.ball_y, state.p1_height)) {
 			scores[1] += 1;
-			sock.send(JSON.stringify({
+			game_sock.send(JSON.stringify({
 				type: "score",
 				p1: scores[0],
 				p2: scores[1]
@@ -242,7 +267,7 @@ function multiplayer_tick_bounce_horizontal(state, input) {
 	} else {
 		if (player_num == 2 && !is_ball_bouncing(state.ball_y, state.p2_height)) {
 			scores[0] += 1;
-			sock.send(JSON.stringify({
+			game_sock.send(JSON.stringify({
 				type: "score",
 				p1: scores[0],
 				p2: scores[1]
@@ -284,7 +309,7 @@ function multiplayer_update() {
 	}
 
 	//send input
-	sock.send(JSON.stringify({
+	game_sock.send(JSON.stringify({
 		type: "input",
 		frame: current_frame,
 		input: inputs[current_frame][player_num - 1],
@@ -453,23 +478,27 @@ function draw() {
 	//copy buffer
 	ctx.drawImage(BUFF, 0, 0);
 }
-sock.onmessage = function (object) {
+function game_sock_receive(object) {
 	try {
 		let inner = JSON.parse(object.data);
 		if (inner.type == "player_assign") {
 			player_num = inner.value;
 			console.log("Assigned to player ", player_num);
-			if (player_num == 2) {
-				sock.send('{"type":"score","p1":0, "p2": 0}')
+			if (player_num == 1 || player_num == 2) {
+				game_sock.send('{"type":"score","p1":0, "p2": 0}')
 			}
 		} else if (inner.type == "score") {
-			//console.log("received score update ", inner);
+			console.log("received score update ", inner);
 			page_state = States.MP_Game
 			scores[0] = inner.p1;
 			scores[1] = inner.p2;
 			clearInterval(interval);
-			init()
-			interval = setInterval(multiplayer_update, 1000 / 60)
+			if (scores[0] == GAME_SETTINGS.win_score || scores[1] == GAME_SETTINGS.win_score) {
+				//TODO: go back to main menu
+			} else {
+				init();
+				interval = setInterval(multiplayer_update, 1000 / 60);
+			}
 		} else if (inner.type == "input") {
 			while (inner.frame >= inputs.length) {
 				inputs[inputs.length] = [undefined, undefined]
@@ -486,12 +515,12 @@ sock.onmessage = function (object) {
 
 // HACK: debug features
 // document.getElementById("tournament").onclick = function () { start_tournament() }
-// document.getElementById("send_score_0").onclick = function () { sock.send('{"type":"score","p1":0, "p2": 0}') }
-// document.getElementById("send_score_1").onclick = function () { sock.send('{"type":"score","p1":1, "p2": 0}') }
-// document.getElementById("send_score_w").onclick = function () { sock.send('{"type":"score","p1":10, "p2": 0}') }
+// document.getElementById("send_score_0").onclick = function () { game_sock.send('{"type":"score","p1":0, "p2": 0}') }
+// document.getElementById("send_score_1").onclick = function () { game_sock.send('{"type":"score","p1":1, "p2": 0}') }
+// document.getElementById("send_score_w").onclick = function () { game_sock.send('{"type":"score","p1":10, "p2": 0}') }
 // document.getElementById("print_input").onclick = function () { console.log(keys) }
 // document.getElementById("shutup").onclick = function () { clearTimeout(interval) }
-// document.getElementById("disconnect").onclick = function () { sock.close() }
+// document.getElementById("disconnect").onclick = function () { game_sock.close() }
 
 function main_menu() {
 	let half_x = (GAME_DIMENSIONS[0] / 2) | 0;
@@ -550,6 +579,12 @@ let current_game = 0;
 let current_round = 0;
 
 function name_enter(key_event) {
+	//HACK: starting match with key, add real UI
+	console.log(key_event.code)
+	if (key_event.code == "KeyU") {
+		console.log("STARTING ONLINE MATCH");
+		online_sock.send("start")
+	}
 	if (key_event.code == "Backquote") {
 		page_state = States.Name_Entry;
 		render_name();
