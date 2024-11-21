@@ -485,6 +485,7 @@ function game_sock_receive(object) {
 			player_num = inner.value;
 			console.log("Assigned to player ", player_num);
 			if (player_num == 1 || player_num == 2) {
+				scores = [0, 0]
 				game_sock.send('{"type":"score","p1":0, "p2": 0}')
 			}
 		} else if (inner.type == "score") {
@@ -584,6 +585,10 @@ function name_enter(key_event) {
 	if (key_event.code == "KeyU") {
 		console.log("STARTING ONLINE MATCH");
 		online_sock.send("start")
+	}
+	if (key_event.code == "KeyM") {
+		console.log("JOINING MM QUEUE");
+		online_sock.send("join_mm")
 	}
 	if (key_event.code == "Backquote") {
 		page_state = States.Name_Entry;
