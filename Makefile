@@ -87,13 +87,21 @@ restart: ## Restart all containers
 	@printf "$(GREEN)✓$(RESET) Restart complete\n"
 
 # Development commands
-dev-logs: ## Display logs for a specific service (usage: make dev-logs service_name)
-	@printf "$(BOLD)Following logs for $(CYAN)$(filter-out $@,$(MAKECMDGOALS))$(RESET)\n"
-	@$(DOCKER_COMPOSE) logs -f $(filter-out $@,$(MAKECMDGOALS))
+dev-logs-frontend: ## Display logs for the frontend service
+	@printf "$(BOLD)Following logs for $(CYAN)frontend$(RESET)\n"
+	@$(DOCKER_COMPOSE) logs -f frontend
 
-dev-shell: ## Open a shell in a container (usage: make dev-shell service_name)
-	@printf "$(BOLD)Opening shell in $(CYAN)$(filter-out $@,$(MAKECMDGOALS))$(RESET)\n"
-	@$(DOCKER_COMPOSE) exec $(filter-out $@,$(MAKECMDGOALS)) sh
+dev-logs-backend: ## Display logs for the backend service
+	@printf "$(BOLD)Following logs for $(CYAN)backend$(RESET)\n"
+	@$(DOCKER_COMPOSE) logs -f backend
+
+dev-shell-frontend: ## Open a shell in the frontend container
+	@printf "$(BOLD)Opening shell in $(CYAN)frontend$(RESET)\n"
+	@$(DOCKER_COMPOSE) exec frontend bash
+
+dev-shell-backend: ## Open a shell in the backend container
+	@printf "$(BOLD)Opening shell in $(CYAN)backend$(RESET)\n"
+	@$(DOCKER_COMPOSE) exec backend bash
 
 # System information
 system-info: ## Display Docker system information
@@ -119,4 +127,4 @@ version: ## Display project version information
 %:
 	@:
 
-.PHONY: help all up build down rebuild rebuild-frontend rebuild-backend clean logs status restart dev-logs dev-shell system-info health version
+.PHONY: help all up build down rebuild rebuild-frontend rebuild-backend clean logs status restart dev-logs-frontend dev-logs-backend dev-shell system-info dev-shell-frontend dev-shell-backend health version

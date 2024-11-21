@@ -1,7 +1,6 @@
 import { UserAPI } from '../api/user.js';
 import { i18n } from '../services/i18n.js';
 import { getUsername } from '../utils/cookies.js';
-import { navigate } from '../app.js';
 
 export function render() {
 	return `
@@ -14,7 +13,7 @@ export function render() {
 				<div class="profile-section">
 					<div class="profile-info-card">
 						<div class="profile-avatar">
-							<div class="avatar-placeholder"></div>
+							<img src="/media/pfp/default_pfp.svg" class="avatar-placeholder"></img>
 							<div class="status-indicator" id="status-indicator"></div>
 						</div>
 						
@@ -115,9 +114,6 @@ export async function init() {
 		document.getElementById('games-played').textContent = stats.games_played;
 		document.getElementById('win-rate').textContent = `${stats.win_rate}%`;
 
-		const avatarPlaceholder = document.querySelector('.avatar-placeholder');
-		avatarPlaceholder.style.backgroundImage = `url(/media/pfp/default_pfp.svg)`;
-
 		// Update online status indicator
 		const statusIndicator = document.getElementById('status-indicator');
 		statusIndicator.classList.add(profile.is_online ? 'online' : 'offline');
@@ -135,7 +131,7 @@ export async function init() {
 	// Save profile changes
 	saveButton.addEventListener('click', async () => {
 		try {
-			const updatedProfile = await UserAPI.updateUser(username, bioInput.value);
+			const updatedProfile = await UserAPI.updateUser(username , bioInput.value);
 			bioInput.setAttribute('disabled', 'true');
 			editButton.classList.remove('hidden');
 			saveButton.classList.add('hidden');
@@ -149,7 +145,7 @@ export async function init() {
 	logoutButton.addEventListener('click', async () => {
 		try {
 			await UserAPI.logout();
-			navigate('/login');
+			window.location.reload();
 		} catch (error) {
 			console.error('Failed to logout:', error);
 		}

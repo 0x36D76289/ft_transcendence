@@ -1,5 +1,5 @@
 import { get, post } from './api.js';
-import { getToken, setToken, setUsername, setBio } from '../utils/cookies.js';
+import { deleteSessionCookies, getToken, setToken, setUsername, setBio } from '../utils/cookies.js';
 
 export const UserAPI = {
 	register: async (username, password, bio = '') => {
@@ -16,9 +16,7 @@ export const UserAPI = {
 
 	logout: async () => {
 		const data = await post('/user/logout');
-		deleteToken();
-		deleteUsername();
-		deleteBio();
+		deleteSessionCookies();
 		return data;
 	},
 
@@ -26,16 +24,14 @@ export const UserAPI = {
 
 	updateUser: (username, bio) => {
 		const data = post('/user/update_user', { username, bio }, getToken());
-		setUsername(data.username);
-		setBio(data.bio);
+		setUsername(username);
+		setBio(bio);
 		return data;
 	},
 
 	deleteUser: () => {
 		const data = post('/user/delete_user', {}, getToken());
-		deleteToken();
-		deleteUsername();
-		deleteBio();
+		deleteSessionCookies();
 		return data;
 	},
 

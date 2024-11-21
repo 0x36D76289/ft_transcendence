@@ -1,3 +1,5 @@
+import { UserAPI } from "../api/user.js"; 
+
 export function setCookie(name, value, days = 7) {
   const date = new Date();
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -102,6 +104,12 @@ export function deleteTheme() {
 
 export function deleteAccentColor() {
   deleteCookie('accent');
+}
+
+export function deleteSessionCookies() {
+  deleteToken();
+  deleteUsername();
+  deleteBio();
 }
 
 export function deleteAllCookies() {
