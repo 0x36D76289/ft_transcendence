@@ -6,6 +6,9 @@ export async function initSidebar() {
     await i18n.init(getLanguages());
     const data = await UserAPI.getProfile(getUsername());
 
+    const data_json = JSON.stringify(data);
+    console.log(data_json);
+
     const SIDEBAR = `
 <nav id="sidebar" class="sidebar">
   <div class="sidebar-header">
@@ -36,7 +39,7 @@ export async function initSidebar() {
   </div>
 
   <a href="/user" class="profile">
-      <img src="${data.pfp}" alt="${i18n.t('sidebar.profile.alt')}" class="profile-image">
+      <img src="/media/pfp/default_pfp.svg" alt="${i18n.t('sidebar.profile.alt')}" class="profile-image">
       <div class="status-led ${data.is_online ? 'online' : 'offline'}"></div>
       <div class="profile-info">
         <span class="profile-name">${data.username}</span>
@@ -55,12 +58,4 @@ export async function initSidebar() {
             profileElement.style.display = 'none';
         }
     }
-}
-
-export async function refreshSidebar() {
-    const oldSidebar = document.querySelector('#sidebar')?.parentElement;
-    if (oldSidebar) {
-    oldSidebar.remove();
-    }
-    await initSidebar();
 }
