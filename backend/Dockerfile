@@ -12,5 +12,4 @@ COPY . /code
 
 RUN mv ./default_pfp.svg /media/pfp/
 
-
 CMD chmod +x /code/start.sh && /code/start.sh
