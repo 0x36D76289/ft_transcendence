@@ -1,15 +1,19 @@
 @font-face {
-	font-family: "Monocraft";
-	src: url("../assets/fonts/Monocraft.ttf") format("truetype");
+	font-family: 'Monocraft';
+	src: url('../asset/fonts/Monocraft.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 
 @font-face {
-	font-family: "JetBrains Mono";
-	src: url("../assets/fonts/JetBrainsMono.ttf") format("truetype");
+	font-family: 'JetBrains Mono';
+	src: url('../assets/fonts/JetBrainsMono.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 
 :root {
-	font-size: 20px;
+	font-size: 1.25rem; 
 
 	/* Margin */
 	--margin-xxs: .25rem;
@@ -30,7 +34,6 @@
 	--padding-xxl: 2.5rem;
 
 	/* Colors */
-	--dark: hsl(0, 0%, 0%);
 	--gray10: hsl(0, 0%, 10%);
 	--gray20: hsl(0, 0%, 20%);
 	--gray30: hsl(0, 0%, 30%);
@@ -40,12 +43,15 @@
 	--gray70: hsl(0, 0%, 70%);
 	--gray80: hsl(0, 0%, 80%);
 	--gray90: hsl(0, 0%, 90%);
-	--colora: #d92e2e; /* Red */
-	--colora2: #0072B5; /* French Blue */
+
+	--colora: #d92e2e;
+	/* Red */
+	--colora2: #0072B5;
+	/* French Blue */
 
 	/* Font families */
-	--ff: "Monocraft", sans-serif;
-	--ff2: "JetBrains Mono", monospace;
+	--ff: "JetBrains Mono", sans-serif;
+	--ff2: "JetBrains Mono", sans-serif;
 
 	/* Typography */
 	--h1: bold 4rem/1em var(--ff);
@@ -75,8 +81,68 @@
 	--b-desktop: 1024px;
 	--b-large: 1200px;
 
-	--sidebar-width: 256px;
-	--transition: 0.3s ease;
+	--transition: all 0.3s ease;
+
+	--hover-bg: var(--gray20);
+	--active-bg: var(--gray30);
+	--sidebar-width: 280px;
+	--sidebar-collapsed: 72px;
+	--mobile-height: 64px;
+
+	--accent-color: #ff6565;
+	--accent-hover: hsl(from var(--accent-color) h s calc(l + 10%));
+	--accent-gradient: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+	
+	/* Composants spécifiques */
+	--sidebar-bg: var(--bg-primary);
+	--sidebar-hover: var(--bg-tertiary);
+	--sidebar-active: var(--accent-color);
+
+	--status-online: #22c55e;
+	--status-offline: #ef4444;
+
+	--blur: 8px;
+	--data-theme: "dark";
+}
+
+[data-theme="light"] {
+	--bg-primary: var(--gray90);
+	--bg-secondary: var(--gray80);
+	--bg-tertiary: var(--gray70);
+	
+	--text-primary: var(--gray20);
+	--text-secondary: var(--gray40);
+	--text-tertiary: var(--gray60);
+	
+	--border-color: var(--gray60);
+	--divider-color: var(--gray70);
+	
+	--hover-bg: var(--gray80);
+	--active-bg: var(--gray70);
+
+	--card-bg: white;
+	--card-border: var(--gray60);
+	--card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+	--bg-primary: var(--gray10);
+	--bg-secondary: var(--gray20);
+	--bg-tertiary: var(--gray30);
+	
+	--text-primary: var(--gray90);
+	--text-secondary: var(--gray70);
+	--text-tertiary: var(--gray50);
+	
+	--border-color: var(--gray30);
+	--divider-color: var(--gray20);
+	
+	--card-bg: var(--gray20);
+	--card-border: var(--gray30);
+	--card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	
+	--hover-bg: var(--gray20);
+	--active-bg: var(--gray30);
 }
 
 /* Reset CSS */
@@ -86,7 +152,7 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	cursor: none !important;
+	color: var(--text-primary);
 }
 
 html {
@@ -94,42 +160,55 @@ html {
 	scroll-behavior: smooth;
 }
 
+/* Fond de la page */
 body {
-	display: flex;
-	font-family: var(--ff);
-	font-size: 1rem;
-	line-height: 1.6;
-	color: var(--text-light);
-	background-color: var(--bg-light);
-	transition: background-color var(--transition), color var(--transition);
+	background-color: var(--bg-primary);
+	font-family: 'JetBrains Mono', sans-serif;
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
 }
 
-html, body {
-	overflow: hidden;
+/* Titres */
+h1,
+h2,
+h3 {
+	color: var(--text-primary);
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
-/* Global Typography */
-h1, h2, h3, h4 {
-	color: var(--text-light);
-}
-
-h1 { font: var(--h1); }
-h2 { font: var(--h2); }
-h3 { font: var(--h3); }
-h4 { font: var(--h4); }
-
+/* Paragraphes */
 p {
-	font: var(--p);
-	margin-bottom: var(--margin-m);
+	line-height: 1.6;
+	color: var(--text-secondary);
 }
 
-small { font: var(--small); }
-
+/* Style des liens */
 a {
+	color: var(--accent-color);
 	text-decoration: none;
-	color: var(--color-primary);
+	position: relative;
+	padding-bottom: var(--margin-xxs);
 }
 
-a:hover {
-	color: var(--color-secondary);
+/* mobile */
+@media screen and (max-width: 480px) {
+	main {
+		margin-left: 0;
+	}
+}
+
+/* tablet */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+	main {
+		margin-left: var(--sidebar-collapsed);
+	}
+}
+
+/* desktop */
+@media screen and (min-width: 1024px) {
+	main {
+		margin-left: var(--sidebar-width);
+	}
 }

@@ -8,13 +8,13 @@ services:
       - backend
     volumes:
       - media:/media/
+      - ./frontend/static-html:/usr/share/nginx/html:ro
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
 
   backend:
     build: ./backend/
     container_name: django-backend
     env_file: .env
-    environment:
-      - DJANGO_SETTINGS_MODULE=ft_transcendence.settings
     volumes:
       - media:/media/
     depends_on:
