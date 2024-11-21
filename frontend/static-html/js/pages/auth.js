@@ -3,45 +3,45 @@ import { navigate } from '../app.js';
 
 export function render() {
     return `
-		<div class="auth-container">
-			<div class="auth-form">
-				<h1>Connexion</h1>
-				<form id="loginForm">
-					<div class="form-group">
-						<label for="loginUsername">Nom d'utilisateur</label>
-						<input type="text" id="loginUsername" name="username" required>
-					</div>
-					<div class="form-group">
-						<label for="loginPassword">Mot de passe</label>
-						<input type="password" id="loginPassword" name="password" required>
-					</div>
-					<button type="submit" class="auth-button">Se connecter</button>
-				</form>
-				<p>Pas encore de compte ? <a href="#" id="showRegister">S'enregistrer</a></p>
-				<button id="guestButton" class="auth-button">Se connecter en tant qu'invité</button>
-			</div>
-			<div class="auth-form" style="display: none;">
-				<h1>Enregistrement</h1>
-				<form id="registerForm">
-					<div class="form-group">
-						<label for="registerUsername">Nom d'utilisateur</label>
-						<input type="text" id="registerUsername" name="username" required>
-					</div>
-					<div class="form-group">
-						<label for="registerPassword">Mot de passe</label>
-						<input type="password" id="registerPassword" name="password" required>
-					</div>
-					<button type="submit" class="auth-button">S'enregistrer</button>
-				</form>
-				<p>Déjà un compte ? <a href="#" id="showLogin">Se connecter</a></p>
-			</div>
-		</div>
-		<div id="popup" class="popup" style="display: none;">
-			<div class="popup-content">
-				<span id="popupMessage"></span>
-				<button id="closePopup" class="auth-button">Fermer</button>
-			</div>
-		</div>
+<div class="auth-container">
+    <div class="auth-form">
+        <h1>Connexion</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginUsername">Nom d'utilisateur</label>
+                <input type="text" id="loginUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Mot de passe</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            <button type="submit" class="auth-button">Se connecter</button>
+        </form>
+        <p>Pas encore de compte ? <a href="#" id="showRegister">S'enregistrer</a></p>
+        <button id="guestButton" class="auth-button">Se connecter en tant qu'invité</button>
+    </div>
+    <div class="auth-form" style="display: none;">
+        <h1>Enregistrement</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="registerUsername">Nom d'utilisateur</label>
+                <input type="text" id="registerUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Mot de passe</label>
+                <input type="password" id="registerPassword" name="password" required>
+            </div>
+            <button type="submit" class="auth-button">S'enregistrer</button>
+        </form>
+        <p>Déjà un compte ? <a href="#" id="showLogin">Se connecter</a></p>
+    </div>
+</div>
+<div id="popup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <span id="popupMessage"></span>
+        <button id="closePopup" class="auth-button">Fermer</button>
+    </div>
+</div>
 	`;
 }
 
@@ -76,9 +76,13 @@ export function init() {
         const username = document.getElementById('loginUsername').value;
         const password = document.getElementById('loginPassword').value;
         try {
-            await UserAPI.login(username, password);
+            const response = await UserAPI.login(username, password);
+            if (response.status === 404) {
+                showPopup('Nom d\'utilisateur ou mot de passe incorrect');
+                return;
+            }
             mainElement.style.marginLeft = originalMarginLeft;
-            navigate('/');
+            window.location.reload();
         } catch (error) {
             showPopup('Erreur de connexion');
         }
@@ -89,9 +93,13 @@ export function init() {
         const username = document.getElementById('registerUsername').value;
         const password = document.getElementById('registerPassword').value;
         try {
-            await UserAPI.register(username, password);
+            const response = await UserAPI.register(username, password);
+            if (response.ok === false) {
+                showPopup('Nom d\'utilisateur déjà utilisé');
+                return;
+            }
             mainElement.style.marginLeft = originalMarginLeft;
-            navigate('/');
+            window.location.reload();
         } catch (error) {
             showPopup('Erreur d\'enregistrement');
         }

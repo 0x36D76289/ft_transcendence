@@ -6,7 +6,10 @@ export async function initSidebar() {
     await i18n.init(getLanguages());
     const data = await UserAPI.getProfile(getUsername());
 
-    const data_json = JSON.stringify(data);
+    if (!data) {
+        return;
+    }
+    const data_json = data.json();
     console.log(data_json);
 
     const SIDEBAR = `

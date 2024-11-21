@@ -21,7 +21,7 @@ export async function get(endpoint, token = null) {
   const jsonResponse = await response.json();
   console.log('Response JSON:', jsonResponse);
 
-  return jsonResponse;
+  return response;
 }
 
 export async function post(endpoint, body = {}, token = null) {
@@ -43,5 +43,5 @@ export async function post(endpoint, body = {}, token = null) {
   const jsonResponse = await response.json();
   console.log('Response JSON:', jsonResponse);
 
-  return jsonResponse;
+  return response;
 }
