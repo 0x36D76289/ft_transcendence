@@ -8,8 +8,8 @@ services:
       - backend
     volumes:
       - media:/media/
-      - ./frontend/static-html:/usr/share/nginx/html:ro
-      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      # - ./frontend/static-html:/usr/share/nginx/html
+      # - ./frontend/nginx.conf:/etc/nginx/nginx.conf
 
   backend:
     build: ./backend/
