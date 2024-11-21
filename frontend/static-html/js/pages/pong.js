@@ -40,6 +40,7 @@ function game_url(room_name) {
 let game_sock = new WebSocket(game_url("test"))
 
 
+//TODO: use the real socket and add read_room to it
 const online_sock = new WebSocket(
 	"wss://" +
 	window.location.host +
@@ -47,7 +48,8 @@ const online_sock = new WebSocket(
 	getCookie("token")
 );
 
-online_sock.onmessage = function (object) {
+online_sock.onmessage = read_room
+function read_room(object) {
 	try {
 		console.log("received ", object, " from online_sock");
 		let inner = JSON.parse(object.data);
@@ -62,7 +64,7 @@ online_sock.onmessage = function (object) {
 		return
 	}
 }
-
+export { read_room };
 
 console.log(document.cookie.split(';')[0])
 //TODO: wait for socket to connect ?

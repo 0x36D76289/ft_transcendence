@@ -7,6 +7,6 @@ urlpatterns = [
 	path('block', views.block_user),
 	path('unblock', views.unblock_user),
 	path('is_user_blocked', views.is_user_blocked),
-	path('', views.conversations)
+	path('conversations', views.conversations)
 	#path('', views.MessageList.as_view())
 ]

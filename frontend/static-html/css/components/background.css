@@ -1,0 +1,26 @@
+#animated-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: -1;
+	background: var(--bg-primary);
+	overflow: hidden;
+}
+
+.dot {
+	position: absolute;
+	width: 3px;
+	height: 3px;
+	background: var(--gray80);
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+}
+
+.line {
+	position: absolute;
+	width: 1px;
+	background: var(--gray60);
+	transition: width 0.3s ease;
+}

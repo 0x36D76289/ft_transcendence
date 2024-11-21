@@ -1,0 +1,136 @@
+.settings-container {
+  padding: var(--padding-l);
+}
+
+.settings-section {
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(var(--blur));
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.setting-info {
+  flex-grow: 1;
+}
+
+.setting-info label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.setting-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.setting-control {
+  min-width: 200px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.setting-control:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: var(--bg-secondary);
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.accent-color {
+  background: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.button {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: var(--padding-s) var(--padding-m);
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.language-settings {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.language-settings label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.language-settings select {
+  min-width: 200px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.language-settings select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: var(--bg-secondary);
+}
+
+/* mobile */
+@media screen and (max-width: 767px) {
+  .settings-container {
+    padding: 16px;
+    margin: 20px 20px 20px 20px;
+    width: calc(100% - 40px);
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .setting-control {
+    width: 100%;
+  }
+
+  .color-picker {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .reset-color {
+    width: 100%;
+  }
+}

@@ -51,6 +51,9 @@ class ChatConsumer(WebsocketConsumer):
             return
         #TODO: if in game: win for other player
         # set state when game over normally for disconnect to be handled
+        errprint(self.user)
+        errprint(dir(self.user))
+        errprint("+" * 20)
         async_to_sync(self.channel_layer.group_discard)(
                 self.room_name,
                 self.channel_name

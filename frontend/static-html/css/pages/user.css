@@ -1,0 +1,245 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-l);
+}
+
+.profile-header {
+  margin-bottom: var(--margin-l);
+}
+
+.profile-header h2 {
+  font: var(--h2ui);
+  color: var(--text-primary);
+}
+
+.profile-content {
+  display: grid;
+  gap: var(--margin-l);
+  grid-template-columns: 2fr 1fr;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-l);
+}
+
+.profile-info-card, .profile-stats-card, .account-actions-card {
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: var(--padding-l);
+  backdrop-filter: blur(var(--blur));
+}
+
+.profile-avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: var(--margin-m);
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg);
+}
+
+.status-indicator.online {
+  background-color: var(--status-online);
+}
+
+.status-indicator.offline {
+  background-color: var(--status-offline);
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-m);
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-xs);
+}
+
+.info-group label {
+  color: var(--text-secondary);
+  font: var(--smallui);
+}
+
+.info-group input, .info-group textarea {
+  background-color: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: var(--padding-xs);
+  color: var(--text-primary);
+  font: var(--pui);
+  transition: var(--transition);
+}
+
+.info-group input:focus, .info-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.profile-actions {
+  display: flex;
+  gap: var(--margin-m);
+  margin-top: var(--margin-l);
+}
+
+.edit-button, .save-button {
+  padding: var(--padding-xs) var(--padding-m);
+  border: none;
+  border-radius: 8px;
+  font: var(--pui);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.edit-button {
+  background-color: var(--bg-secondary);
+}
+
+.save-button {
+  background-color: var(--accent-color);
+}
+
+.edit-button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.save-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.profile-stats-card h3, .account-actions-card h3 {
+  font: var(--h3ui);
+  margin-bottom: var(--margin-m);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--margin-m);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  font: var(--h3ui);
+  color: var(--accent-color);
+}
+
+.stat-label {
+  font: var(--smallui);
+  color: var(--text-secondary);
+}
+
+.account-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-m);
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--margin-xs);
+  padding: var(--padding-s) var(--padding-m);
+  border: none;
+  border-radius: 8px;
+  font: var(--pui);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.logout-button {
+  background-color: var(--bg-secondary);
+}
+
+.logout-button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.delete-button {
+  background-color: var(--colora);
+  color: var(--text-on-primary);
+  padding: var(--padding-xs) var(--padding-m);
+  border: none;
+  border-radius: 8px;
+  font: var(--pui);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.delete-button:hover {
+  filter: brightness(1.1);
+}
+
+.delete-confirmation {
+  margin-top: var(--margin-l);
+  padding-top: var(--padding-m);
+  border-top: 1px solid var(--border-color);
+}
+
+.delete-confirmation p {
+  color: var(--text-secondary);
+  margin-bottom: var(--margin-m);
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: var(--margin-m);
+}
+
+.cancel-button {
+  background-color: var(--bg-secondary);
+  padding: var(--padding-xs) var(--padding-m);
+  border: none;
+  border-radius: 8px;
+  font: var(--pui);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancel-button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+  .profile-content {
+      grid-template-columns: 1fr;
+  }
+  
+  .confirmation-actions {
+      flex-direction: column;
+  }
+}

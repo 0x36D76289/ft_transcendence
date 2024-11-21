@@ -1,0 +1,30 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.play-button {
+  padding: var(--padding-l) var(--padding-xxl);
+  font-size: 5rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  border: 3px solid var(--accent-color);
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: 50rem;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(var(--blur));
+}
+
+.play-button:hover {
+  background: var(--accent-gradient);
+  transform: scale(1.1);
+}
+
+.play-button:active {
+  transform: scale(1);
+}
