@@ -13,30 +13,28 @@ class MessageSerializer(serializers.ModelSerializer):
 		exclude = ('conversation_id',)
 
 class ConversationListSerializer(serializers.ModelSerializer):
-	other_user = serializers.SerializerMethodField()
+	participants = serializers.SerializerMethodField()
 	last_message = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Conversation
-		fields = ['id', 'other_user', 'last_message']
+		fields = ['id', 'participants', 'last_message']
 
-	def get_other_user(self, instance):
+	def get_participants(self, instance):
 		if not self.context.get('current_user'):
 			raise serializers.ValidationError('current_user was not passed in context')
 		current_user = self.context['current_user']
-		if current_user == instance.initiator:
-			return UserSerializer(instance.receiver).data
-		return UserSerializer(instance.initiator).data
+		users = instance.participants.all().exclude(id=current_user.id)
+		return UserSerializer(users, many=True).data
 
 	def get_last_message(self, instance):
 		message = instance.message_set.first()
 		return MessageSerializer(instance=message).data
 	
 class ConversationSerializer(serializers.ModelSerializer):
-	initiator = UserSerializer()
-	receiver = UserSerializer()
+	participants = UserSerializer(many=True)
 	message_set = MessageSerializer(many=True)
 
 	class Meta:
 		model = Conversation
-		fields = ['id', 'initiator', 'receiver', 'message_set']
+		fields = ['id', 'participants', 'message_set']

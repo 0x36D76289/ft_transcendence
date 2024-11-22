@@ -11,6 +11,8 @@ from user.models import User
 from chat.models import Message, Conversation
 from chat.serializers import MessageSerializer
 
+from sys import stderr
+
 class ChatConsumer(WebsocketConsumer):
 	def connect(self):
 		self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
@@ -18,9 +20,13 @@ class ChatConsumer(WebsocketConsumer):
 		sender = self.scope.get("user")
 
 		try:
+			print("on est la", file = stderr)
 			conversation = Conversation.objects.get(id=int(self.room_name))
 			sender = self.scope["user"]
-			if sender not in (conversation.initiator, conversation.receiver):
+			print(sender.username, file = stderr)
+			print(conversation.participants.all(), file = stderr)
+			if sender not in conversation.participants.all():
+				print("user not in conv", file = stderr)
 				raise
 		except:
 			self.close()

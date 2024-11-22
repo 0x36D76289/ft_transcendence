@@ -2,8 +2,7 @@ from django.db import models
 from user.models import User
 
 class Conversation(models.Model):
-	initiator = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='conv_initiator', null=True)
-	receiver = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='conv_participant', null=True)
+	participants = models.ManyToManyField(User)
 	start_time = models.DateTimeField(auto_now_add=True)
 
 class Message(models.Model):

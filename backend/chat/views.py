@@ -5,7 +5,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Count
+from sys import stderr
 
 @api_view(['POST'])
 def start_conversation(request):
@@ -14,24 +15,29 @@ def start_conversation(request):
 			{'detail': 'username field required'},
 			status=status.HTTP_400_BAD_REQUEST
 		)
-	participant = get_object_or_404(User, username=request.data['username'])
-	try:
-		conversation = Conversation.objects.get(
-			Q(initiator=request.user, receiver=participant) |
-			Q(initiator=participant, receiver=request.user)
-		)
-	except:
-		conversation = Conversation.objects.create(
-			initiator=request.user,
-			receiver=participant
-		)
+	other_user = get_object_or_404(User, username=request.data['username'])
+	conversation = Conversation.objects.annotate(
+		n_users=Count('participants')
+	).filter(
+		n_users=2
+	).filter(
+		participants=request.user
+	).filter(
+		participants=other_user
+	)
+	if conversation.exists():
+		conversation = conversation[0]
+	else:
+		conversation = Conversation()
+		conversation.save()
+		conversation.participants.add(request.user, other_user)
 	serializer = ConversationSerializer(conversation)
 	return Response(serializer.data)
 
 @api_view(['GET'])
 def get_conversation(request, convo_id):
 	conversation = get_object_or_404(Conversation, id=convo_id)
-	if request.user not in (conversation.initiator, conversation.receiver):
+	if request.user not in conversation.participants.all():
 		return Response(
 			{'detail': 'You are not in this conversation'},
 			status=status.HTTP_403_FORBIDDEN
@@ -41,7 +47,7 @@ def get_conversation(request, convo_id):
 @api_view(['GET'])
 def conversations(request):
 	conversations_list = Conversation.objects.filter(
-		Q(initiator=request.user) | Q(receiver=request.user)
+		participants=request.user
 	)
 	serializer = ConversationListSerializer(
 		conversations_list,
