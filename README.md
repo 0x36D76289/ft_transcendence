@@ -149,6 +149,7 @@ To complete the project, a minimum of **7 major modules** is required. Two minor
 | ------------ | ------------------------------------------------- |
 | `/game`      | Allows manual game creation via browser           |
 | `/chat`      | Allows manual message creation via browser        |
+| `/debug/test_data` | (POST) creates test data for testing        |
 
 
 ## 📦 Composants des données renvoyées par l'API
