@@ -20,7 +20,7 @@ export function render() {
 						<div class="profile-details">
 							<div class="info-group">
 								<label>${i18n.t('user.username')}</label>
-								<input type="text" id="username-input" disabled />
+								<input type="text" id="username-input"/>
 							</div>
 							
 							<div class="info-group">
@@ -35,10 +35,7 @@ export function render() {
 						</div>
 						
 						<div class="profile-actions">
-							<button id="edit-profile" class="edit-button">
-								${i18n.t('user.edit')}
-							</button>
-							<button id="save-profile" class="save-button hidden">
+							<button id="save-profile" class="save-button">
 								${i18n.t('user.save')}
 							</button>
 						</div>
@@ -86,13 +83,13 @@ export function render() {
 					</div>
 				</div>
 			</div>
+
 		</div>
 	`;
 }
 
 export async function init() {
 	const username = getUsername();
-	const editButton = document.getElementById('edit-profile');
 	const saveButton = document.getElementById('save-profile');
 	const bioInput = document.getElementById('bio-input');
 	const usernameInput = document.getElementById('username-input');
@@ -121,20 +118,10 @@ export async function init() {
 		console.error('Failed to load profile:', error);
 	}
 
-	// Edit mode handling
-	editButton.addEventListener('click', () => {
-		bioInput.removeAttribute('disabled');
-		editButton.classList.add('hidden');
-		saveButton.classList.remove('hidden');
-	});
-
 	// Save profile changes
 	saveButton.addEventListener('click', async () => {
 		try {
-			const updatedProfile = await UserAPI.updateUser(username , bioInput.value);
-			bioInput.setAttribute('disabled', 'true');
-			editButton.classList.remove('hidden');
-			saveButton.classList.add('hidden');
+			await UserAPI.updateUser(usernameInput.value, bioInput.value);
 			window.location.reload();
 		} catch (error) {
 			console.error('Failed to update profile:', error);

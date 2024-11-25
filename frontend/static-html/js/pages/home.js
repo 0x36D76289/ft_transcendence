@@ -12,6 +12,6 @@ export function render() {
 export function init() {
 	const playButton = document.querySelector(".play-button");
 	playButton.addEventListener("click", () => {
-		navigate("/game");
+		navigate("/pong");
 	});
 }

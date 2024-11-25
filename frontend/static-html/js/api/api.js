@@ -1,4 +1,4 @@
-import { getToken } from '../utils/cookies.js';
+import { popupSystem } from '../services/popup.js';
 
 export const API_BASE_URL = 'https://localhost:8443/api';
 export const WS_BASE_URL = 'wss://localhost:8443/api/ws';
@@ -18,10 +18,16 @@ export async function get(endpoint, token = null) {
 
   console.log(`curl -X GET "${API_BASE_URL}${endpoint}" -H "Content-Type: application/json"${token ? ` -H "Authorization: Token ${token}"` : ''}`);
 
-  const jsonResponse = await response.json();
-  console.log('Response JSON:', jsonResponse);
-
-  return response;
+  if (response.status === 200) {
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } else {
+    const data = await response.json();
+    popupSystem('error', data.detail);
+    console.log(data);
+    return null;
+  }
 }
 
 export async function post(endpoint, body = {}, token = null) {
@@ -40,8 +46,14 @@ export async function post(endpoint, body = {}, token = null) {
 
   console.log(`curl -X POST "${API_BASE_URL}${endpoint}" -H "Content-Type: application/json"${token ? ` -H "Authorization: Token ${token}"` : ''} -d '${JSON.stringify(body)}'`);
 
-  const jsonResponse = await response.json();
-  console.log('Response JSON:', jsonResponse);
-
-  return response;
+  if (response.status === 200) {
+    const data = await response.json();
+    // console.log(data);
+    return data;
+  } else {
+    const data = await response.json();
+    popupSystem('error', data.detail);
+    // console.log(data);
+    return null;
+  }
 }

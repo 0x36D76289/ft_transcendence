@@ -1,21 +1,21 @@
-import { generateRandomUsers } from '../tests/createuser.js';
-// import { UserAPI } from '../api/user.js';
+// import { createAndAddFriends } from '../tests/createuser.js';
+import { UserAPI } from '../api/user.js';
 
-function createContactCard(user) {
-	const lastActiveDate = new Date(user.lastActive);
+async function createContactCard(user) {
+	const lastLoginDate = new Date(user.last_login);
 	const now = new Date();
-	const timeDiff = Math.abs(now - lastActiveDate);
+	const timeDiff = Math.abs(now - lastLoginDate);
 	const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
 	return `
 <div class="contact-card" data-user-id="${user.id}">
 	<div class="contact-avatar">
-		<img src="${user.avatar}" alt="${user.name}">
-		<div class="status-indicator status-${user.status}"></div>
+		<img src="${user.pfp}" alt="${user.username}">
+		<div class="status-indicator status-${user.is_online}"></div>
 	</div>
 	<div class="contact-info">
-		<div class="contact-name">${user.name}</div>
-		<div class="contact-status">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
+		<div class="contact-name">${user.username}</div>
+		<div class="contact-status">${user.is_online === 'online' ? 'En ligne' : 'Hors ligne'}</div>
 		<div class="contact-last-active">Dernière activité : ${diffDays} jours</div>
 	</div>
 	<div class="contact-expanded-content">
@@ -45,7 +45,7 @@ function createContactCard(user) {
 	`;
 }
 
-export function render() {
+export async function render() {
 	return `
 <div class="app-container">
 		<main class="main-content">
@@ -144,8 +144,8 @@ function handleActionButton(event) {
 	}
 }
 
-export function init() {
-	const users = generateRandomUsers(20);
+export async function init() {
+	const users = await UserAPI.getFriends();
 
 	// Remplir la grille avec les cartes
 	const contactGrid = document.getElementById('contactGrid');
@@ -163,17 +163,17 @@ export function init() {
 
 			switch (sortType) {
 				case 'online':
-					sortedUsers = users.filter(user => user.status === 'online');
+					sortedUsers = users.filter(user => user.is_online === 'online');
 					break;
 				case 'offline':
-					sortedUsers = users.filter(user => user.status === 'offline');
+					sortedUsers = users.filter(user => user.is_online === 'offline');
 					break;
 				case 'name':
-					sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
+					sortedUsers.sort((a, b) => a.username.localeCompare(b.username));
 					break;
 				case 'activity':
 					sortedUsers.sort((a, b) => {
-						return new Date(b.lastActive) - new Date(a.lastActive);
+						return new Date(b.last_login) - new Date(a.last_login);
 					});
 					break;
 			}
@@ -185,7 +185,7 @@ export function init() {
 	const searchInput = document.getElementById('searchInput');
 	searchInput.addEventListener('input', () => {
 		const query = searchInput.value.toLowerCase();
-		const filteredUsers = users.filter(user => user.name.toLowerCase().includes(query));
+		const filteredUsers = users.filter(user => user.username.toLowerCase().includes(query));
 		contactGrid.innerHTML = filteredUsers.map(user => createContactCard(user)).join('');
 	});
 

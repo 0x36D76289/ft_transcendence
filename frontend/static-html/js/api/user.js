@@ -24,8 +24,8 @@ export const UserAPI = {
 
 	updateUser: (username, bio) => {
 		const data = post('/user/update_user', { username, bio }, getToken());
-		setUsername(username);
-		setBio(bio);
+		setUsername(data.username);
+		setBio(data.bio);
 		return data;
 	},
 
@@ -39,6 +39,7 @@ export const UserAPI = {
 		const data = await post('/user/create_guest');
 		setToken(data.token);
 		setUsername(data.username);
+		
 		return data;
 	},
 

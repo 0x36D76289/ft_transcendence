@@ -48,6 +48,10 @@
   transition: var(--transition);
 }
 
+.form-group input[type="password"] {
+  letter-spacing: 0.2em;
+}
+
 .form-group input:hover {
   border-color: var(--accent-color);
 }
@@ -105,46 +109,5 @@ form .auth-button:hover {
 }
 
 #guestButton {
-  margin-top: var(--margin-m);
-}
-
-/* Popup */
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(var(--blur));
-}
-
-.popup-content {
-  position: absolute;
-  background: var(--bg-secondary);
-  padding: var(--padding-l);
-  border-radius: 12px;
-  text-align: center;
-  border: 1.5px solid var(--accent-color);
-  width: 300px;
-  max-width: calc(100% - 40px);
-  margin: 20px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.popup-content span {
-  display: block;
-  margin-bottom: var(--margin-m);
-  font: var(--pui);
-  color: var(--text-primary);
-}
-
-.popup-content .auth-button {
   margin-top: var(--margin-m);
 }
