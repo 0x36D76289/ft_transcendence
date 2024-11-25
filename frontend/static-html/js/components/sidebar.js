@@ -9,8 +9,6 @@ export async function initSidebar() {
     if (!data) {
         return;
     }
-    const data_json = data.json();
-    console.log(data_json);
 
     const SIDEBAR = `
 <nav id="sidebar" class="sidebar">

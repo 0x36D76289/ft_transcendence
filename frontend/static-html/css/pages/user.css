@@ -105,25 +105,15 @@
   margin-top: var(--margin-l);
 }
 
-.edit-button, .save-button {
+.save-button {
   padding: var(--padding-xs) var(--padding-m);
-  border: none;
+  border: 1px solid var(--accent-color);
   border-radius: 8px;
   font: var(--pui);
   cursor: pointer;
   transition: var(--transition);
-}
-
-.edit-button {
-  background-color: var(--bg-secondary);
-}
-
-.save-button {
-  background-color: var(--accent-color);
-}
-
-.edit-button:hover {
   background-color: var(--bg-tertiary);
+  color: var(--text-on-primary);
 }
 
 .save-button:hover {

@@ -25,8 +25,7 @@ help: ## Display this help message
 	@printf "$(BOLD)USAGE:$(RESET)\n"
 	@printf "  make $(GREEN)[target]$(RESET)\n\n"
 	@printf "$(BOLD)TARGETS:$(RESET)\n"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; \
-		{printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}'
 
 # Main commands
 all: build up ## Build and start all containers (default)
