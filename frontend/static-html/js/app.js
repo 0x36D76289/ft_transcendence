@@ -15,6 +15,7 @@ const ROUTES = {
 	"/game": "game",
 	"/user": "user",
 	"/auth": "auth",
+	"/pong": "pong/main",
 };
 
 // CSS Management
