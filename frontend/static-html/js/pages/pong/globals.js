@@ -28,7 +28,6 @@ export function init_globals() {
 		VIEW = document.getElementById("game");
 	}
 	VIEW.onclick = canvas_click;
-	console.log("VIEW IS ", VIEW);
 
 	VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
 

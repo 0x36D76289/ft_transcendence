@@ -2,6 +2,7 @@ import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
 import { getToken } from "./utils/cookies.js";
 import { Settings } from "./pages/settings.js";
+import { create_socket } from "./api/socket.js";
 
 /* ******************** Constants & Config ******************** */
 const CONTENT_ELEMENT = document.getElementById("content");
@@ -12,7 +13,6 @@ const ROUTES = {
 	"/friends": "friends",
 	"/tournaments": "tournaments",
 	"/messages": "messages",
-	"/pong": "pong",
 	"/user": "user",
 	"/auth": "auth",
 	"/pong": "pong/main",
@@ -207,6 +207,9 @@ async function initApp() {
 		console.error("Erreur d'initialisation:", error);
 		renderError("Erreur d'initialisation", "Impossible d'initialiser l'application.");
 	}
+
+	//TODO: load after login
+	create_socket();
 }
 
 // Démarrage de l'application

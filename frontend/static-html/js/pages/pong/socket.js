@@ -23,15 +23,6 @@ function game_url(room_name) {
 /** @type {WebSocket} */
 export var game_sock = new WebSocket(game_url("test"));
 
-/** @type {WebSocket} */
-//TODO: use the real socket and add read_room to it
-const online_sock = new WebSocket(
-	"wss://" +
-	window.location.host +
-	'/api/ws/user/online_status?token=' +
-	getToken()
-);
-online_sock.onmessage = read_room;
 
 /**
 	* @param {Object} object
