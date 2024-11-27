@@ -7,18 +7,16 @@ export function render() {
 }
 
 export async function init() {
-	const { name_enter } = await import("./input.js");
+	const { name_enter, canvas_click, keys } = await import("./input.js");
 	const { main_menu } = await import("./main_menu.js");
+	const { init_globals, VIEW } = await import("./globals.js");
 
-	function initPong() {
-		VIEW.onclick = canvas_click;
-	//TODO: save event listeners so you can close them later
-		window.addEventListener('keydown', function (e) { keys.add(e.code); name_enter(e); })
-		window.addEventListener('keyup', function (e) { keys.delete(e.code); })
-	}
+	init_globals();
+//TODO: save event listeners so you can close them later
+	window.addEventListener('keydown', function (e) { keys.add(e.code); name_enter(e); })
+	window.addEventListener('keyup', function (e) { keys.delete(e.code); })
 
 	
 	
-	initPong();
 	main_menu();
 }

@@ -9,7 +9,6 @@
 	* @param {GameState} dest
 	* @returns {void}
 */
-
 function copy_gamestate(src, dest) {
 	dest.frame = src.frame;
 	dest.ball_x = src.ball_x;

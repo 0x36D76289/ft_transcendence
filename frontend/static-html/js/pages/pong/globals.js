@@ -1,32 +1,49 @@
 import { min } from "../../utils/math.js"
+import { canvas_click } from "./input.js";
 import { vec2 } from "./types.js";
 
 //@ts-check
 
 
-/** @type {HTMLCanvasElement} */
-const VIEW = document.getElementById("game");
-
-/** @type {vec2} */
-export const VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
-
-/** @type {HTMLCanvasElement} */
-const BUFF = document.createElement("canvas");
-BUFF.width = VIEW_DIMENSIONS[0];
-BUFF.height = VIEW_DIMENSIONS[1];
-
 /** @type {vec2} */
 export const GAME_DIMENSIONS = new vec2(400, 300);
 
-/** @type {CanvasRenderingContext2D} */
-export const ctx = VIEW.getContext("2d", { alpha: false });
+/** @type {HTMLCanvasElement} */
+var VIEW;
+
+/** @type {vec2} */
+export var VIEW_DIMENSIONS;
+
+/** @type {HTMLCanvasElement} */
+var BUFF;
 
 /** @type {CanvasRenderingContext2D} */
-const buff_ctx = BUFF.getContext("2d", { alpha: false });
-buff_ctx.fillStyle = "white";
-buff_ctx.textAlign = "center";
-buff_ctx.textBaseline = "middle";
-buff_ctx.font = (min(VIEW_DIMENSIONS[0] / 12, VIEW_DIMENSIONS[1] / 9) | 0) + "px Arial";
+export var ctx;
+
+/** @type {CanvasRenderingContext2D} */
+var buff_ctx;
+
+export function init_globals() {
+	while (VIEW == undefined) {
+		VIEW = document.getElementById("game");
+	}
+	VIEW.onclick = canvas_click;
+	console.log("VIEW IS ", VIEW);
+
+	VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
+
+	BUFF = document.createElement("canvas");
+	BUFF.width = VIEW_DIMENSIONS[0];
+	BUFF.height = VIEW_DIMENSIONS[1];
+
+	ctx = VIEW.getContext("2d", { alpha: false });
+
+	buff_ctx = BUFF.getContext("2d", { alpha: false });
+	buff_ctx.fillStyle = "white";
+	buff_ctx.textAlign = "center";
+	buff_ctx.textBaseline = "middle";
+	buff_ctx.font = (min(VIEW_DIMENSIONS[0] / 12, VIEW_DIMENSIONS[1] / 9) | 0) + "px Arial";
+}
 
 export const STATES = {
 	SP_Game: Symbol('sp_game'),

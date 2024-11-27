@@ -1,10 +1,9 @@
 //@ts-check
 
-import { copy_gamestate } from "./gamestate";
-import { keys } from "./globals";
-import { ball_bounce_y_speed, current_state, init, inputs, interval, is_ball_bouncing, is_ball_on_left, is_ball_on_wall, scores, tick_bounce_vertical, tick_move_ball, tick_move_paddle } from "./shared_gameplay";
-import { game_sock } from "./socket";
-import { vec2 } from "./types";
+import { copy_gamestate } from "./gamestate.js";
+import { ball_bounce_y_speed, current_state, init, inputs, interval, is_ball_bouncing, is_ball_on_left, is_ball_on_wall, scores, tick_bounce_vertical, tick_move_ball, tick_move_paddle } from "./shared_gameplay.js";
+import { game_sock } from "./socket.js";
+import { vec2 } from "./types.js";
 
 /**
  * @typedef {import("./types").GameState} GameState

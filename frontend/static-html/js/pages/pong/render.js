@@ -1,8 +1,8 @@
 //@ts-check
 
-import { BUFF, buff_ctx, ctx, GAME_DIMENSIONS, VIEW_DIMENSIONS } from "./globals";
-import { GAME_SETTINGS } from "./shared_gameplay";
-import { vec2 } from "./types";
+import { BUFF, buff_ctx, ctx, GAME_DIMENSIONS, VIEW_DIMENSIONS } from "./globals.js";
+import { GAME_SETTINGS } from "./shared_gameplay.js";
+import { vec2 } from "./types.js";
 
 /**
 	* @param {number} x1 - the left x coordinate of the rectangle

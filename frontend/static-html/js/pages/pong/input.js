@@ -1,10 +1,9 @@
 //@ts-check
 
-import { page_state, set_page_state, STATES, VIEW, VIEW_DIMENSIONS } from "./globals";
-import { local_update } from "./local_gameplay";
-import { render_name } from "./render";
-import { bots, init, interval, scores, start_simulation } from "./shared_gameplay";
-import { name_entry_key, next_round, start_name_entry } from "./tournament";
+import { page_state, set_page_state, STATES, VIEW, VIEW_DIMENSIONS } from "./globals.js";
+import { local_update } from "./local_gameplay.js";
+import { bots, init, interval, scores, start_simulation } from "./shared_gameplay.js";
+import { name_entry_key, next_round, start_name_entry } from "./tournament.js";
 
 /** @type {Set} */
 export const keys = new Set();
@@ -59,6 +58,8 @@ export function canvas_click(param) {
 			break;
 	}
 }
+
+//TODO: make "init" function
 
 //FIXME: TYPES 
 //		+ RENAME

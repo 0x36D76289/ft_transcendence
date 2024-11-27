@@ -1,10 +1,10 @@
 //@ts-check
 
-import { page_state, set_page_state, STATES } from "./globals";
-import { local_update } from "./local_gameplay";
-import { main_menu } from "./main_menu";
-import { render_name, render_rounds } from "./render";
-import { bots, init, interval, scores, start_simulation } from "./shared_gameplay";
+import { page_state, set_page_state, STATES } from "./globals.js";
+import { local_update } from "./local_gameplay.js";
+import { main_menu } from "./main_menu.js";
+import { render_name, render_rounds } from "./render.js";
+import { bots, init, interval, scores, start_simulation } from "./shared_gameplay.js";
 
 /** @type {Array<Array<string | null>>} */
 let rounds = [];
@@ -21,7 +21,6 @@ let current_round = 0;
 
 /** @type {Array<?string>} */
 export const game_players = ["", ""]
-
 
 /**
 	* @param {number} n
@@ -62,7 +61,7 @@ function start_tournament() {
 	fill_rounds();
 	current_game = 0;
 	current_round = 0;
-	set_page_state(STATES.Score);
+	set_page_state(STATES.Scores);
 	render_rounds(rounds);
 }
 
@@ -80,6 +79,10 @@ export function start_name_entry() {
 //FIXME: PARAM TYPE
 //		 + EXCTRACT ISVALID
 export function name_entry_key(key_event) {
+	/**
+		* @param {String} str
+		* @returns {boolean}
+	*/
 	function isValid(str) {
 		return str.length == 1 &&
 			((str >= 'a' && str <= 'z') || 
@@ -165,7 +168,7 @@ export function next_round() {
 }
 
 //FIXME: OWN FILE
-function game_end_callback(winner) {
+export function game_end_callback(winner) {
 	if (interval)
 		clearInterval(interval);
 	switch (page_state) {

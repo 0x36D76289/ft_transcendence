@@ -1,7 +1,8 @@
-import { current_state } from "./globals";
-import { vec2 } from "./types";
+import { vec2 } from "./types.js";
+import { GAME_DIMENSIONS } from "./globals.js";
 
 //@ts-check
+
 
 /**
  * @typedef {import("./types").GameState} GameState

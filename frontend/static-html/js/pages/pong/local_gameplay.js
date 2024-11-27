@@ -1,9 +1,11 @@
 //@ts-check
 
-import { GAME_DIMENSIONS, keys } from "./globals";
-import { draw } from "./render";
-import { ball_bounce_y_speed, bots, current_state, GAME_SETTINGS, init, inputs, is_ball_bouncing, is_ball_on_left, is_ball_on_wall, scores, tick_bounce_vertical, tick_move_ball, tick_move_paddle } from "./shared_gameplay";
-import { vec2 } from "./types";
+import { GAME_DIMENSIONS } from "./globals.js";
+import { keys } from "./input.js";
+import { draw } from "./render.js";
+import { ball_bounce_y_speed, bots, current_state, GAME_SETTINGS, init, inputs, is_ball_bouncing, is_ball_on_left, is_ball_on_wall, scores, tick_bounce_vertical, tick_move_ball, tick_move_paddle } from "./shared_gameplay.js";
+import { vec2 } from "./types.js";
+import { game_end_callback, game_players } from "./tournament.js"
 
 /**
  * @typedef {import("./types").GameState} GameState

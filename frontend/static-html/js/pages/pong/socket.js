@@ -37,7 +37,7 @@ online_sock.onmessage = read_room;
 	* @param {Object} object
 	* @returns {void}
 */
-function read_room(object) {
+export function read_room(object) {
 	try {
 		console.log("received ", object, " from online_sock");
 		let inner = JSON.parse(object.data);

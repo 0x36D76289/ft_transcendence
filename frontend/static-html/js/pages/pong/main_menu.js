@@ -1,7 +1,7 @@
 //@ts-check
 
-import { set_page_state, STATES } from "./globals";
-import { draw_main_menu } from "./render";
+import { set_page_state, STATES } from "./globals.js";
+import { draw_main_menu } from "./render.js";
 
 /**
 	* @returns {void}
