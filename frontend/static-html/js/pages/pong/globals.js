@@ -31,6 +31,10 @@ export function init_globals() {
 
 	VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
 
+	if (BUFF != undefined) {
+		BUFF.remove();
+		BUFF = undefined;
+	}
 	BUFF = document.createElement("canvas");
 	BUFF.width = VIEW_DIMENSIONS[0];
 	BUFF.height = VIEW_DIMENSIONS[1];

@@ -1,8 +1,17 @@
 //@ts-check
 
+import { online_sock } from "../../api/socket.js";
+
 export function render() {
 	return `
-		<canvas class="game" id="game" width="600" height="450">you're not supposed to see this</canvas>
+		<div class="hflex">
+			<canvas class="game" id="game" width="600px" height="450px">you're not supposed to see this</canvas>
+			<div class="vflex">
+				<button type="button" class="pong_nav_button" id="matchmaking">Join Matchmaking</button>
+				<div class="spacer"></div>
+				<button type="button" class="pong_nav_button">Join Tournament?</button>
+			</div>
+		</div>
 	`;
 }
 
@@ -13,8 +22,10 @@ export async function init() {
 
 	init_globals();
 //TODO: save event listeners so you can close them later
+	document.getElementById("matchmaking").onclick = function () { online_sock.send("join_mm"); }
 	window.addEventListener('keydown', function (e) { keys.add(e.code); name_enter(e); })
 	window.addEventListener('keyup', function (e) { keys.delete(e.code); })
+	window.addEventListener('resize', init_globals);
 
 	
 	

@@ -1,6 +1,8 @@
 //@ts-check
 
 import { copy_gamestate } from "./gamestate.js";
+import { keys } from "./input.js";
+import { draw } from "./render.js";
 import { ball_bounce_y_speed, current_state, init, inputs, interval, is_ball_bouncing, is_ball_on_left, is_ball_on_wall, scores, tick_bounce_vertical, tick_move_ball, tick_move_paddle } from "./shared_gameplay.js";
 import { game_sock } from "./socket.js";
 import { vec2 } from "./types.js";
@@ -146,7 +148,7 @@ export function multiplayer_update() {
 			validating = false;
 		}
 	}
-	draw(current_state);
+	draw(current_state, scores);
 	// create array of size 3
 	// if array less than size 3 append to array
 	// if array size 3 shift left and set input to pos 3
@@ -157,8 +159,8 @@ export function multiplayer_update() {
 }
 
 export function multiplayer_init() {
+	init();
 	current_frame = 0;
 	last_processed_frame = 0;
 	last_processed_state = Object.assign({}, current_state);
-	init();
 }

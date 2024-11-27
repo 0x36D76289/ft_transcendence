@@ -1,7 +1,11 @@
 import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
-import { getToken } from "./utils/cookies.js";
+import { getLanguages, getToken } from "./utils/cookies.js";
 import { Settings } from "./pages/settings.js";
+import { i18n } from "./services/i18n.js";
+import { create_socket } from "./api/socket.js"
+
+//@ts-check
 
 /* ******************** Constants & Config ******************** */
 const CONTENT_ELEMENT = document.getElementById("content");

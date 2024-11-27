@@ -1,0 +1,53 @@
+.pong_nav_button {
+  padding: var(--padding-l) var(--padding-xxl);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 3px solid var(--accent-color);
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: 50rem;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(var(--blur));
+}
+
+.pong_nav_button:hover {
+  background: var(--accent-gradient);
+  transform: scale(1.1);
+}
+
+.pong_nav_button:active {
+  transform: scale(1);
+}
+
+.game {
+	border: 1px solid #aaaaaa;
+	min-width: 600px;
+	max-width: 600px;
+	min-height: 450px;
+	max-height: 450px;
+}
+
+.hflex {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 0;
+	flex-shrink: 0;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.vflex {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 0;
+	flex-shrink: 0;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.spacer {
+	/* min-width: var(--sidebar-width); */
+	min-height: 1rem;
+}

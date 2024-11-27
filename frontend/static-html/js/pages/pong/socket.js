@@ -55,6 +55,7 @@ function game_sock_receive(object) {
 	try {
 		let inner = JSON.parse(object.data);
 		if (inner.type == "player_assign") {
+			let player_num = inner.value;
 			set_player_num(player_num);
 			console.log("Assigned to player ", player_num);
 			if (player_num == 1 || player_num == 2) {
