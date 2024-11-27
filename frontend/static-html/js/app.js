@@ -15,6 +15,7 @@ const ROUTES = {
 	"/pong": "pong",
 	"/user": "user",
 	"/auth": "auth",
+	"/pong": "pong/main",
 };
 
 /* ******************** Security Middleware ******************** */
