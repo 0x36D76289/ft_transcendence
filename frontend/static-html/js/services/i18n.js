@@ -9,6 +9,7 @@ export const i18n = {
 		try {
 			const response = await fetch(`../../assets/translations/${lang}.json`);
 			translations = await response.json();
+
 			console.log("translations = ", translations);
 		} catch (error) {
 			console.error(`Error loading translations for ${lang}:`, error);
@@ -35,7 +36,6 @@ export const i18n = {
 
 		return value;
 	},
-
 
 	setLanguage(lang) {
 		this.init(lang);

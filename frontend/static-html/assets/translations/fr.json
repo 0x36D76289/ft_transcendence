@@ -53,10 +53,10 @@
 		}
 	},
 	"auth": {
+		"username": "Nom d'utilisateur",
+		"password": "Mot de passe",
 		"login": {
 			"title": "Connexion",
-			"username": "Nom d'utilisateur",
-			"password": "Mot de passe",
 			"submit": "Connexion",
 			"noAccount": "Pas encore de compte?",
 			"register": "S'inscrire",
@@ -65,8 +65,6 @@
 		},
 		"register": {
 			"title": "Inscription",
-			"username": "Nom d'utilisateur",
-			"password": "Mot de passe",
 			"submit": "Inscription",
 			"hasAccount": "Vous avez déjà un compte?",
 			"login": "Connexion",

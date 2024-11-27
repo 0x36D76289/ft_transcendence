@@ -1,40 +1,41 @@
 import { UserAPI } from '../api/user.js';
 import { navigate } from '../app.js';
 import { popupSystem } from '../services/popup.js';
+import { i18n } from '../services/i18n.js';
 
 export function render() {
 	return `
 <div class="auth-container">
 	<div class="auth-form">
-		<h1>Connexion</h1>
+		<h1>${i18n.t('auth.login.title')}</h1>
 		<form id="loginForm">
 			<div class="form-group">
-				<label for="loginUsername">Nom d'utilisateur</label>
+				<label for="loginUsername">${i18n.t('auth.username')}</label>
 				<input type="text" id="loginUsername" name="username" required>
 			</div>
 			<div class="form-group">
-				<label for="loginPassword">Mot de passe</label>
+				<label for="loginPassword">${i18n.t('auth.password')}</label>
 				<input type="password" id="loginPassword" name="password" required>
 			</div>
-			<button type="submit" class="auth-button">Se connecter</button>
+			<button type="submit" class="auth-button">${i18n.t('auth.login.submit')}</button>
 		</form>
-		<p>Pas encore de compte ? <a id="showRegister">S'enregistrer</a></p>
-		<button id="guestButton" class="auth-button">Se connecter en tant qu'invité</button>
+		<p>${i18n.t('auth.login.noAccount')} <a id="showRegister">${i18n.t('auth.login.register')}</a></p>
+		<button id="guestButton" class="auth-button">${i18n.t('auth.login.guest')}</button>
 	</div>
 	<div class="auth-form" style="display: none;">
-		<h1>Enregistrement</h1>
+		<h1>${i18n.t('auth.register.title')}</h1>
 		<form id="registerForm">
 			<div class="form-group">
-				<label for="registerUsername">Nom d'utilisateur</label>
+				<label for="registerUsername">${i18n.t('auth.username')}</label>
 				<input type="text" id="registerUsername" name="username" required>
 			</div>
 			<div class="form-group">
-				<label for="registerPassword">Mot de passe</label>
+				<label for="registerPassword">${i18n.t('auth.password')}</label>
 				<input type="password" id="registerPassword" name="password" required>
 			</div>
-			<button type="submit" class="auth-button">S'enregistrer</button>
+			<button type="submit" class="auth-button">${i18n.t('auth.register.submit')}</button>
 		</form>
-		<p>Déjà un compte ? <a id="showLogin">Se connecter</a></p>
+		<p>${i18n.t('auth.register.hasAccount')} <a id="showLogin">${i18n.t('auth.register.login')}</a></p>
 	</div>
 </div>
 	`;
@@ -51,7 +52,7 @@ export function init() {
 		const password = document.getElementById('loginPassword').value;
 		try {
 			const response = await UserAPI.login(username, password);
-			if (response === null) {
+			if (!response) {
 				console.error('Error while logging in');
 				return;
 			}
@@ -67,8 +68,8 @@ export function init() {
 		const username = document.getElementById('registerUsername').value;
 		const password = document.getElementById('registerPassword').value;
 		try {
-			const response = await UserAPI.register(username, password);
-			if (response.ok === false) {
+			const response = await UserAPI.register({ username, password });
+			if (!response) {
 				console.error('Error while registering');
 				return;
 			}
@@ -81,9 +82,17 @@ export function init() {
 
 	document.getElementById('guestButton').addEventListener('click', async (event) => {
 		event.preventDefault();
-		await UserAPI.createGuest();
-		mainElement.style.marginLeft = originalMarginLeft;
-		window.location.reload();
+		try {
+			const response = await UserAPI.createGuestAccount();
+			if (!response) {
+				console.error('Error while creating guest account');
+				return;
+			}
+			mainElement.style.marginLeft = originalMarginLeft;
+			window.location.reload();
+		} catch (error) {
+			popupSystem('error', 'Erreur de création de compte invité');
+		}
 	});
 
 	document.getElementById('showRegister').addEventListener('click', (event) => {

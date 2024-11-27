@@ -5,39 +5,39 @@ import { i18n } from '../services/i18n.js';
 
 export function render() {
   return `
-      <div class="messages-container">
-          <div class="friends-sidebar">
-              <div class="friends-header">
-                  <h2>${i18n.t('messages.friends')}</h2>
-                  <div class="search-container">
-                      <input type="text" id="friend-search" placeholder="${i18n.t('messages.search')}">
-                  </div>
-              </div>
-              <div class="friends-list" id="friends-list">
-                  <!-- Friends will be populated here -->
-              </div>
-          </div>
-          <div class="chat-container">
-              <div class="welcome-message" id="welcome-message">
-                  <h1>${i18n.t('messages.welcome')}</h1>
-                  <p>${i18n.t('messages.select_friend')}</p>
-              </div>
-              <div class="active-chat hidden" id="active-chat">
-                  <div class="chat-header" id="chat-header">
-                      <!-- Active chat header -->
-                  </div>
-                  <div class="messages-list" id="messages-list">
-                      <!-- Messages will be populated here -->
-                  </div>
-                  <div class="message-input">
-                      <textarea id="message-text" placeholder="${i18n.t('messages.type_message')}"></textarea>
-                      <button class="send-button" id="send-button">
-                          ${i18n.t('messages.send')}
-                      </button>
-                  </div>
-              </div>
-          </div>
-      </div>
+<div class="messages-container">
+	<div class="friends-sidebar">
+		<div class="friends-header">
+			<h2>${i18n.t('messages.friends')}</h2>
+			<div class="search-container">
+				<input type="text" id="friend-search" placeholder="${i18n.t('messages.search')}">
+			</div>
+		</div>
+		<div class="friends-list" id="friends-list">
+			<!-- Friends will be populated here -->
+		</div>
+	</div>
+	<div class="chat-container">
+		<div class="welcome-message" id="welcome-message">
+			<h1>${i18n.t('messages.welcome')}</h1>
+			<p>${i18n.t('messages.select_friend')}</p>
+		</div>
+		<div class="active-chat hidden" id="active-chat">
+			<div class="chat-header" id="chat-header">
+				<!-- Active chat header -->
+			</div>
+			<div class="messages-list" id="messages-list">
+				<!-- Messages will be populated here -->
+			</div>
+			<div class="message-input">
+				<textarea id="message-text" placeholder="${i18n.t('messages.type_message')}"></textarea>
+				<button class="send-button" id="send-button">
+					${i18n.t('messages.send')}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
   `;
 }
 
@@ -54,107 +54,107 @@ export function init() {
   const searchInput = document.getElementById('friend-search');
 
   async function loadFriends() {
-    try {
-      const friends = await UserAPI.getFriends();
-      friendsList.innerHTML = friends.map(friend => `
-              <div class="friend-item" data-username="${friend.username}">
-                  <div class="friend-avatar">
-                      <div class="status-indicator ${friend.is_online ? 'online' : 'offline'}"></div>
-                  </div>
-                  <div class="friend-info">
-                      <span class="friend-name">${friend.username}</span>
-                      <span class="friend-status">${friend.is_online ? 'En ligne' : 'Hors ligne'}</span>
-                  </div>
-              </div>
-          `).join('');
+	try {
+	  const friends = await UserAPI.getFriends();
+	  friendsList.innerHTML = friends.map(friend => `
+			  <div class="friend-item" data-username="${friend.username}">
+				  <div class="friend-avatar">
+					  <div class="status-indicator ${friend.is_online ? 'online' : 'offline'}"></div>
+				  </div>
+				  <div class="friend-info">
+					  <span class="friend-name">${friend.username}</span>
+					  <span class="friend-status">${friend.is_online ? 'En ligne' : 'Hors ligne'}</span>
+				  </div>
+			  </div>
+		  `).join('');
 
-      // Add click listeners to friend items
-      document.querySelectorAll('.friend-item').forEach(item => {
-        item.addEventListener('click', () => {
-          startChat(item.dataset.username);
-        });
-      });
-    } catch (error) {
-      console.error('Failed to load friends:', error);
-    }
+	  // Add click listeners to friend items
+	  document.querySelectorAll('.friend-item').forEach(item => {
+		item.addEventListener('click', () => {
+		  startChat(item.dataset.username);
+		});
+	  });
+	} catch (error) {
+	  console.error('Failed to load friends:', error);
+	}
   }
 
   async function startChat(username) {
-    try {
-      const conversation = await ChatAPI.startConversation(username);
-      currentConversation = conversation;
+	try {
+	  const conversation = await ChatAPI.startConversation(username);
+	  currentConversation = conversation;
 
-      // Close previous socket if exists
-      if (activeSocket) {
-        activeSocket.close();
-      }
+	  // Close previous socket if exists
+	  if (activeSocket) {
+		activeSocket.close();
+	  }
 
-      // Connect to WebSocket
-      activeSocket = WebSocketAPI.chat(conversation.id);
-      activeSocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        appendMessage(message);
-      };
+	  // Connect to WebSocket
+	  activeSocket = WebSocketAPI.chat(conversation.id);
+	  activeSocket.onmessage = (event) => {
+		const message = JSON.parse(event.data);
+		appendMessage(message);
+	  };
 
-      // Show active chat
-      welcomeMessage.classList.add('hidden');
-      activeChat.classList.remove('hidden');
+	  // Show active chat
+	  welcomeMessage.classList.add('hidden');
+	  activeChat.classList.remove('hidden');
 
-      // Update chat header
-      chatHeader.innerHTML = `
-              <div class="chat-header-info">
-                  <h3>${username}</h3>
-              </div>
-          `;
+	  // Update chat header
+	  chatHeader.innerHTML = `
+			  <div class="chat-header-info">
+				  <h3>${username}</h3>
+			  </div>
+		  `;
 
-      // Load previous messages
-      messagesList.innerHTML = conversation.message_set.map(msg => `
-              <div class="message ${msg.sender === username ? 'received' : 'sent'}">
-                  <div class="message-content">${msg.message}</div>
-                  <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
-              </div>
-          `).join('');
+	  // Load previous messages
+	  messagesList.innerHTML = conversation.message_set.map(msg => `
+			  <div class="message ${msg.sender === username ? 'received' : 'sent'}">
+				  <div class="message-content">${msg.message}</div>
+				  <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+			  </div>
+		  `).join('');
 
-      // Scroll to bottom
-      messagesList.scrollTop = messagesList.scrollHeight;
-    } catch (error) {
-      console.error('Failed to start chat:', error);
-    }
+	  // Scroll to bottom
+	  messagesList.scrollTop = messagesList.scrollHeight;
+	} catch (error) {
+	  console.error('Failed to start chat:', error);
+	}
   }
 
   function appendMessage(message) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', message.sender === currentConversation.receiver ? 'received' : 'sent');
-    messageElement.innerHTML = `
-          <div class="message-content">${message.message}</div>
-          <div class="message-time">${new Date().toLocaleTimeString()}</div>
-      `;
-    messagesList.appendChild(messageElement);
-    messagesList.scrollTop = messagesList.scrollHeight;
+	const messageElement = document.createElement('div');
+	messageElement.classList.add('message', message.sender === currentConversation.receiver ? 'received' : 'sent');
+	messageElement.innerHTML = `
+		  <div class="message-content">${message.message}</div>
+		  <div class="message-time">${new Date().toLocaleTimeString()}</div>
+	  `;
+	messagesList.appendChild(messageElement);
+	messagesList.scrollTop = messagesList.scrollHeight;
   }
 
   // Event listeners
   sendButton.addEventListener('click', () => {
-    const message = messageInput.value.trim();
-    if (message && activeSocket) {
-      activeSocket.send(JSON.stringify({ message }));
-      messageInput.value = '';
-    }
+	const message = messageInput.value.trim();
+	if (message && activeSocket) {
+	  activeSocket.send(JSON.stringify({ message }));
+	  messageInput.value = '';
+	}
   });
 
   messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendButton.click();
-    }
+	if (e.key === 'Enter' && !e.shiftKey) {
+	  e.preventDefault();
+	  sendButton.click();
+	}
   });
 
   searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    document.querySelectorAll('.friend-item').forEach(item => {
-      const friendName = item.querySelector('.friend-name').textContent.toLowerCase();
-      item.style.display = friendName.includes(searchTerm) ? 'flex' : 'none';
-    });
+	const searchTerm = e.target.value.toLowerCase();
+	document.querySelectorAll('.friend-item').forEach(item => {
+	  const friendName = item.querySelector('.friend-name').textContent.toLowerCase();
+	  item.style.display = friendName.includes(searchTerm) ? 'flex' : 'none';
+	});
   });
 
   // Initial load

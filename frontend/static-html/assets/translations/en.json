@@ -53,20 +53,18 @@
 		}
 	},
 	"auth": {
+		"username": "Username",
+		"password": "Password",
 		"login": {
 			"title": "Login",
-			"username": "Username",
-			"password": "Password",
 			"submit": "Login",
-			"noAccount": "No account yet?",	
+			"noAccount": "Don't have an account?",
 			"register": "Register",
-			"guest": "Login as guest",
+			"guest": "Login as Guest",
 			"error": "Login error"
 		},
 		"register": {
 			"title": "Register",
-			"username": "Username",
-			"password": "Password",
 			"submit": "Register",
 			"hasAccount": "Already have an account?",
 			"login": "Login",

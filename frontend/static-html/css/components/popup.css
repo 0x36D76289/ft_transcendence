@@ -14,7 +14,6 @@
   animation: popupEnter 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
   z-index: 1000;
   margin: var(--margin-s);
-  user-select: none;
 }
 
 .popup__content {

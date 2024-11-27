@@ -49,24 +49,6 @@
   justify-content: center;
 }
 
-.status-indicator {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--card-bg);
-}
-
-.status-indicator.online {
-  background-color: var(--status-online);
-}
-
-.status-indicator.offline {
-  background-color: var(--status-offline);
-}
-
 .profile-details {
   display: flex;
   flex-direction: column;

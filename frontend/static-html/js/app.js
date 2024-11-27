@@ -2,7 +2,6 @@ import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
 import { getToken } from "./utils/cookies.js";
 import { Settings } from "./pages/settings.js";
-import { create_socket } from "./api/socket.js";
 
 /* ******************** Constants & Config ******************** */
 const CONTENT_ELEMENT = document.getElementById("content");
@@ -137,7 +136,9 @@ export function navigate(path, options = {}) {
 		history.pushState({}, "", path);
 	}
 
-	updateActiveNavItem(path);
+	if (path !== "/auth") {
+		updateActiveNavItem(path);
+	}
 	renderPage(path);
 	console.log(`Navigation vers: ${path}`);
 }
@@ -161,12 +162,13 @@ function initSidebarNavigation() {
 }
 
 /* ******************** Event Listeners ******************** */
+i18n.init(getLanguages());
+
 window.addEventListener("popstate", () => {
 	const currentPath = location.pathname;
 	if (!checkAuth()) return;
 	renderPage(currentPath);
 });
-
 /* ******************** Initialization ******************** */
 export let currentSettings = new Settings();
 currentSettings.applyToDOM();
@@ -188,6 +190,7 @@ async function initApp() {
 
 		const token = getToken();
 		if (token) {
+			create_socket();
 			await initSidebar();
 			initSidebarNavigation();
 
@@ -207,9 +210,6 @@ async function initApp() {
 		console.error("Erreur d'initialisation:", error);
 		renderError("Erreur d'initialisation", "Impossible d'initialiser l'application.");
 	}
-
-	//TODO: load after login
-	create_socket();
 }
 
 // Démarrage de l'application
