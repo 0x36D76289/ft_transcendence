@@ -1,4 +1,11 @@
 {
+	"errors": {
+		"404": "Page not found",
+		"page": {
+			"title": "Initialization error",
+			"message": "An error occurred during the initialization of the application. Please try again later."
+		}
+	},
 	"sidebar": {
 		"title": "ft_transcendance",
 		"home": "Welcome",

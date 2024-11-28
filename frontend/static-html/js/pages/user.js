@@ -13,12 +13,10 @@ export function render() {
 	<div class="profile-content">
 		<div class="profile-section">
 			<div class="profile-info-card">
-        <div class="profile-avatar">
+				<div class="profile-avatar">
 					<img src="/media/pfp/default_pfp.svg" class="avatar-placeholder" id="profile-image"></img>
-					<button id="edit-avatar-btn" class="edit-avatar-btn">
-						<span class="material-icons">edit</span>
-					</button>
-        </div>
+					<input type="file" id="pfp-input" class="hidden" accept="image/*"/>
+				</div>
 				
 				<div class="profile-details">
 					<div class="info-group">
@@ -91,125 +89,72 @@ export function render() {
 }
 
 export async function init() {
+	const username = getUsername();
+
 	try {
-		// Get the current username from cookies
-		const username = getUsername();
+		const userData = await UserAPI.getProfile(username);
+		const userStat = await UserAPI.getUserStats(username);
 
-		// Fetch user profile
-		const profile = await UserAPI.getProfile(username);
+		// Set data
+		document.getElementById('profile-image').src = `/media/${userData.pfp}`;
+		document.getElementById('username-input').value = userData.username;
+		document.getElementById('bio-input').value = userData.bio;
+		document.getElementById('date-joined').innerText = new Date(userData.date_joined).toLocaleDateString();
 
-		// Populate username input
-		const usernameInput = document.getElementById('username-input');
-		usernameInput.value = profile.username;
+		// Set stats
+		document.getElementById('games-played').innerText = userStat.games_played;
+		document.getElementById('win-rate').innerText = userStat.win_rate;
 
-		// Populate bio textarea
-		const bioInput = document.getElementById('bio-input');
-		bioInput.value = profile.bio || '';
+		// Save profile button
+		document.getElementById('save-profile').addEventListener('click', async () => {
+			const newUsername = document.getElementById('username-input').value;
+			const newBio = document.getElementById('bio-input').value;
 
-		// Set date joined
-		const dateJoinedElement = document.getElementById('date-joined');
-		dateJoinedElement.textContent = new Date(profile.date_joined).toLocaleDateString();
+			const updatedData = await UserAPI.updateProfile({
+				username: newUsername,
+				bio: newBio
+			});
 
-		// Set profile image
-		const profileImage = document.getElementById('profile-image');
-		profileImage.src = profile.pfp ? `/media/${profile.pfp}` : '/media/pfp/default_pfp.svg';
-
-		// Fetch user stats
-		const stats = await UserAPI.getUserStats(username);
-
-		// Update stats
-		const gamesPlayedElement = document.getElementById('games-played');
-		const winRateElement = document.getElementById('win-rate');
-
-		gamesPlayedElement.textContent = stats.games_played || 0;
-		winRateElement.textContent = `${(stats.win_rate || 0).toFixed(1)}%`;
-
-		// Setup save profile button
-		const saveProfileButton = document.getElementById('save-profile');
-		saveProfileButton.addEventListener('click', async () => {
-			try {
-				const updateData = {
-					username: usernameInput.value,
-					bio: bioInput.value
-				};
-
-				// Get profile picture file if selected
-				const pfpFileInput = document.getElementById('pfp-file-input');
-				const pfpFile = pfpFileInput?.files[0] || null;
-
-				// Update profile
-				await UserAPI.updateProfile(updateData, pfpFile);
-				popupSystem('success', i18n.t('user.profileUpdated'));
-				// window.location.reload();
-			} catch (error) {
-				console.error('Profile update error:', error);
-			}
+			popupSystem('success', 'Profile updated successfully');
 		});
 
-		// Setup logout button
-		const logoutButton = document.getElementById('logout-button');
-		logoutButton.addEventListener('click', async () => {
-			try {
-				await UserAPI.logout();
-				// Redirect to login page or home page
-				
-			} catch (error) {
-				console.error('Logout error:', error);
-			}
+		// Logout button
+		document.getElementById('logout-button').addEventListener('click', async () => {
+			await UserAPI.logout();
+			window.location.reload();
 		});
 
-		// Setup delete account logic
-		const deleteAccountButton = document.getElementById('delete-account-button');
-		const deleteConfirmation = document.getElementById('delete-confirmation');
-		const confirmDeleteButton = document.getElementById('confirm-delete');
-		const cancelDeleteButton = document.getElementById('cancel-delete');
-
-		deleteAccountButton.addEventListener('click', () => {
-			deleteConfirmation.classList.remove('hidden');
+		// Delete account button
+		document.getElementById('delete-account-button').addEventListener('click', () => {
+			document.getElementById('delete-confirmation').classList.remove('hidden');
 		});
 
-		cancelDeleteButton.addEventListener('click', () => {
-			deleteConfirmation.classList.add('hidden');
+		// Confirm delete button
+		document.getElementById('confirm-delete').addEventListener('click', async () => {
+			await UserAPI.deleteAccount();
+			window.location.reload();
 		});
 
-		confirmDeleteButton.addEventListener('click', async () => {
-			try {
-				await UserAPI.deleteAccount();
-				// Redirect to home or login page
-				window.location.href = '/login';
-			} catch (error) {
-				console.error('Account deletion error:', error);
-			}
+		// Cancel delete button
+		document.getElementById('cancel-delete').addEventListener('click', () => {
+			document.getElementById('delete-confirmation').classList.add('hidden');
 		});
 
-		// Setup avatar edit button (assuming you'll add file input)
-		const editAvatarButton = document.getElementById('edit-avatar-btn');
-		const pfpFileInput = document.createElement('input');
-		pfpFileInput.type = 'file';
-		pfpFileInput.accept = 'image/*';
-		pfpFileInput.id = 'pfp-file-input';
-		pfpFileInput.style.display = 'none';
-		document.body.appendChild(pfpFileInput);
-
-		editAvatarButton.addEventListener('click', () => {
-			pfpFileInput.click();
+		// Edit avatar button
+		document.getElementById('profile-image').addEventListener('click', () => {
+			document.getElementById('pfp-input').click();
 		});
 
-		pfpFileInput.addEventListener('change', async (event) => {
-			const file = event.target.files[0];
-			if (file) {
-				try {
-					await UserAPI.updateProfile({}, file);
-					profileImage.src = URL.createObjectURL(file);
-					popupSystem('success', i18n.t('user.avatarUpdated'));
-				} catch (error) {
-					console.error('Avatar update error:', error);
-				}
-			}
-		});
+		// Update avatar when a new file is selected
+		document.getElementById('pfp-input').addEventListener('change', async () => {
+			const file = document.getElementById('pfp-input').files[0];
+			const updatedData = await UserAPI.updateProfile({}, file);
 
+			document.getElementById('profile-image').src = `/media/${updatedData.pfp}`;
+		});
 	} catch (error) {
-		console.error('Profile initialization error:', error);
-		popupSystem('error', i18n.t('user.profileLoadError'));
+		console.error(error);
+		popupSystem('error', 'Failed to load user data');
+		return;
 	}
 }

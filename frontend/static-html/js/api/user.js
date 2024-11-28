@@ -6,12 +6,13 @@ const BASE_URL = 'https://localhost:8443/api/user';
 export class UserAPI {
 	// Helper method to handle API responses
 	static async _handleResponse(response) {
+		const responseData = await response.json();
+		console.log(responseData);
 		if (!response.ok) {
-			const errorData = await response.json();
-			popupSystem('error', errorData.detail || 'An error occurred');
-			throw new Error(errorData.detail || 'An error occurred');
+			popupSystem('error', responseData.detail || 'An error occurred');
+			throw new Error(responseData.detail || 'An error occurred');
 		}
-		return response.json();
+		return responseData;
 	}
 
 	// Helper method to get default headers
@@ -82,30 +83,17 @@ export class UserAPI {
 	}
 
 	// Update user profile
-	static async updateProfile(updateData, pfpFile = null) {
-		const formData = new FormData();
-		for (const key in updateData) {
-			formData.append(key, updateData[key]);
-		}
-		if (pfpFile !== null) {
-			formData.append('pfp', pfpFile);
-		}
-
+	static async updateProfile(updateData) {
 		const response = await fetch(`${BASE_URL}/update_user`, {
 			method: 'POST',
-			headers: {
-				'Authorization': `Token ${cookies.getToken()}`
-			},
-			body: formData
+			headers: this._getHeaders(),
+			body: JSON.stringify(updateData)
 		});
 
-		const data = await this._handleResponse(response);
+		cookies.setUsername(updateData.username);
+		cookies.setToken(updateData.token);
 
-		// Update relevant cookies if needed
-		if (updateData.username) cookies.setUsername(data.username);
-		if (updateData.bio) cookies.setBio(data.bio);
-
-		return data;
+		return this._handleResponse(response);
 	}
 
 	// Get user profile

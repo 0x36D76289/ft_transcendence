@@ -193,11 +193,11 @@
 	margin-bottom: 8px;
 }
 
-.contact-expanded-content {
+/* .contact-expanded-content {
 	display: none;
 	opacity: 0;
 	transition: opacity 0.3s ease;
-}
+} */
 
 .contact-card.expanded .contact-expanded-content {
 	display: block;

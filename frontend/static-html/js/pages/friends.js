@@ -1,23 +1,19 @@
 import { UserAPI } from '../api/user.js';
+import { ChatAPI } from '../api/chat.js';
 import { popupSystem } from '../services/popup.js';
 import { getUsername } from '../utils/cookies.js';
 
 function createContactCard(user) {
-	const lastActive = new Date(user.last_active);
-	const now = new Date();
-	const diffTime = Math.abs(now - lastActive);
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+	console.log(user);
 	return `
-<div class="contact-card" data-user-id="${user.id}">
+<div class="contact-card" data-user-id="${user.username}">
 	<div class="contact-avatar">
-		<img src="${user.pfp}" alt="${user.username}">
+		<img src="/media/${user.pfp}" alt="${user.username}">
 		<div class="status-indicator status-${user.is_online ? 'online' : 'offline'}"></div>
 	</div>
 	<div class="contact-info">
 		<div class="contact-name">${user.username}</div>
 		<div class="contact-status">${user.is_online ? 'En ligne' : 'Hors ligne'}</div>
-		<div class="contact-last-active">Dernière activité : ${diffDays} jours</div>
 	</div>
 	<div class="contact-expanded-content">
 		<div class="contact-bio">
@@ -91,7 +87,23 @@ function initScrollTopButton() {
 }
 
 async function handleActionButton(event) {
+	const button = event.target;
+	const contactCard = button.closest('.contact-card');
+	const userId = contactCard.dataset.userId;
 
+	if (button.classList.contains('message')) {
+		// Ouvrir une conversation avec l'utilisateur
+	} else if (button.classList.contains('play')) {
+		// Inviter l'utilisateur à jouer
+	} else if (button.classList.contains('block')) {
+		await ChatAPI.blockUser(userId);
+		popupSystem('success', 'Utilisateur bloqué');
+		contactCard.remove();
+	} else if (button.classList.contains('remove')) {
+		await UserAPI.removeFriendRequest(userId);
+		popupSystem('success', 'Ami supprimé');
+		contactCard.remove();
+	}
 }
 
 export async function init() {
@@ -99,7 +111,6 @@ export async function init() {
 	search_input.onkeyup = async function (key) {
 		if (key.key == "Enter") {
 			console.log(await UserAPI.sendFriendRequest(search_input.value));
-			//append
 		}
 	};
 
@@ -113,4 +124,9 @@ export async function init() {
 		e.innerHTML = createContactCard(friends[0][user]);
 		list.appendChild(e);
 	}
+
+	initScrollTopButton();
+	document.querySelectorAll('.contact-action-btn').forEach(button => {
+		button.addEventListener('click', handleActionButton);
+	});
 }

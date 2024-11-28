@@ -1,5 +1,6 @@
 import { initBackground } from "./components/background.js";
 import { initSidebar } from "./components/sidebar.js";
+import { UserAPI } from "./api/user.js";
 import { getLanguages, getToken } from "./utils/cookies.js";
 import { Settings } from "./pages/settings.js";
 import { i18n } from "./services/i18n.js";
@@ -22,18 +23,27 @@ const ROUTES = {
 };
 
 /* ******************** Security Middleware ******************** */
-function checkAuth() {
+async function checkAuth() {
 	const token = getToken();
 	const currentPath = location.pathname;
 
 	if (!token && !PUBLIC_ROUTES.includes(currentPath)) {
-		console.log("Accès non autorisé - Redirection vers /auth");
+		console.log("Navigation bloquée - Token manquant");
 		navigate("/auth", { replace: true });
 		return false;
 	}
 
+	if (token) {
+		const isValid = await UserAPI.isTokenValid(token);
+		if (!isValid) {
+			console.log("Navigation bloquée - Token invalide");
+			navigate("/auth", { replace: true });
+			return false;
+		}
+	}
+
 	if (token && currentPath === "/auth") {
-		console.log("Déjà authentifié - Redirection vers /");
+		console.log("Navigation bloquée - Token présent");
 		navigate("/", { replace: true });
 		return false;
 	}
@@ -69,12 +79,9 @@ async function loadCSS(filename) {
 }
 /* ******************** Page Navigation ******************** */
 async function renderPage(path) {
-	// Vérification de sécurité avant tout rendu
-	if (!checkAuth()) return;
-
 	const pageModule = ROUTES[path];
 	if (!pageModule) {
-		renderError("404", "Page non trouvée.");
+		renderError("404", i18n.t("errors.404"));
 		return;
 	}
 
@@ -101,7 +108,7 @@ async function renderPage(path) {
 		if (init) await init();
 	} catch (error) {
 		console.error("Erreur lors du rendu de la page:", error);
-		renderError("Erreur de chargement", "Impossible de charger la page demandée.");
+		renderError(i18n.t("errors.page.title"), i18n.t("errors.page.message"));
 	}
 }
 
@@ -144,7 +151,7 @@ export function navigate(path, options = {}) {
 		updateActiveNavItem(path);
 	}
 	renderPage(path);
-	console.log(`Navigation vers: ${path}`);
+	console.log(`Navigating to: ${path}`);
 }
 
 /* ******************** UI Updates ******************** */
@@ -192,8 +199,7 @@ async function initApp() {
 
 		initBackground();
 
-		const token = getToken();
-		if (token) {
+		if (getToken() && await UserAPI.isTokenValid(getToken())) {
 			create_socket();
 			await initSidebar();
 			initSidebarNavigation();
@@ -212,7 +218,7 @@ async function initApp() {
 		document.body.classList.add('loaded');
 	} catch (error) {
 		console.error("Erreur d'initialisation:", error);
-		renderError("Erreur d'initialisation", "Impossible d'initialiser l'application.");
+		renderError(i18n.t("errors.page.title"), i18n.t("errors.page.message"));
 	}
 }
 
