@@ -45,7 +45,7 @@ async function createContactCard(user) {
 	`;
 }
 
-export async function render() {
+export function render() {
 	return `
 <div class="app-container">
 	<main class="main-content">
