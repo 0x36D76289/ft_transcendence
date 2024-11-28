@@ -1,7 +1,8 @@
 import { UserAPI } from '../api/user.js';
 import { popupSystem } from '../services/popup.js';
+import { getUsername } from '../utils/cookies.js';
 
-async function createContactCard(user) {
+function createContactCard(user) {
 	const lastActive = new Date(user.last_active);
 	const now = new Date();
 	const diffTime = Math.abs(now - lastActive);
@@ -94,5 +95,22 @@ async function handleActionButton(event) {
 }
 
 export async function init() {
+	var search_input = document.getElementById("searchInput");
+	search_input.onkeyup = async function (key) {
+		if (key.key == "Enter") {
+			console.log(await UserAPI.sendFriendRequest(search_input.value));
+			//append
+		}
+	};
 
+	var list = document.getElementById("contactGrid");
+	let friends = await UserAPI.getFriends(getUsername());
+	console.log(friends[0]);
+	for (let user in friends[0]) {
+		if (user == "status")
+			continue;
+		let e = document.createElement("div");
+		e.innerHTML = createContactCard(friends[0][user]);
+		list.appendChild(e);
+	}
 }

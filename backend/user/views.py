@@ -211,8 +211,8 @@ def list_users(request):
 
 # USER_FRIEND
 @api_view(['GET'])
-def get_friends(request, user):
-	if user != request.user.username:
+def get_friends(request, username):
+	if username != request.user.username:
 		return Response({'detail': 'You can\'t see someone else friends'}, status=status.HTTP_400_BAD_REQUEST)
 	friends = UserFriend.objects.filter(Q(uid1=request.user, status=UserFriend.FRIEND) | Q(uid2=request.user, status=UserFriend.FRIEND))
 	serializer = UserFriendSerializer(friends, many=True)
