@@ -4,7 +4,6 @@ import { popupSystem } from '../services/popup.js';
 import { getUsername } from '../utils/cookies.js';
 
 function createContactCard(user) {
-	console.log(user);
 	return `
 <div class="contact-card" data-user-id="${user.username}">
 	<div class="contact-avatar">
@@ -89,18 +88,18 @@ function initScrollTopButton() {
 async function handleActionButton(event) {
 	const button = event.target;
 	const contactCard = button.closest('.contact-card');
-	const userId = contactCard.dataset.userId;
+	const username = contactCard.dataset.userId;
 
 	if (button.classList.contains('message')) {
 		// Ouvrir une conversation avec l'utilisateur
 	} else if (button.classList.contains('play')) {
 		// Inviter l'utilisateur à jouer
 	} else if (button.classList.contains('block')) {
-		await ChatAPI.blockUser(userId);
+		await ChatAPI.blockUser(username);
 		popupSystem('success', 'Utilisateur bloqué');
 		contactCard.remove();
 	} else if (button.classList.contains('remove')) {
-		await UserAPI.removeFriendRequest(userId);
+		await UserAPI.removeFriendRequest(username);
 		popupSystem('success', 'Ami supprimé');
 		contactCard.remove();
 	}
@@ -110,13 +109,13 @@ export async function init() {
 	var search_input = document.getElementById("searchInput");
 	search_input.onkeyup = async function (key) {
 		if (key.key == "Enter") {
-			console.log(await UserAPI.sendFriendRequest(search_input.value));
+			await UserAPI.sendFriendRequest(search_input.value);
+			//can be read to make a notif
 		}
 	};
 
 	var list = document.getElementById("contactGrid");
 	let friends = await UserAPI.getFriends(getUsername());
-	console.log(friends[0]);
 	for (let user in friends[0]) {
 		if (user == "status")
 			continue;
