@@ -102,8 +102,8 @@ export class UserAPI {
 		const data = await this._handleResponse(response);
 
 		// Update relevant cookies if needed
-		if (updateData.username) cookies.setUsername(updateData.username);
-		if (updateData.bio) cookies.setBio(updateData.bio);
+		if (updateData.username) cookies.setUsername(data.username);
+		if (updateData.bio) cookies.setBio(data.bio);
 
 		return data;
 	}

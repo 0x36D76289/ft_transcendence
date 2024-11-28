@@ -42,14 +42,14 @@ export function render() {
 }
 
 export function init() {
-	const mainElement = document.querySelector('main');
+	const mainElement = document?.querySelector('main');
 	const originalMarginLeft = getComputedStyle(mainElement).marginLeft;
 	mainElement.style.marginLeft = '0';
 
 	document.getElementById('loginForm').addEventListener('submit', async (event) => {
 		event.preventDefault();
-		const username = document.getElementById('loginUsername').value;
-		const password = document.getElementById('loginPassword').value;
+		const username = document?.getElementById('loginUsername')?.value;
+		const password = document?.getElementById('loginPassword')?.value;
 		try {
 			const response = await UserAPI.login(username, password);
 			if (!response) {
@@ -65,8 +65,8 @@ export function init() {
 
 	document.getElementById('registerForm').addEventListener('submit', async (event) => {
 		event.preventDefault();
-		const username = document.getElementById('registerUsername').value;
-		const password = document.getElementById('registerPassword').value;
+		const username = document?.getElementById('registerUsername')?.value;
+		const password = document?.getElementById('registerPassword')?.value;
 		try {
 			const response = await UserAPI.register({ username, password });
 			if (!response) {

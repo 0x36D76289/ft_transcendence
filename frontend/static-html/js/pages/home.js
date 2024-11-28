@@ -3,9 +3,9 @@ import { i18n } from '../services/i18n.js';
 
 export function render() {
 	return `
-		<div class="home-container">
-			<button class="play-button">${i18n.t('home.play')}</button>
-		</div>
+<div class="home-container">
+	<button class="play-button">${i18n.t('home.play')}</button>
+</div>
 	`;
 }
 

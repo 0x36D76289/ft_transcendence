@@ -166,7 +166,7 @@ function initSidebarNavigation() {
 }
 
 /* ******************** Event Listeners ******************** */
-i18n.init(getLanguages());
+await i18n.init(getLanguages());
 
 window.addEventListener("popstate", () => {
 	const currentPath = location.pathname;

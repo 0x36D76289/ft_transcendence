@@ -4,80 +4,80 @@ import { currentSettings } from '../app.js';
 
 export function render() {
   return `
-    <div class="settings-container">
-      <header class="settings-header">
-        <h1>${i18n.t('settings.title')}</h1>
-      </header>
+<div class="settings-container">
+  <header class="settings-header">
+    <h1>${i18n.t('settings.title')}</h1>
+  </header>
 
-      <div class="settings-grid">
-        <!-- Langue -->
-        <section class="settings-section">
-          <h2>${i18n.t('settings.language.title')}</h2>
-          <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="language">${i18n.t('settings.language.label')}</label>
-                <span class="setting-description">${i18n.t('settings.language.description')}</span>
-              </div>
-              <select id="language" class="setting-control">
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-              </select>
-            </div>
+  <div class="settings-grid">
+    <!-- Langue -->
+    <section class="settings-section">
+      <h2>${i18n.t('settings.language.title')}</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="language">${i18n.t('settings.language.label')}</label>
+            <span class="setting-description">${i18n.t('settings.language.description')}</span>
           </div>
-        </section>
-
-        <!-- Apparence -->
-        <section class="settings-section">
-          <h2>${i18n.t('settings.appearance.title')}</h2>
-          <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="theme">${i18n.t('settings.appearance.theme.label')}</label>
-                <span class="setting-description">${i18n.t('settings.appearance.theme.description')}</span>
-              </div>
-              <select id="theme" class="setting-control">
-                <option value="dark">${i18n.t('settings.appearance.theme.options.dark')}</option>
-                <option value="light">${i18n.t('settings.appearance.theme.options.light')}</option>
-              </select>
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="accent">${i18n.t('settings.appearance.accentColor.label')}</label>
-                <span class="setting-description">${i18n.t('settings.appearance.accentColor.description')}</span>
-              </div>
-              <div class="color-picker">
-                <input type="color" id="accent" value="#3245ff">
-                <button id="reset-accent" class="button">${i18n.t('settings.appearance.accentColor.reset')}</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Notifications -->
-        <section class="settings-section">
-          <h2>${i18n.t('settings.notifications.title')}</h2>
-          <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="notifications">${i18n.t('settings.notifications.push.label')}</label>
-                <span class="setting-description">${i18n.t('settings.notifications.push.description')}</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="notifications">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- Bouton Réinitialiser -->
-        <div class="settings-actions">
-          <button id="reset-settings" class="button">${i18n.t('settings.actions.reset')}</button>
+          <select id="language" class="setting-control">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
         </div>
       </div>
+    </section>
+
+    <!-- Apparence -->
+    <section class="settings-section">
+      <h2>${i18n.t('settings.appearance.title')}</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="theme">${i18n.t('settings.appearance.theme.label')}</label>
+            <span class="setting-description">${i18n.t('settings.appearance.theme.description')}</span>
+          </div>
+          <select id="theme" class="setting-control">
+            <option value="dark">${i18n.t('settings.appearance.theme.options.dark')}</option>
+            <option value="light">${i18n.t('settings.appearance.theme.options.light')}</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="accent">${i18n.t('settings.appearance.accentColor.label')}</label>
+            <span class="setting-description">${i18n.t('settings.appearance.accentColor.description')}</span>
+          </div>
+          <div class="color-picker">
+            <input type="color" id="accent" value="#3245ff">
+            <button id="reset-accent" class="button">${i18n.t('settings.appearance.accentColor.reset')}</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notifications -->
+    <section class="settings-section">
+      <h2>${i18n.t('settings.notifications.title')}</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="notifications">${i18n.t('settings.notifications.push.label')}</label>
+            <span class="setting-description">${i18n.t('settings.notifications.push.description')}</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="notifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bouton Réinitialiser -->
+    <div class="settings-actions">
+      <button id="reset-settings" class="button">${i18n.t('settings.actions.reset')}</button>
     </div>
+  </div>
+</div>
   `;
 }
 

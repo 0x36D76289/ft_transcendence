@@ -76,6 +76,10 @@
   transition: var(--transition);
 }
 
+.info-group textarea {
+  resize: none;
+}
+
 .info-group input:focus, .info-group textarea:focus {
   outline: none;
   border-color: var(--accent-color);
@@ -206,7 +210,9 @@
   display: none !important;
 }
 
-@media screen and (max-width: 768px) {
+/* Responsive styles */
+/* Tablet */
+@media screen and (max-width: 1024px) {
   .profile-content {
       grid-template-columns: 1fr;
   }

@@ -1,6 +1,7 @@
 import { UserAPI } from '../api/user.js';
 import { i18n } from '../services/i18n.js';
 import { getUsername } from '../utils/cookies.js';
+import { popupSystem } from '../services/popup.js';
 
 export function render() {
 	return `
@@ -85,88 +86,130 @@ export function render() {
 			</div>
 		</div>
 	</div>
-
 </div>
 `;
 }
 
 export async function init() {
-	const editAvatarBtn = document.getElementById('edit-avatar-btn');
-	const avatarFileInput = document.getElementById('avatar-file-input');
-	const profileImage = document.getElementById('profile-image');
-	let selectedFile = null;
-
 	try {
+		// Get the current username from cookies
+		const username = getUsername();
+
 		// Fetch user profile
-		const profile = await UserAPI.getProfile(getUsername());
-		const stats = await UserAPI.getUserStats(getUsername());
+		const profile = await UserAPI.getProfile(username);
 
-		// Update UI with fetched data
-		profileImage.src = "/media" + profile.pfp;
-		document.getElementById('username-input').value = profile.username;
-		document.getElementById('bio-input').value = profile.bio || '';
-		document.getElementById('date-joined').textContent = new Date(profile.date_joined).toLocaleDateString();
-		document.getElementById('games-played').textContent = stats.games_played;
-		document.getElementById('win-rate').textContent = `${stats.win_rate}%`;
+		// Populate username input
+		const usernameInput = document.getElementById('username-input');
+		usernameInput.value = profile.username;
+
+		// Populate bio textarea
+		const bioInput = document.getElementById('bio-input');
+		bioInput.value = profile.bio || '';
+
+		// Set date joined
+		const dateJoinedElement = document.getElementById('date-joined');
+		dateJoinedElement.textContent = new Date(profile.date_joined).toLocaleDateString();
+
+		// Set profile image
+		const profileImage = document.getElementById('profile-image');
+		profileImage.src = profile.pfp ? `/media/${profile.pfp}` : '/media/pfp/default_pfp.svg';
+
+		// Fetch user stats
+		const stats = await UserAPI.getUserStats(username);
+
+		// Update stats
+		const gamesPlayedElement = document.getElementById('games-played');
+		const winRateElement = document.getElementById('win-rate');
+
+		gamesPlayedElement.textContent = stats.games_played || 0;
+		winRateElement.textContent = `${(stats.win_rate || 0).toFixed(1)}%`;
+
+		// Setup save profile button
+		const saveProfileButton = document.getElementById('save-profile');
+		saveProfileButton.addEventListener('click', async () => {
+			try {
+				const updateData = {
+					username: usernameInput.value,
+					bio: bioInput.value
+				};
+
+				// Get profile picture file if selected
+				const pfpFileInput = document.getElementById('pfp-file-input');
+				const pfpFile = pfpFileInput?.files[0] || null;
+
+				// Update profile
+				await UserAPI.updateProfile(updateData, pfpFile);
+				popupSystem('success', i18n.t('user.profileUpdated'));
+				// window.location.reload();
+			} catch (error) {
+				console.error('Profile update error:', error);
+			}
+		});
+
+		// Setup logout button
+		const logoutButton = document.getElementById('logout-button');
+		logoutButton.addEventListener('click', async () => {
+			try {
+				await UserAPI.logout();
+				// Redirect to login page or home page
+				
+			} catch (error) {
+				console.error('Logout error:', error);
+			}
+		});
+
+		// Setup delete account logic
+		const deleteAccountButton = document.getElementById('delete-account-button');
+		const deleteConfirmation = document.getElementById('delete-confirmation');
+		const confirmDeleteButton = document.getElementById('confirm-delete');
+		const cancelDeleteButton = document.getElementById('cancel-delete');
+
+		deleteAccountButton.addEventListener('click', () => {
+			deleteConfirmation.classList.remove('hidden');
+		});
+
+		cancelDeleteButton.addEventListener('click', () => {
+			deleteConfirmation.classList.add('hidden');
+		});
+
+		confirmDeleteButton.addEventListener('click', async () => {
+			try {
+				await UserAPI.deleteAccount();
+				// Redirect to home or login page
+				window.location.href = '/login';
+			} catch (error) {
+				console.error('Account deletion error:', error);
+			}
+		});
+
+		// Setup avatar edit button (assuming you'll add file input)
+		const editAvatarButton = document.getElementById('edit-avatar-btn');
+		const pfpFileInput = document.createElement('input');
+		pfpFileInput.type = 'file';
+		pfpFileInput.accept = 'image/*';
+		pfpFileInput.id = 'pfp-file-input';
+		pfpFileInput.style.display = 'none';
+		document.body.appendChild(pfpFileInput);
+
+		editAvatarButton.addEventListener('click', () => {
+			pfpFileInput.click();
+		});
+
+		pfpFileInput.addEventListener('change', async (event) => {
+			const file = event.target.files[0];
+			if (file) {
+				try {
+					await UserAPI.updateProfile({}, file);
+					profileImage.src = URL.createObjectURL(file);
+					popupSystem('success', i18n.t('user.avatarUpdated'));
+				} catch (error) {
+					console.error('Avatar update error:', error);
+				}
+			}
+		});
+
 	} catch (error) {
-		console.error('Failed to load profile:', error);
+		console.error('Profile initialization error:', error);
+		popupSystem('error', i18n.t('user.profileLoadError'));
 	}
-
-	// Avatar editing functionality
-	editAvatarBtn.addEventListener('click', () => {
-		avatarFileInput.click();
-	});
-
-	avatarFileInput.addEventListener('change', (event) => {
-		const file = event.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				profileImage.src = e.target.result;
-				selectedFile = file;
-			};
-			reader.readAsDataURL(file);
-		}
-	});
-
-	// Save profile changes
-	document.getElementById('save-profile').addEventListener('click', async () => {
-		try {
-			await UserAPI.updateProfile({
-				username: document.getElementById('username-input').value,
-				bio: document.getElementById('bio-input').value
-			}, selectedFile);
-			window.location.reload();
-		} catch (error) {
-			console.error('Failed to update profile:', error);
-		}
-	});
-
-	// Logout handling
-	document.getElementById('logout-button').addEventListener('click', async () => {
-		try {
-			await UserAPI.logout();
-			window.location.reload();
-		} catch (error) {
-			console.error('Failed to logout:', error);
-		}
-	});
-
-	// Delete account handling
-	document.getElementById('delete-account-button').addEventListener('click', () => {
-		document.getElementById('delete-confirmation').classList.remove('hidden');
-	});
-
-	document.getElementById('cancel-delete').addEventListener('click', () => {
-		document.getElementById('delete-confirmation').classList.add('hidden');
-	});
-
-	document.getElementById('confirm-delete').addEventListener('click', async () => {
-		try {
-			await UserAPI.deleteAccount();
-			window.location.reload();
-		} catch (error) {
-			console.error('Failed to delete account:', error);
-		}
-	});
 }
