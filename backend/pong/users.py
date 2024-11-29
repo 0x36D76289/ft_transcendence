@@ -245,6 +245,8 @@ class pong_data:
 
     @classmethod
     def fight(cls, user: User, opponent: str):
+        if (user.get_username() == opponent):
+            return
         pu = cls.get_pong_user(user)
         if pu is None:
             return
