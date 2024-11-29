@@ -17,6 +17,8 @@
 	padding: var(--padding-m);
 	gap: var(--margin-s);
 	border-bottom: 1px solid var(--border-color);
+	user-select: none;
+	transition: var(--transition);
 }
 
 .logo-text {
@@ -68,7 +70,7 @@
 	transition: var(--transition);
 }
 
-.profile:hover {
+.profile:hover, .sidebar-header:hover {
 	background-color: var(--hover-bg);
 	border-color: var(--border-color);
 	cursor: pointer;

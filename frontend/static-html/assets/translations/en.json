@@ -102,5 +102,20 @@
 		"deleteConfirmation": "Are you sure you want to delete your account? This action cannot be undone.",
 		"confirmDelete": "Confirm Delete",
 		"cancel": "Cancel"
+	},
+	"friends": {
+		"title": "Friends",
+		"search_user": "Search user...",
+		"online": "Online",
+		"offline": "Offline",
+		"send_message": "Send Message",
+		"invite_to_play": "Invite to Play",
+		"block": "Block",
+		"remove": "Remove",
+		"add_friend_tooltip": "Add Friend",
+		"empty_username": "Username cannot be empty",
+		"request_sent": "Friend request sent to {username}",
+		"profile_load_error": "Failed to load profile",
+		"fetch_error": "Error fetching friends"
 	}
 }

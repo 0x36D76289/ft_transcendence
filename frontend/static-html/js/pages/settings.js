@@ -188,7 +188,7 @@ export async function init() {
 
   document.querySelector('#reset-settings').addEventListener('click', () => {
     currentSettings.reset();
-    window.location.reload();
+    navigate('/settings');
   });
 
   const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');

@@ -8,11 +8,6 @@
   margin-bottom: var(--margin-l);
 }
 
-.profile-header h2 {
-  font: var(--h2ui);
-  color: var(--text-primary);
-}
-
 .profile-content {
   display: grid;
   gap: var(--margin-l);

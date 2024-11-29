@@ -93,7 +93,6 @@
 	--accent-hover: hsl(from var(--accent-color) h s calc(l + 10%));
 	--accent-gradient: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
 	
-	/* Composants spécifiques */
 	--sidebar-bg: var(--bg-primary);
 	--sidebar-hover: var(--bg-tertiary);
 	--sidebar-active: var(--accent-color);
@@ -174,7 +173,6 @@ h1,
 h2,
 h3 {
 	color: var(--text-primary);
-	text-transform: uppercase;
 	letter-spacing: 1px;
 }
 

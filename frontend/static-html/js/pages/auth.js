@@ -57,7 +57,7 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			window.location.reload();
+			navigate('/auth');
 		} catch (error) {
 			popupSystem('error', 'Erreur de connexion');
 		}
@@ -74,7 +74,7 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			window.location.reload();
+			navigate('/auth');
 		} catch (error) {
 			popupSystem('error', 'Erreur d\'enregistrement');
 		}
@@ -89,7 +89,7 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			window.location.reload();
+			navigate('/auth');
 		} catch (error) {
 			popupSystem('error', 'Erreur de création de compte invité');
 		}

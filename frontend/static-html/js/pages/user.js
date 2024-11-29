@@ -6,9 +6,9 @@ import { popupSystem } from '../services/popup.js';
 export function render() {
 	return `
 <div class="profile-container">
-	<div class="profile-header">
-		<h2>${i18n.t('user.title')}</h2>
-	</div>
+	<header class="profile-header">
+		<h1>${i18n.t('user.title')}</h1>
+	</header>
 	
 	<div class="profile-content">
 		<div class="profile-section">
@@ -121,7 +121,7 @@ export async function init() {
 		// Logout button
 		document.getElementById('logout-button').addEventListener('click', async () => {
 			await UserAPI.logout();
-			window.location.reload();
+			navigate('/user');
 		});
 
 		// Delete account button
@@ -132,7 +132,7 @@ export async function init() {
 		// Confirm delete button
 		document.getElementById('confirm-delete').addEventListener('click', async () => {
 			await UserAPI.deleteAccount();
-			window.location.reload();
+			navigate('/user');
 		});
 
 		// Cancel delete button

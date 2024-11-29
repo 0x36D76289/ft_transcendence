@@ -17,7 +17,7 @@ DOCKER_COMPOSE = docker compose
 PROJECT_NAME = ft_transcendence
 DOCKER_ENV_FILE ?= .env
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := all
 
 # Main help command with improved formatting
 help: ## Display this help message
