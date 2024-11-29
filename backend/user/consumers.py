@@ -14,7 +14,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
             return
         pong_data.register(self)
         self.accept()
-        user = self.scope['user']
+        user = User.objects.get(id=self.scope['user'].id)
         user.is_online = True
         user.save()
 
@@ -22,7 +22,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
         if (self.anonymous_connection):
             return
         pong_data.unregister(self)
-        user = self.scope['user']
+        user = User.objects.get(id=self.scope['user'].id)
         user.is_online = False
         user.save()
 
