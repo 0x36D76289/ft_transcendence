@@ -15,10 +15,11 @@ export function render() {
 	`;
 }
 
-export async function init() {
+export async function init(options) {
 	const { name_enter, canvas_click, keys } = await import("./input.js");
 	const { main_menu } = await import("./main_menu.js");
 	const { init_globals, VIEW } = await import("./globals.js");
+	const { read_room } = await import ("./socket.js");
 
 	init_globals();
 //TODO: save event listeners so you can close them later
@@ -26,8 +27,11 @@ export async function init() {
 	window.addEventListener('keydown', function (e) { keys.add(e.code); name_enter(e); })
 	window.addEventListener('keyup', function (e) { keys.delete(e.code); })
 	window.addEventListener('resize', init_globals);
-
-	
 	
 	main_menu();
+
+	if (options?.game != undefined) {
+		document.getElementById('profile-preview-overlay')?.remove();
+		read_room(options.game);
+	}
 }

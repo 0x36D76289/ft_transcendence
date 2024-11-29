@@ -2,7 +2,7 @@ from channels.generic.websocket import WebsocketConsumer
 from user.models import User
 from sys import stderr
 
-from pong.users import pong_data
+from pong.users import errprint, pong_data
 
 #TODO: check if self.user and user are exactly equivalent
 class OnlineStatusConsumer(WebsocketConsumer):
@@ -27,6 +27,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
         user.save()
 
     def receive(self, text_data: str):
+        print(text_data)
         if text_data == "start":
             l = list(pong_data.online_users)
             print("\\" * 20, file=stderr)
@@ -35,5 +36,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
             print("\\" * 20, file=stderr)
             pong_data.start_tournament(l)
             # pong_data.start_game(l[0], l[1])
-        if text_data == "join_mm":
+        elif text_data == "join_mm":
             pong_data.join_matchmaking(self.user)
+        elif text_data.startswith("fight "):
+            pong_data.fight(self.user, text_data[6:])

@@ -29,19 +29,10 @@ export var game_sock = new WebSocket(game_url("test"));
 	* @returns {void}
 */
 export function read_room(object) {
-	try {
-		console.log("received ", object, " from online_sock");
-		let inner = JSON.parse(object.data);
-		if (inner.type == "game_start") {
-			let room = inner.value;
-			game_sock.close();
-			game_sock = new WebSocket(game_url(room));
-			game_sock.onmessage = game_sock_receive;
-		}
-	} catch (e) {
-		console.log("[online_sock] couldn't parse: ", object.data);
-		return;
-	}
+	let room = object.value;
+	game_sock.close();
+	game_sock = new WebSocket(game_url(room));
+	game_sock.onmessage = game_sock_receive;
 }
 
 //TODO: wait for socket to connect ?

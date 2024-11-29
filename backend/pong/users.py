@@ -90,7 +90,7 @@ class Tournament():
     def __init__(self, player_list: list[User]):
         self.players = []
         for user in player_list:
-            self.players.append(TournamentPlayer(user.username, False, user))
+            self.players.append(TournamentPlayer(user.get_username(), False, user))
         self.fill_rounds()
         self.current_round_index = 0
         errprint("BEFORE TOURNAMENT START")
@@ -193,15 +193,18 @@ class PongUser():
     game: PongGame | None
     pong_socket: WebsocketConsumer | None
     tournament: Tournament | None
+    wants_to_fight: str | None
     def __init__(self, online_sock: WebsocketConsumer):
         self.user = online_sock.user
         self.online_socket = online_sock
         self.game = None
         self.pong_socket = None
         self.tournament = None
+        self.wants_to_fight = None
 
 class pong_data:
     online_users: dict[User, PongUser] = dict()
+    name_to_user: dict[str, User] = dict()
 
     matchmaking_queue: User | None = None
 
@@ -213,7 +216,9 @@ class pong_data:
 
     @classmethod
     def register(cls, online_sock: WebsocketConsumer):
-        cls.online_users[online_sock.user] = PongUser(online_sock)
+        user: User = online_sock.user
+        cls.online_users[user] = PongUser(online_sock)
+        cls.name_to_user[user.get_username()] = user
     
     @classmethod
     def unregister(cls, online_sock: WebsocketConsumer):
@@ -223,6 +228,8 @@ class pong_data:
             #TODO: report loser if in game
             pu.game.lose_game(pu.user)
         cls.online_users.pop(user)
+        if user.get_username() in cls.name_to_user:
+            del(cls.name_to_user[user.get_username()])
 
 
     @classmethod
@@ -235,6 +242,24 @@ class pong_data:
         pu1.game = game
         pu2.game = game
         return True
+
+    @classmethod
+    def fight(cls, user: User, opponent: str):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        pu.wants_to_fight = opponent
+        if opponent in cls.name_to_user:
+            opp_user: User = cls.name_to_user[opponent]
+        else:
+            return
+        opp_pu = cls.get_pong_user(opp_user)
+        if opp_pu is None:
+            return
+        if opp_pu.wants_to_fight == user.get_username():
+            pu.wants_to_fight = None
+            opp_pu.wants_to_fight = None
+            cls.start_game(user, opp_user)
 
     @classmethod
     def get_assign_message(cls, user: User) -> str:

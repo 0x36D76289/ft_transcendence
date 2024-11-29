@@ -4,14 +4,16 @@ import { popupSystem } from '../services/popup.js';
 import { getUsername } from '../utils/cookies.js';
 import { i18n } from '../services/i18n.js';
 import { navigate } from '../app.js';
+import { online_sock } from '../api/socket.js';
 
 function createContactCard(user) {
+	let status = user.is_online ? i18n.t('friends.online') : i18n.t('friends.offline');
 	return `
 	<div class="contact-card" data-user-id="${user.username}">
 		<img src="/media/${user.pfp}" alt="${user.username}" class="contact-avatar">
 		<h3 class="contact-username">${user.username}</h3>
-		<p class="contact-status" data-status="${user.status}">
-				${user.status === 'online' ? i18n.t('friends.online') : i18n.t('friends.offline')}
+		<p class="contact-status" data-status="${status}">
+				${status}
 		</p>
 	</div>
 	`;
@@ -106,13 +108,16 @@ async function handleActionButton(event) {
 	const action = event.currentTarget.classList[1];
 	const username = document.querySelector('.preview-username').textContent;
 
+
 	switch (action) {
 		case 'message':
 			const chatId = await ChatAPI.createChat(username);
 			navigate(`/chat/${chatId}`);
 			break;
 		case 'play':
-			popupSystem('info', i18n.t('friends.invite_to_play'));
+			online_sock.send("fight " + username);
+			popupSystem('info', i18n.t('friends.invite_to_play') + ' ' + username);
+			return;
 			break;
 		case 'block':
 			await ChatAPI.blockUser(username);
@@ -124,10 +129,10 @@ async function handleActionButton(event) {
 			break;
 		default:
 			console.error('Unknown action:', action);
+			break;
 	}
-
 	document.getElementById('profile-preview-overlay').remove();
-	navigate('/friends');
+    navigate('/friends');
 }
 
 async function showProfilePreview(username) {

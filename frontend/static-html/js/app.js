@@ -78,7 +78,7 @@ async function loadCSS(filename) {
 	});
 }
 /* ******************** Page Navigation ******************** */
-async function renderPage(path) {
+async function renderPage(path, options) {
 	const pageModule = ROUTES[path];
 	if (!pageModule) {
 		renderError("404", i18n.t("errors.404"));
@@ -104,8 +104,8 @@ async function renderPage(path) {
 		// Marquer comme chargé et ajouter la transition
 		document.body.classList.add('loaded');
 		pageContent.classList.add("fade-in");
-
-		if (init) await init();
+		console.log("CHECKPOINT");
+		if (init) await init(options);
 	} catch (error) {
 		console.error("Erreur lors du rendu de la page:", error);
 		renderError(i18n.t("errors.page.title"), i18n.t("errors.page.message"));
@@ -150,7 +150,7 @@ export function navigate(path, options = {}) {
 	if (path !== "/auth") {
 		updateActiveNavItem(path);
 	}
-	renderPage(path);
+	renderPage(path, options);
 	console.log(`Navigating to: ${path}`);
 }
 

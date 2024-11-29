@@ -90,6 +90,7 @@
 		"title": "Profile",
 		"username": "Username",
 		"bio": "Bio",
+		"no_bio": "User doesn't have a bio",
 		"joined": "Joined on",
 		"edit": "Edit",
 		"save": "Save",
