@@ -259,6 +259,23 @@
 	gap: var(--margin-l);
 }
 
+.add-friend-btn {
+	background: var(--bg-tertiary);
+	border: none;
+	border-radius: 8px;
+	padding: var(--padding-s) var(--padding-m);
+	color: var(--bg-primary);
+	cursor: pointer;
+	transition: var(--transition);
+	height: 40px;
+	display: flex;
+	align-items: center;
+}
+
+.add-friend-btn:hover {
+	background: var(--bg-secondary);
+}
+
 @media screen and (max-width: 767px) {
 	.contact-grid {
 		grid-template-columns: 1fr;
