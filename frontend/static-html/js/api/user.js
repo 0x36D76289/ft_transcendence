@@ -1,7 +1,7 @@
 import * as cookies from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
 
-const BASE_URL = 'https://localhost:8443/api/user';
+const BASE_URL = 'https://' + window.location.host + '/api/user';
 
 export class UserAPI {
 	// Helper method to handle API responses
