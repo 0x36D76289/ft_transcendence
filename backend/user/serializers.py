@@ -35,3 +35,40 @@ class UserFriendSerializer(serializers.ModelSerializer):
 	class Meta(object):
 		model = UserFriend
 		fields = ['uid1', 'uid2', 'status']
+
+class UserFriendListSerializer(serializers.ModelSerializer):
+	user = serializers.SerializerMethodField()
+	status = serializers.SerializerMethodField()
+
+	class Meta(object):
+		model = UserFriend
+		fields = ['user', 'status']
+
+	def get_user(self, instance):
+		if not self.context.get('current_user'):
+			raise serializers.ValidationError('current_user was not passed in context')
+		current_user = self.context['current_user']
+		if current_user != instance.uid1 and current_user != instance.uid2:
+			raise serializers.ValidationError('current_user is not in the UserFriend')
+		if current_user != instance.uid1:
+			return UserSerializer(instance.uid1).data
+		return UserSerializer(instance.uid2).data
+	
+	def get_status(self, instance):
+		if not self.context.get('current_user'):
+			raise serializers.ValidationError('current_user was not passed in context')
+		current_user = self.context['current_user']
+		if current_user != instance.uid1 and current_user != instance.uid2:
+			raise serializers.ValidationError('current_user is not in the UserFriend')
+		if instance.status == UserFriend.FRIEND:
+			return 'friend'
+		elif instance.status == UserFriend.REQ_UID1:
+			if instance.uid1 == current_user:
+				return 'request_sent'
+			else:
+				return 'request_received'
+		else:
+			if instance.uid2 == current_user:
+				return 'request_sent'
+			else:
+				return 'request_received'

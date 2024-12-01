@@ -111,7 +111,7 @@ To complete the project, a minimum of **7 major modules** is required. Two minor
 | `/user/send_friend_request`   | **POST**   | Send a friend request, or accept if the user already sent you one        | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
 | `/user/remove_friend_request` | **POST**   | Remove a friend request, decline a request, or unfriend                  | Authorization in header, `username` in body (target user) | `detail` in body                                                   |
 | `/user/get_friendship`        | **GET**    | Get friendship status with a user                                        | Authorization in header, `username` in body               | `detail` in body                                                   |
-| `/user/get_friends`           | **GET**    | Get friends of a user                                                    | Authorization in header, `username` in body               | List of friends, `detail` if failed                                |
+| `/user/get_friends`           | **GET**    | Get friends of a user                                                    | Authorization in header, `username` in body               | List of friends with `user` being the friend information and `status` being equal to 'friend', 'request_sent' or 'request_received', `detail` if failed                                |
 | `/ws/user/online_status`      | **WEBSOCKET** | Set is_online status to True when user is connected to this websocket   | token=`token` in query string                             |                                                                   |
 
 ---

@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from rest_framework.response import Response
-from user.serializers import UserSerializer, UserFriendSerializer
+from user.serializers import UserSerializer, UserFriendListSerializer
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from user.models import User, UserFriend
@@ -214,8 +214,12 @@ def list_users(request):
 def get_friends(request, username):
 	if username != request.user.username:
 		return Response({'detail': 'You can\'t see someone else friends'}, status=status.HTTP_400_BAD_REQUEST)
-	friends = UserFriend.objects.filter(Q(uid1=request.user, status=UserFriend.FRIEND) | Q(uid2=request.user, status=UserFriend.FRIEND))
-	serializer = UserFriendSerializer(friends, many=True)
+	friends = UserFriend.objects.filter(Q(uid1=request.user) | Q(uid2=request.user))
+	serializer = UserFriendListSerializer(
+		friends,
+		many=True,
+		context={'current_user': request.user}
+	)
 	return Response(serializer.data)
 
 @api_view(['POST'])
