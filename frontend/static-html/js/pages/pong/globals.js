@@ -24,6 +24,7 @@ export var ctx;
 var buff_ctx;
 
 export function init_globals() {
+	VIEW = undefined;
 	while (VIEW == undefined) {
 		VIEW = document.getElementById("game");
 	}

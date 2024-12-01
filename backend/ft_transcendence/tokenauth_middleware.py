@@ -19,7 +19,6 @@ class TokenAuthMiddleware(BaseMiddleware):
 
 	async def __call__(self, scope, receive, send):
 		query_string = scope['query_string'].split(b'&')
-		print(f"QUERY_STRING: {query_string}", file=sys.stderr)
 		for s in query_string:
 			if s.startswith(b'token='):
 				s = s.decode()
