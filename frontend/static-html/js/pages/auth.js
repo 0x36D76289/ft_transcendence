@@ -19,7 +19,7 @@ export function render() {
 			</div>
 			<button type="submit" class="auth-button">${i18n.t('auth.login.submit')}</button>
 		</form>
-		<p>${i18n.t('auth.login.noAccount')} <a id="showRegister">${i18n.t('auth.login.register')}</a></p>
+		<p>${i18n.t('auth.login.no_account')} <a id="showRegister">${i18n.t('auth.login.register')}</a></p>
 		<button id="guestButton" class="auth-button">${i18n.t('auth.login.guest')}</button>
 	</div>
 	<div class="auth-form" style="display: none;">
@@ -35,7 +35,7 @@ export function render() {
 			</div>
 			<button type="submit" class="auth-button">${i18n.t('auth.register.submit')}</button>
 		</form>
-		<p>${i18n.t('auth.register.hasAccount')} <a id="showLogin">${i18n.t('auth.register.login')}</a></p>
+		<p>${i18n.t('auth.register.has_account')} <a id="showLogin">${i18n.t('auth.register.login')}</a></p>
 	</div>
 </div>
 	`;
@@ -57,7 +57,7 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			navigate('/auth');
+			window.location.reload();
 		} catch (error) {
 			popupSystem('error', 'Erreur de connexion');
 		}
@@ -74,7 +74,7 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			navigate('/auth');
+			popupSystem('success', 'Compte créé avec succès');
 		} catch (error) {
 			popupSystem('error', 'Erreur d\'enregistrement');
 		}
@@ -89,7 +89,7 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			navigate('/auth');
+			window.location.reload();
 		} catch (error) {
 			popupSystem('error', 'Erreur de création de compte invité');
 		}

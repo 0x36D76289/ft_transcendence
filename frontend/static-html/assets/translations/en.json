@@ -65,7 +65,7 @@
 		"login": {
 			"title": "Login",
 			"submit": "Login",
-			"noAccount": "Don't have an account?",
+			"no_account": "Don't have an account?",
 			"register": "Register",
 			"guest": "Login as Guest",
 			"error": "Login error"
@@ -73,7 +73,7 @@
 		"register": {
 			"title": "Register",
 			"submit": "Register",
-			"hasAccount": "Already have an account?",
+			"has_account": "Already have an account?",
 			"login": "Login",
 			"error": "Registration error"
 		}
@@ -95,14 +95,16 @@
 		"edit": "Edit",
 		"save": "Save",
 		"stats": "Statistics",
-		"gamesPlayed": "Games played",
-		"winRate": "Win rate",
-		"accountActions": "Account Actions",
+		"games_played": "Games played",
+		"win_rate": "Win rate",
+		"account_actions": "Account Actions",
 		"logout": "Logout",
-		"deleteAccount": "Delete Account",
-		"deleteConfirmation": "Are you sure you want to delete your account? This action cannot be undone.",
-		"confirmDelete": "Confirm Delete",
-		"cancel": "Cancel"
+		"delete_account": "Delete Account",
+		"delete_confirmation": "Are you sure you want to delete your account? This action cannot be undone.",
+		"confirm_delete": "Confirm Delete",
+		"cancel": "Cancel",
+		"game_history": "Game History",
+		"no_games": "No games played"
 	},
 	"friends": {
 		"title": "Friends",

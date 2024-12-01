@@ -27,7 +27,7 @@
 	backdrop-filter: blur(var(--blur));
 	transition: var(--transition);
 	flex-grow: 1;
-	height: 40px; /* Adjust the height to match the button */
+	height: 40px;
 }
 
 .search-input:focus {
@@ -259,25 +259,6 @@
 	gap: var(--margin-l);
 }
 
-.add-friend-btn {
-	background: var(--bg-tertiary);
-	border: none;
-	border-radius: 8px;
-	padding: var(--padding-s);
-	color: var(--bg-primary);
-	cursor: pointer;
-	transition: var(--transition);
-	height: 40px; /* Adjust the height to match the input */
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-right: var(--margin-s); /* Add margin to the right */
-}
-
-.add-friend-btn:hover {
-	background-color: var(--bg-secondary);
-}
-
 @media screen and (max-width: 767px) {
 	.contact-grid {
 		grid-template-columns: 1fr;
@@ -304,9 +285,5 @@
 	.search-container {
 		flex-direction: column;
 		gap: var(--margin-m);
-	}
-
-	.add-friend-btn {
-		width: 100%;
 	}
 }

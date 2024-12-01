@@ -1,0 +1,124 @@
+{
+	"errors": {
+		"404": "Página no encontrada",
+		"page": {
+			"title": "Error de inicialización",
+			"message": "Se produjo un error durante la inicialización de la aplicación. Por favor, inténtelo de nuevo más tarde."
+		}
+	},
+	"sidebar": {
+		"title": "ft_transcendencia",
+		"home": "Bienvenido",
+		"friends": "Amigos",
+		"tournaments": "Torneos",
+		"messages": "Mensajes",
+		"settings": "Configuraciones",
+		"profile": {
+			"alt": "Foto de perfil",
+			"status": {
+				"online": "En línea",
+				"offline": "Desconectado"
+			}
+		}
+	},
+	"home": {
+		"play": "Jugar"
+	},
+	"settings": {
+		"title": "Configuraciones",
+		"subtitle": "Personaliza tu experiencia",
+		"language": {
+			"title": "Idioma",
+			"label": "Idioma",
+			"description": "Elige el idioma de la interfaz"
+		},
+		"appearance": {
+			"title": "Apariencia",
+			"theme": {
+				"label": "Tema",
+				"description": "Elige el tema de la interfaz",
+				"options": {
+					"dark": "Oscuro",
+					"light": "Claro"
+				}
+			},
+			"accentColor": {
+				"label": "Color de acento",
+				"description": "Color principal de la interfaz",
+				"reset": "Restablecer"
+			}
+		},
+		"notifications": {
+			"title": "Notificaciones",
+			"push": {
+				"label": "Notificaciones push",
+				"description": "Recibir notificaciones"
+			}
+		},
+		"actions": {
+			"reset": "Restablecer configuraciones"
+		}
+	},
+	"auth": {
+		"username": "Nombre de usuario",
+		"password": "Contraseña",
+		"login": {
+			"title": "Iniciar sesión",
+			"submit": "Iniciar sesión",
+			"no_account": "¿No tienes una cuenta?",
+			"register": "Registrarse",
+			"guest": "Iniciar sesión como invitado",
+			"error": "Error de inicio de sesión"
+		},
+		"register": {
+			"title": "Registrarse",
+			"submit": "Registrarse",
+			"has_account": "¿Ya tienes una cuenta?",
+			"login": "Iniciar sesión",
+			"error": "Error de registro"
+		}
+	},
+	"messages": {
+		"friends": "Amigos",
+		"search": "Buscar amigos",
+		"welcome": "Bienvenido al chat",
+		"select_friend": "Selecciona un amigo para empezar a chatear",
+		"type_message": "Escribe tu mensaje aquí...",
+		"send": "Enviar"
+	},
+	"user": {
+		"title": "Perfil",
+		"username": "Nombre de usuario",
+		"bio": "Biografía",
+		"no_bio": "El usuario no tiene biografía",
+		"joined": "Se unió el",
+		"edit": "Editar",
+		"save": "Guardar",
+		"stats": "Estadísticas",
+		"games_played": "Partidas jugadas",
+		"win_rate": "Tasa de victorias",
+		"account_actions": "Acciones de la cuenta",
+		"logout": "Cerrar sesión",
+		"delete_account": "Eliminar cuenta",
+		"delete_confirmation": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.",
+		"confirm_delete": "Confirmar eliminación",
+		"cancel": "Cancelar",
+		"game_history": "Historial de partidas",
+		"no_games": "No se han jugado partidas"
+	},
+	"friends": {
+		"title": "Amigos",
+		"search_user": "Buscar un usuario...",
+		"online": "En línea",
+		"offline": "Desconectado",
+		"send_message": "Enviar mensaje",
+		"invite_to_play": "Invitar a jugar",
+		"block": "Bloquear",
+		"remove": "Eliminar",
+		"add_friend_tooltip": "Agregar amigo",
+		"empty_username": "El nombre de usuario no puede estar vacío",
+		"request_sent": "Solicitud de amistad enviada a {username}",
+		"profile_load_error": "Error al cargar el perfil",
+		"fetch_error": "Error al recuperar amigos"
+	}
+}

@@ -22,6 +22,8 @@ export function render() {
           <select id="language" class="setting-control">
             <option value="fr">Français</option>
             <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="it">Italiano</option>
           </select>
         </div>
       </div>

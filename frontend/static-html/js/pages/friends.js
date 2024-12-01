@@ -36,11 +36,11 @@ function createProfilePreviewPopup(userData, userStats) {
 				<div class="preview-stats">
 					<div class="stat-item">
 						<span class="stat-value">${userStats.games_played}</span>
-						<span class="stat-label">${i18n.t('user.gamesPlayed')}</span>
+						<span class="stat-label">${i18n.t('user.games_played')}</span>
 					</div>
 					<div class="stat-item">
 						<span class="stat-value">${userStats.win_rate}%</span>
-						<span class="stat-label">${i18n.t('user.winRate')}</span>
+						<span class="stat-label">${i18n.t('user.win_rate')}</span>
 					</div>
 				</div>
 				
@@ -132,7 +132,7 @@ async function handleActionButton(event) {
 			break;
 	}
 	document.getElementById('profile-preview-overlay').remove();
-    navigate('/friends');
+	navigate('/friends');
 }
 
 async function showProfilePreview(username) {
@@ -168,73 +168,36 @@ async function showProfilePreview(username) {
 	}
 }
 
-export async function init() {
-	const searchInput = document.getElementById("searchInput");
-	const addFriendButton = document.createElement('button');
-	addFriendButton.innerHTML = `
-    <span class="material-icons">person_add</span>
-	`;
-	addFriendButton.classList.add('add-friend-btn');
-	addFriendButton.title = i18n.t('friends.add_friend_tooltip');
-	searchInput.parentNode.insertBefore(addFriendButton, searchInput.nextSibling);
+function renderContacts(friends) {
+	const contactGrid = document.getElementById('contactGrid');
+	contactGrid.innerHTML = '';
 
-	async function addFriend() {
-		const username = searchInput.value.trim();
-
-		if (!username) {
-			popupSystem('error', i18n.t('friends.empty_username'));
-			return;
-		}
-
-		try {
-			await UserAPI.sendFriendRequest(username);
-			popupSystem('success', i18n.t('friends.request_sent', { username }));
-			searchInput.value = ''; 
-
-			await updateFriendsList();
-		} catch (error) {
-			console.error('Friend request error:', error);
-		}
-	}
-
-	// Ajouter un ami via le bouton
-	addFriendButton.addEventListener('click', addFriend);
-
-	// Ajouter un ami via la touche Entrée
-	searchInput.addEventListener('keyup', async (event) => {
-		if (event.key === 'Enter') {
-			await addFriend();
-		}
+	friends.forEach((friend) => {
+		const contactCard = createContactCard(friend);
+		contactGrid.insertAdjacentHTML('beforeend', contactCard);
 	});
 
-	// Charger et afficher la liste des amis
-	async function updateFriendsList() {
-		const list = document.getElementById("contactGrid");
-		list.innerHTML = ''; // Vider la liste existante
+	const contactCards = document.querySelectorAll('.contact-card');
+	contactCards.forEach((card) => {
+		card.addEventListener('click', () => {
+			const username = card.dataset.userId;
+			showProfilePreview(username);
+		});
+	});
+}
 
-		try {
-			const friends = await UserAPI.getFriends(getUsername());
+export async function init() {
+	const contactGrid = document.getElementById('contactGrid');
+	const searchInput = document.getElementById('searchInput');
+	let friends = await UserAPI.getFriends(getUsername());
 
-			for (let user in friends[0]) {
-				if (user === "status") continue;
+	// Filter friends by search input
+	searchInput.addEventListener('input', () => {
+		const searchValue = searchInput.value.toLowerCase();
+		const filteredFriends = friends.filter((friend) => friend.username.toLowerCase().includes(searchValue));
+		renderContacts(filteredFriends);
+	});
 
-				const friendCard = document.createElement("div");
-				friendCard.innerHTML = createContactCard(friends[0][user]);
-				list.appendChild(friendCard);
-
-				friendCard.querySelector('.contact-card').addEventListener('click', () => {
-					showProfilePreview(friends[0][user].username);
-				});
-			}
-		} catch (error) {
-			console.error('Error fetching friends:', error);
-			popupSystem('error', i18n.t('friends.fetch_error'));
-		}
-	}
-
-	// Initialiser la liste des amis au chargement
-	await updateFriendsList();
-
-	// Initialiser le bouton de défilement
+	renderContacts(friends);	
 	initScrollTopButton();
 }

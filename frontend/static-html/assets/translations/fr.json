@@ -65,7 +65,7 @@
 		"login": {
 			"title": "Connexion",
 			"submit": "Connexion",
-			"noAccount": "Pas encore de compte?",
+			"no_account": "Pas encore de compte?",
 			"register": "S'inscrire",
 			"guest": "Connexion en tant qu'invité",
 			"error": "Erreur de connexion"
@@ -73,7 +73,7 @@
 		"register": {
 			"title": "Inscription",
 			"submit": "Inscription",
-			"hasAccount": "Vous avez déjà un compte?",
+			"has_account": "Vous avez déjà un compte?",
 			"login": "Connexion",
 			"error": "Erreur d'inscription"
 		}
@@ -95,14 +95,16 @@
 		"edit": "Modifier",
 		"save": "Enregistrer",
 		"stats": "Statistiques",
-		"gamesPlayed": "Parties jouées",
-		"winRate": "Taux de victoire",
-		"accountActions": "Actions du compte",
+		"games_played": "Parties jouées",
+		"win_rate": "Taux de victoire",
+		"account_actions": "Actions du compte",
 		"logout": "Se déconnecter",
-		"deleteAccount": "Supprimer le compte",
-		"deleteConfirmation": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.",
-		"confirmDelete": "Confirmer la suppression",
-		"cancel": "Annuler"
+		"delete_account": "Supprimer le compte",
+		"delete_confirmation": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.",
+		"confirm_delete": "Confirmer la suppression",
+		"cancel": "Annuler",
+		"game_history": "Historique des parties",
+		"no_games": "Aucune partie jouée"
 	},
 	"friends": {
 		"title": "Amis",

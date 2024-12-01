@@ -20,7 +20,9 @@
   gap: var(--margin-l);
 }
 
-.profile-info-card, .profile-stats-card, .account-actions-card {
+.profile-info-card,
+.profile-stats-card,
+.account-actions-card {
   border: 1px solid var(--card-border);
   border-radius: 16px;
   padding: var(--padding-l);
@@ -61,7 +63,8 @@
   font: var(--smallui);
 }
 
-.info-group input, .info-group textarea {
+.info-group input,
+.info-group textarea {
   background-color: var(--bg-secondary);
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
@@ -75,7 +78,8 @@
   resize: none;
 }
 
-.info-group input:focus, .info-group textarea:focus {
+.info-group input:focus,
+.info-group textarea:focus {
   outline: none;
   border-color: var(--accent-color);
 }
@@ -101,7 +105,8 @@
   background-color: var(--accent-hover);
 }
 
-.profile-stats-card h3, .account-actions-card h3 {
+.profile-stats-card h3,
+.account-actions-card h3 {
   font: var(--h3ui);
   margin-bottom: var(--margin-m);
 }
@@ -205,14 +210,56 @@
   display: none !important;
 }
 
+.no-friends-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: var(--padding-l);
+}
+
+.no-friends-content {
+  text-align: center;
+}
+
+.add-friends-center-btn {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: var(--padding-l) calc(var(--padding-l) * 2);
+  font-size: var(--h3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--margin-m);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.add-friends-center-btn:hover {
+  background: var(--accent-color-hover, #4a90e2);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.add-friends-center-btn .material-icons {
+  font-size: var(--h2);
+  margin-right: var(--margin-s);
+}
+
 /* Responsive styles */
 /* Tablet */
 @media screen and (max-width: 1024px) {
   .profile-content {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
-  
+
   .confirmation-actions {
-      flex-direction: column;
+    flex-direction: column;
   }
 }

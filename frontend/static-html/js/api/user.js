@@ -34,7 +34,6 @@ export class UserAPI {
 
 		const data = await this._handleResponse(response);
 
-		// Set cookies after successful login
 		cookies.setToken(data.token);
 		cookies.setUsername(data.username);
 
@@ -60,7 +59,6 @@ export class UserAPI {
 
 		const data = await this._handleResponse(response);
 
-		// Set cookies for guest account
 		cookies.setToken(data.token);
 		cookies.setUsername(data.username);
 
@@ -76,7 +74,6 @@ export class UserAPI {
 
 		const data = await this._handleResponse(response);
 
-		// Clear all session cookies
 		cookies.deleteSessionCookies();
 
 		return data;
@@ -179,13 +176,12 @@ export class UserAPI {
 	}
 
 	// Delete user account
-	static async deleteAccount() {
+	static async delete_account() {
 		const response = await fetch(`${BASE_URL}/delete_user`, {
 			method: 'POST',
 			headers: this._getHeaders()
 		});
 
-		// Clear all cookies after account deletion
 		cookies.deleteAllCookies();
 
 		return this._handleResponse(response);
