@@ -10,7 +10,7 @@ function createContactCard(friend) {
 	let status = friend.is_online ? i18n.t('friends.online') : i18n.t('friends.offline');
 	return `
 	<div class="contact-card" data-user-id="${friend.username}">
-		<img src="/media/${friend.pfp}" alt="${friend.username}" class="contact-avatar">
+		<img src="/media${friend.pfp}" alt="${friend.username}" class="contact-avatar">
 		<h3 class="contact-username">${friend.username}</h3>
 		<p class="contact-status" data-status="${status}">
 				${status}
@@ -28,7 +28,7 @@ function createProfilePreviewPopup(userData, userStats) {
 			</button>
 			<div class="profile-preview-content">
 				<div class="profile-preview-avatar">
-					<img src="/media/${userData.pfp}" alt="${userData.username}" class="preview-avatar">
+					<img src="/media${userData.pfp}" alt="${userData.username}" class="preview-avatar">
 				</div>
 				<h2 class="preview-username">${userData.username}</h2>
 				<p class="preview-bio">${userData.bio || i18n.t('user.no_bio')}</p>
@@ -172,13 +172,11 @@ function renderContacts(friends) {
 	const contactGrid = document.getElementById('contactGrid');
 	contactGrid.innerHTML = '';
 
-	for (let user in friends[0]) {
-		if (user == "status")
-			continue;
+	friends.forEach(friend => {
 		let e = document.createElement("div");
-		e.innerHTML = createContactCard(friends[0][user]);
+		e.innerHTML = createContactCard(friend.user);
 		contactGrid.appendChild(e);
-	}
+	});
 
 	const contactCards = document.querySelectorAll('.contact-card');
 	contactCards.forEach((card) => {
@@ -196,9 +194,8 @@ export async function init() {
 	let friends = await UserAPI.getFriends(getUsername());
 
 	searchInput.addEventListener('input', () => {
-		const query = searchInput.value.toLowerCase();
-		const filteredFriends = friends.filter((friend) => friend.username.toLowerCase().includes(query));
-		renderContacts(filteredFriends);
+		const filterFriends = friends.filter(friend => friend.user.username.includes(searchInput.value));
+		renderContacts(filterFriends);
 	});
 
 	addFriendBtn.addEventListener('click', async () => {

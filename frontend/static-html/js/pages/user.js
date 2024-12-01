@@ -149,13 +149,16 @@ export async function init() {
 				bio: newBio
 			});
 
+			document.getElementById('username-input').value = updatedData.username;
+			document.getElementById('bio-input').value = updatedData.bio;
+
 			popupSystem('success', 'Profile updated successfully');
 		});
 
 		// Logout button
 		document.getElementById('logout-button').addEventListener('click', async () => {
 			await UserAPI.logout();
-			navigate('/user');
+			window.location.reload();
 		});
 
 		// Delete account button
@@ -165,8 +168,8 @@ export async function init() {
 
 		// Confirm delete button
 		document.getElementById('confirm-delete').addEventListener('click', async () => {
-			await UserAPI.delete_account();
-			navigate('/user');
+			await UserAPI.deleteAccount();
+			window.location.reload();
 		});
 
 		// Cancel delete button
