@@ -88,8 +88,7 @@ export class UserAPI {
 		});
 
 		cookies.setUsername(updateData.username);
-		cookies.setToken(updateData.token);
-
+		
 		return this._handleResponse(response);
 	}
 
