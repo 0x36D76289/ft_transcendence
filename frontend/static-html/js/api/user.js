@@ -1,7 +1,7 @@
 import * as cookies from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
 
-const BASE_URL = 'https://localhost:8443/api/user';
+const BASE_URL = 'https://' + window.location.host + '/api/user';
 
 export class UserAPI {
 	// Helper method to handle API responses
@@ -83,13 +83,15 @@ export class UserAPI {
 	static async updateProfile(updateData) {
 		const response = await fetch(`${BASE_URL}/update_user`, {
 			method: 'POST',
-			headers: this._getHeaders(),
-			body: JSON.stringify(updateData)
+			headers: { 'Authorization': `Token ${cookies.getToken()}` },
+			body: updateData
 		});
 
-		cookies.setUsername(updateData.username);
-		cookies.setToken(updateData.token);
-
+		const newUsername = updateData.get('username');
+		if (newUsername != undefined && response.ok) {
+			cookies.setUsername(newUsername);
+		}
+		
 		return this._handleResponse(response);
 	}
 

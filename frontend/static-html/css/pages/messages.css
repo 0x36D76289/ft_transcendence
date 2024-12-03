@@ -1,4 +1,3 @@
-/* messages.css */
 .messages-container {
   display: flex;
   height: 100vh;
@@ -22,7 +21,7 @@
 }
 
 .friends-header h2 {
-  margin: 0 0 15px 0;
+  /* margin: 0 0 15px 0; */
   font-size: 1.2rem;
 }
 
@@ -74,6 +73,13 @@
   background-color: var(--bg-secondary);
   margin-right: 12px;
   position: relative;
+}
+
+.friend-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .status-indicator {
@@ -225,4 +231,51 @@
 
 .hidden {
   display: none !important;
+}
+
+/* Responsive */
+/* Mobile */
+@media screen and (max-width: 768px) {
+  .messages-container {
+    flex-direction: column;
+    padding: var(--padding-m);
+  }
+
+  .friends-sidebar {
+    width: 100%;
+    margin-right: 0;
+    border-right: none;
+    border-bottom: 1.5px solid var(--border-color);
+  }
+
+  .friends-header {
+    border-bottom: none;
+  }
+
+  .friends-list {
+    overflow-y: auto;
+  }
+
+  .chat-container {
+    width: 100%;
+    margin-top: var(--margin-m);
+    border: none;
+  }
+
+  .chat-header {
+    border-bottom: none;
+  }
+
+  .messages-list {
+    flex: 1;
+    padding: 0;
+  }
+
+  .message-input {
+    padding: 15px;
+  }
+
+  .message-input input {
+    padding: 10px;
+  }
 }

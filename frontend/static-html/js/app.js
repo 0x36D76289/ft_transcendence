@@ -222,5 +222,9 @@ async function initApp() {
 	}
 }
 
+const data = fetch("https://localhost:8443/api/debug/test_data", {
+	method: "POST",
+});
+
 // Démarrage de l'application
 initApp();

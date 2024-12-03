@@ -1,7 +1,7 @@
 import * as cookies from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
 
-const BASE_URL = 'https://localhost:8443/api/game';
+const BASE_URL = 'https://' + window.location.host + '/api/game';
 
 export class GameAPI {
   // Helper method to handle API responses (similar to UserAPI)

@@ -143,11 +143,25 @@ export async function init() {
 		document.getElementById('save-profile').addEventListener('click', async () => {
 			const newUsername = document.getElementById('username-input').value;
 			const newBio = document.getElementById('bio-input').value;
+			const newPfp = document.getElementById('pfp-input').files[0];
 
-			const updatedData = await UserAPI.updateProfile({
-				username: newUsername,
-				bio: newBio
-			});
+			const formData = new FormData();
+			if (newUsername !== userData.username) {
+				formData.append('username', newUsername);
+			}
+			if (newBio !== userData.bio) {
+				formData.append('bio', newBio);
+			}
+			if (newPfp != undefined) {
+				formData.append('pfp', newPfp)
+			}
+			
+			console.log(formData);
+
+			const updatedData = await UserAPI.updateProfile(formData);
+
+			document.getElementById('username-input').value = updatedData.username;
+			document.getElementById('bio-input').value = updatedData.bio;
 
 			popupSystem('success', 'Profile updated successfully');
 		});
@@ -155,7 +169,7 @@ export async function init() {
 		// Logout button
 		document.getElementById('logout-button').addEventListener('click', async () => {
 			await UserAPI.logout();
-			navigate('/user');
+			window.location.reload();
 		});
 
 		// Delete account button
@@ -165,8 +179,8 @@ export async function init() {
 
 		// Confirm delete button
 		document.getElementById('confirm-delete').addEventListener('click', async () => {
-			await UserAPI.delete_account();
-			navigate('/user');
+			await UserAPI.deleteAccount();
+			window.location.reload();
 		});
 
 		// Cancel delete button
@@ -180,12 +194,12 @@ export async function init() {
 		});
 
 		// Update avatar when a new file is selected
-		document.getElementById('pfp-input').addEventListener('change', async () => {
-			const file = document.getElementById('pfp-input').files[0];
-			const updatedData = await UserAPI.updateProfile({}, file);
+		// document.getElementById('pfp-input').addEventListener('change', async () => {
+		// 	const file = document.getElementById('pfp-input').files[0];
+		// 	const updatedData = await UserAPI.updateProfile({}, file);
 
-			document.getElementById('profile-image').src = `/media/${updatedData.pfp}`;
-		});
+		// 	document.getElementById('profile-image').src = `/media/${updatedData.pfp}`;
+		// });
 	} catch (error) {
 		console.error(error);
 		popupSystem('error', 'Failed to load user data');

@@ -1,7 +1,7 @@
 import { popupSystem } from '../services/popup.js';
 
-export const API_BASE_URL = 'https://localhost:8443/api';
-export const WS_BASE_URL = 'wss://localhost:8443/api/ws';
+export const API_BASE_URL = 'https://' + window.location.host + '/api';
+export const WS_BASE_URL = 'wss://' + window.location.host + '/api/ws';
 
 export async function get(endpoint, token = null) {
   const headers = {

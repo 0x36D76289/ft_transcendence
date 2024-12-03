@@ -6,12 +6,12 @@ import { i18n } from '../services/i18n.js';
 import { navigate } from '../app.js';
 import { online_sock } from '../api/socket.js';
 
-function createContactCard(user) {
-	let status = user.is_online ? i18n.t('friends.online') : i18n.t('friends.offline');
+function createContactCard(friend) {
+	let status = friend.is_online ? i18n.t('friends.online') : i18n.t('friends.offline');
 	return `
-	<div class="contact-card" data-user-id="${user.username}">
-		<img src="/media/${user.pfp}" alt="${user.username}" class="contact-avatar">
-		<h3 class="contact-username">${user.username}</h3>
+	<div class="contact-card" data-user-id="${friend.username}">
+		<img src="/media${friend.pfp}" alt="${friend.username}" class="contact-avatar">
+		<h3 class="contact-username">${friend.username}</h3>
 		<p class="contact-status" data-status="${status}">
 				${status}
 		</p>
@@ -28,7 +28,7 @@ function createProfilePreviewPopup(userData, userStats) {
 			</button>
 			<div class="profile-preview-content">
 				<div class="profile-preview-avatar">
-					<img src="/media/${userData.pfp}" alt="${userData.username}" class="preview-avatar">
+					<img src="/media${userData.pfp}" alt="${userData.username}" class="preview-avatar">
 				</div>
 				<h2 class="preview-username">${userData.username}</h2>
 				<p class="preview-bio">${userData.bio || i18n.t('user.no_bio')}</p>
@@ -73,6 +73,9 @@ export function render() {
 
 	<div class="search-container">
 		<input type="text" id="searchInput" placeholder="${i18n.t('friends.search_user')}" class="search-input">
+		<button id="addFriendBtn" class="add-friend-btn">
+			<span class="material-icons">person_add</span>
+		</button>
 	</div>
 
 	<div id="contactGrid" class="contact-grid"></div>
@@ -108,17 +111,14 @@ async function handleActionButton(event) {
 	const action = event.currentTarget.classList[1];
 	const username = document.querySelector('.preview-username').textContent;
 
-
 	switch (action) {
 		case 'message':
-			const chatId = await ChatAPI.createChat(username);
-			navigate(`/chat/${chatId}`);
+			await ChatAPI.createChat(username);
 			break;
 		case 'play':
 			online_sock.send("fight " + username);
 			popupSystem('info', i18n.t('friends.invite_to_play') + ' ' + username);
 			return;
-			break;
 		case 'block':
 			await ChatAPI.blockUser(username);
 			popupSystem('info', i18n.t('friends.block'));
@@ -172,9 +172,10 @@ function renderContacts(friends) {
 	const contactGrid = document.getElementById('contactGrid');
 	contactGrid.innerHTML = '';
 
-	friends.forEach((friend) => {
-		const contactCard = createContactCard(friend);
-		contactGrid.insertAdjacentHTML('beforeend', contactCard);
+	friends.forEach(friend => {
+		let e = document.createElement("div");
+		e.innerHTML = createContactCard(friend.user);
+		contactGrid.appendChild(e);
 	});
 
 	const contactCards = document.querySelectorAll('.contact-card');
@@ -187,15 +188,19 @@ function renderContacts(friends) {
 }
 
 export async function init() {
-	const contactGrid = document.getElementById('contactGrid');
 	const searchInput = document.getElementById('searchInput');
+	const addFriendBtn = document.getElementById('addFriendBtn');
+
 	let friends = await UserAPI.getFriends(getUsername());
 
-	// Filter friends by search input
 	searchInput.addEventListener('input', () => {
-		const searchValue = searchInput.value.toLowerCase();
-		const filteredFriends = friends.filter((friend) => friend.username.toLowerCase().includes(searchValue));
-		renderContacts(filteredFriends);
+		const filterFriends = friends.filter(friend => friend.user.username.includes(searchInput.value));
+		renderContacts(filterFriends);
+	});
+
+	addFriendBtn.addEventListener('click', async () => {
+		await UserAPI.sendFriendRequest(searchInput.value);
+		popupSystem('info', i18n.t('friends.friend_request_sent'));
 	});
 
 	renderContacts(friends);	

@@ -1,10 +1,10 @@
 import { UserAPI } from '../api/user.js';
 import { ChatAPI } from '../api/chat.js';
-import { WebSocketAPI } from '../api/ws.js';
 import { i18n } from '../services/i18n.js';
+import { getUsername } from '../utils/cookies.js';
 
 export function render() {
-  return `
+	return `
 <div class="messages-container">
 	<div class="friends-sidebar">
 		<div class="friends-header">
@@ -38,125 +38,113 @@ export function render() {
 		</div>
 	</div>
 </div>
-  `;
+	`;
 }
 
 export function init() {
-  let activeSocket = null;
-  let currentConversation = null;
-  const friendsList = document.getElementById('friends-list');
-  const messagesList = document.getElementById('messages-list');
-  const activeChat = document.getElementById('active-chat');
-  const welcomeMessage = document.getElementById('welcome-message');
-  const chatHeader = document.getElementById('chat-header');
-  const messageInput = document.getElementById('message-text');
-  const sendButton = document.getElementById('send-button');
-  const searchInput = document.getElementById('friend-search');
+	let activeSocket = null;
+	let currentConversation = null;
 
-  async function loadFriends() {
-	try {
-	  const friends = await UserAPI.getFriends();
-	  friendsList.innerHTML = friends.map(friend => `
-			  <div class="friend-item" data-username="${friend.username}">
-				  <div class="friend-avatar">
-					  <div class="status-indicator ${friend.is_online ? 'online' : 'offline'}"></div>
-				  </div>
-				  <div class="friend-info">
-					  <span class="friend-name">${friend.username}</span>
-					  <span class="friend-status">${friend.is_online ? 'En ligne' : 'Hors ligne'}</span>
-				  </div>
-			  </div>
-		  `).join('');
+	let conversation = ChatAPI.getConversations();
 
-	  // Add click listeners to friend items
-	  document.querySelectorAll('.friend-item').forEach(item => {
-		item.addEventListener('click', () => {
-		  startChat(item.dataset.username);
-		});
-	  });
-	} catch (error) {
-	  console.error('Failed to load friends:', error);
+	const messagesList = document.getElementById('messages-list');
+	const messageInput = document.getElementById('message-text');
+	const sendButton = document.getElementById('send-button');
+	const searchInput = document.getElementById('friend-search');
+
+	async function loadFriends() {
+		try {
+			const friends = await UserAPI.getFriends(getUsername());
+			document.getElementById('friends-list').innerHTML = friends.map(friend => `
+				<div class="friend-item" data-username="${friend.user.username}">
+					<div class="friend-avatar">
+						<img src="/media${friend.user.pfp}" alt="${friend.user.username}'s avatar">
+						<div class="status-indicator ${friend.user.is_online ? 'online' : 'offline'}"></div>
+					</div>
+					<div class="friend-info">
+						<span class="friend-name">${friend.user.username}</span>
+						<span class="friend-status">${friend.user.is_online ? i18n.t('friends.online') : i18n.t('friends.offline')}</span>
+					</div>
+				</div>
+			`).join('');
+
+			// Add click listeners to friend items
+			document.querySelectorAll('.friend-item').forEach(item => {
+				item.addEventListener('click', () => {
+					startChat(item.dataset.username);
+				});
+			});
+		} catch (error) {
+			console.error('Failed to load friends:', error);
+		}
 	}
-  }
 
-  async function startChat(username) {
-	try {
-	  const conversation = await ChatAPI.startConversation(username);
-	  currentConversation = conversation;
+	async function startChat(username) {
+		try {
+			const conversation = await ChatAPI.startConversation(username);
+			currentConversation = conversation;
 
-	  // Close previous socket if exists
-	  if (activeSocket) {
-		activeSocket.close();
-	  }
+			// Show active chat
+			document.getElementById('welcome-message').classList.add('hidden');
+			document.getElementById('active-chat').classList.remove('hidden');
 
-	  // Connect to WebSocket
-	  activeSocket = WebSocketAPI.chat(conversation.id);
-	  activeSocket.onmessage = (event) => {
-		const message = JSON.parse(event.data);
-		appendMessage(message);
-	  };
+			// Update chat header
+			document.getElementById('chat-header').innerHTML = `
+				<div class="chat-header-info">
+					<h3>${username}</h3>
+				</div>
+			`;
 
-	  // Show active chat
-	  welcomeMessage.classList.add('hidden');
-	  activeChat.classList.remove('hidden');
+			// Load previous messages
+			messagesList.innerHTML = conversation.message_set.map(msg => `
+				<div class="message ${msg.sender === username ? 'received' : 'sent'}">
+					<div class="message-content">${msg.message}</div>
+					<div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+				</div>
+			`).join('');
 
-	  // Update chat header
-	  chatHeader.innerHTML = `
-			  <div class="chat-header-info">
-				  <h3>${username}</h3>
-			  </div>
-		  `;
-
-	  // Load previous messages
-	  messagesList.innerHTML = conversation.message_set.map(msg => `
-			  <div class="message ${msg.sender === username ? 'received' : 'sent'}">
-				  <div class="message-content">${msg.message}</div>
-				  <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
-			  </div>
-		  `).join('');
-
-	  // Scroll to bottom
-	  messagesList.scrollTop = messagesList.scrollHeight;
-	} catch (error) {
-	  console.error('Failed to start chat:', error);
+			// Scroll to bottom
+			messagesList.scrollTop = messagesList.scrollHeight;
+		} catch (error) {
+			console.error('Failed to start chat:', error);
+		}
 	}
-  }
 
-  function appendMessage(message) {
-	const messageElement = document.createElement('div');
-	messageElement.classList.add('message', message.sender === currentConversation.receiver ? 'received' : 'sent');
-	messageElement.innerHTML = `
-		  <div class="message-content">${message.message}</div>
-		  <div class="message-time">${new Date().toLocaleTimeString()}</div>
-	  `;
-	messagesList.appendChild(messageElement);
-	messagesList.scrollTop = messagesList.scrollHeight;
-  }
-
-  // Event listeners
-  sendButton.addEventListener('click', () => {
-	const message = messageInput.value.trim();
-	if (message && activeSocket) {
-	  activeSocket.send(JSON.stringify({ message }));
-	  messageInput.value = '';
+	function appendMessage(message) {
+		const messageElement = document.createElement('div');
+		messageElement.classList.add('message', message.sender === currentConversation.receiver ? 'received' : 'sent');
+		messageElement.innerHTML = `
+			<div class="message-content">${message.message}</div>
+			<div class="message-time">${new Date().toLocaleTimeString()}</div>
+		`;
+		messagesList.appendChild(messageElement);
+		messagesList.scrollTop = messagesList.scrollHeight;
 	}
-  });
 
-  messageInput.addEventListener('keypress', (e) => {
-	if (e.key === 'Enter' && !e.shiftKey) {
-	  e.preventDefault();
-	  sendButton.click();
-	}
-  });
-
-  searchInput.addEventListener('input', (e) => {
-	const searchTerm = e.target.value.toLowerCase();
-	document.querySelectorAll('.friend-item').forEach(item => {
-	  const friendName = item.querySelector('.friend-name').textContent.toLowerCase();
-	  item.style.display = friendName.includes(searchTerm) ? 'flex' : 'none';
+	// Event listeners
+	sendButton.addEventListener('click', () => {
+		const message = messageInput.value.trim();
+		if (message && activeSocket) {
+			activeSocket.send(JSON.stringify({ message }));
+			messageInput.value = '';
+		}
 	});
-  });
 
-  // Initial load
-  loadFriends();
+	messageInput.addEventListener('keypress', (e) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			sendButton.click();
+		}
+	});
+
+	searchInput.addEventListener('input', (e) => {
+		const searchTerm = e.target.value.toLowerCase();
+		document.querySelectorAll('.friend-item').forEach(item => {
+			const friendName = item.querySelector('.friend-name').textContent.toLowerCase();
+			item.style.display = friendName.includes(searchTerm) ? 'flex' : 'none';
+		});
+	});
+
+	// Initial load
+	loadFriends();
 }
