@@ -133,9 +133,9 @@ To complete the project, a minimum of **7 major modules** is required. Two minor
 
 | **Endpoint**            | **Method** | **Description**                    | **Request**                                            | **Response**                                                       |
 | ----------------------- | ---------- | ---------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------ |
-| `/chat/<int:convo_id>`  | **GET**    | Get conversation of the corresponding id | Authorization in header                                | `id`, `initiator`, `receiver` and `message_set` (list of message). `detail` if error |
+| `/chat/<int:convo_id>`  | **GET**    | Get conversation of the corresponding id | Authorization in header                                | `{id, participants: [list of users], message_set: [list of messages]}`. `detail` if error |
 | `/chat/conversations`   | **GET**    | Get all the conversations of the user | Authorization in header                                | List of `{id, other_user, last_message}`. `detail` if error        |
-| `/chat/start`           | **POST**   | Start and/or get conversation with another user     | Authorization in header, `username` in body           | `id`, `initiator`, `receiver` and `message_set` (list of message). `detail` if error |
+| `/chat/start`           | **POST**   | Start and/or get conversation with another user     | Authorization in header, `username` in body           | `{id, participants: [list of users], message_set: [list of messages]}`. `detail` if error |
 | `/ws/chat/<int:convo_id>` | **WEBSOCKET** | Open a websocket to the conversation id              | token=`token` in query string                             |                                                                   |
 | `/chat/block`           | **POST**   | Block another user                                   | Authorization in header, `username` in body            | `detail` in body                                                   |
 | `/chat/unblock`         | **POST**   | Unblock another user                                 | Authorization in header, `username` in body            | `detail` in body                                                   |
