@@ -83,11 +83,14 @@ export class UserAPI {
 	static async updateProfile(updateData) {
 		const response = await fetch(`${BASE_URL}/update_user`, {
 			method: 'POST',
-			headers: this._getHeaders(),
-			body: JSON.stringify(updateData)
+			headers: { 'Authorization': `Token ${cookies.getToken()}` },
+			body: updateData
 		});
 
-		cookies.setUsername(updateData.username);
+		const newUsername = updateData.get('username');
+		if (newUsername != undefined && response.ok) {
+			cookies.setUsername(newUsername);
+		}
 		
 		return this._handleResponse(response);
 	}
