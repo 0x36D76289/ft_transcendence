@@ -3,8 +3,10 @@ from channels.generic.websocket import WebsocketConsumer
 from user.models import User
 from dataclasses import dataclass
 from uuid import uuid4
+from random import randint
 import sys
 import json
+from pong.tournament_player import TournamentPlayer
 
 WIN_SCORE = 10
 
@@ -40,6 +42,7 @@ class PongGame():
             pass
         pu.pong_socket = None
         pu.game = None
+
     def lose_game(self, loser: User):
         errprint(loser.username, "LOST THE GAME")
         #TODO:
@@ -69,12 +72,6 @@ class PongGame():
             number = 2
         return json.dumps({"type":"player_assign", "value":number})
 
-@dataclass
-class TournamentPlayer:
-    name: str
-    bot: bool
-    user: User | None
-
 def next_power_of_2(n: int) -> int:
     return 2**(n-1).bit_length()
 
@@ -87,10 +84,13 @@ class Tournament():
     _next_round: list[TournamentPlayer | None]
     #TODO: winner of tournament player has to get removed
 
-    def __init__(self, player_list: list[User]):
+    def __init__(self, player_list: list[User | TournamentPlayer]):
         self.players = []
         for user in player_list:
-            self.players.append(TournamentPlayer(user.get_username(), False, user))
+            if type(user) == User:
+                self.players.append(TournamentPlayer(user.get_username(), False, user))
+            elif type(user) == TournamentPlayer:
+                self.players.append(user)
         self.fill_rounds()
         self.current_round_index = 0
         errprint("BEFORE TOURNAMENT START")
@@ -108,14 +108,20 @@ class Tournament():
             return p2
         if p2 is None:
             return p1
-        # if p1.bot and p2.bot:
-        #     return random between p1 and p2
-        # if p1.bot:
-        #     start bot game p2
-        #     return
-        # if p2.bot:
-        #     start bot game p1
-        #     return
+        if p1.bot and p2.bot:
+            if randint(0, 1):
+                return p2
+            return p1
+        if p1.bot:
+            if p2.user:
+                pong_data.start_bot_game(p2.user)
+            return
+        if p2.bot:
+            if p1.user:
+                pong_data.start_bot_game(p1.user)
+            return
+        if not p1.user or not p2.user:
+            return
         pong_data.start_game(p1.user, p2.user)
         #TODO: check return value of start_game
         #   if game failed:
@@ -126,6 +132,9 @@ class Tournament():
         #       IN THAT ORDER
 
     def start_round(self) -> None:
+        #FIXME:-
+        #TODO: CHECK IF LAST ROUND IF SO STOP
+        # REMOVE CHECK FROM REPORT GAME
         self._ongoing_round = self.rounds[self.current_round_index]
         self._next_round = self.rounds[self.current_round_index + 1]
         for i in range(len(self._next_round)):
@@ -162,12 +171,15 @@ class Tournament():
         """
         returns True if tournament is over, in which case it should be deleted
         """
+        errprint("report from", user.get_username())
         self.print_rounds()
         if self.current_round_index == len(self.rounds) - 1:
             # end of tournament
             #  TODO:
             #   remove is_busy status from everyone
             #   report tournament
+            errprint("TOURNAMENT OVER")
+            self.print_rounds()
             return True
         round_number, winner = self.find_round(user)
         if round_number == -1:
@@ -190,6 +202,7 @@ class Tournament():
 class PongUser():
     user: User
     online_socket: WebsocketConsumer
+    is_in_bot_game: bool
     game: PongGame | None
     pong_socket: WebsocketConsumer | None
     tournament: Tournament | None
@@ -225,7 +238,6 @@ class pong_data:
         user: User = online_sock.user
         pu: PongUser = cls.online_users[user]
         if pu.game:
-            #TODO: report loser if in game
             pu.game.lose_game(pu.user)
         cls.online_users.pop(user)
         if user.get_username() in cls.name_to_user:
@@ -242,6 +254,13 @@ class pong_data:
         pu1.game = game
         pu2.game = game
         return True
+
+    @classmethod
+    def start_bot_game(cls, user: User):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        pu.online_socket.send(json.dumps({"type":"game_start", "value":"bot"}))
 
     @classmethod
     def fight(cls, user: User, opponent: str):
@@ -264,6 +283,33 @@ class pong_data:
             cls.start_game(user, opp_user)
 
     @classmethod
+    def set_fighting_bot(cls, user: User):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        pu.is_in_bot_game = True
+
+    @classmethod
+    def win_bot(cls, user: User):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        if not pu.is_in_bot_game:
+            return
+        if pu.tournament:
+            pu.tournament.report_game(user, True)
+
+    @classmethod
+    def lose_bot(cls, user: User):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        if not pu.is_in_bot_game:
+            return
+        if pu.tournament:
+            pu.tournament.report_game(user, False)
+
+    @classmethod
     def get_assign_message(cls, user: User) -> str:
         pu = pong_data.get_pong_user(user)
         if pu is None or pu.game is None:
@@ -271,12 +317,20 @@ class pong_data:
         return pu.game.get_player_number(user)
     
     @classmethod
-    def start_tournament(cls, l: list[User]):
+    def start_tournament(cls, l: list[User | TournamentPlayer]):
         tournament: Tournament = Tournament(l)
         for user in l:
-            pu = pong_data.get_pong_user(user)
-            if pu is not None:
-                pu.tournament = tournament
+            if type(user) == User:
+                pu = pong_data.get_pong_user(user)
+                if pu is not None:
+                    pu.tournament = tournament
+            elif type(user) == TournamentPlayer:
+                if user.user == None:
+                    continue
+                pu = pong_data.get_pong_user(user.user)
+                if pu is not None:
+                    pu.tournament = tournament
+
 
     @classmethod
     def join_matchmaking(cls, user: User):

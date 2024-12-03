@@ -5,6 +5,7 @@ import { local_update } from "./local_gameplay.js";
 import { main_menu } from "./main_menu.js";
 import { render_name, render_rounds } from "./render.js";
 import { bots, init, interval, scores, start_simulation } from "./shared_gameplay.js";
+import { game_sock } from "./socket.js";
 
 /** @type {Array<Array<string | null>>} */
 let rounds = [];
@@ -73,34 +74,53 @@ export function start_name_entry() {
 	render_name(players);
 }
 
+/** @type {boolean} */
+var is_online_bot_game = false;
+
+/** @returns {void} */
+export function start_online_bot_game() 
+{
+	init();
+	scores[0] = 0;
+	scores[1] = 0;
+	bots[0] = 0;
+	bots[1] = 1;
+	if (interval)
+		clearInterval(interval);
+	start_simulation(local_update);
+	set_page_state(STATES.SP_Game);
+	is_online_bot_game = true;
+}
+
 /**
+	* @param {string} str
+	* @returns {boolean}
+*/
+function is_valid_tournament_username_character(str) {
+	return str.length == 1 &&
+		((str >= 'a' && str <= 'z') || 
+			(str >= 'A' && str <= 'Z') ||
+			(str >= "0" && str <= "9") ||
+			str == "_" ||
+			str == "-"
+		);
+}
+
+/**
+	* @param {KeyboardEvent} key_event 
 	* @returns {void}
 */
-//FIXME: PARAM TYPE
-//		 + EXCTRACT ISVALID
 export function name_entry_key(key_event) {
-	/**
-		* @param {String} str
-		* @returns {boolean}
-	*/
-	function isValid(str) {
-		return str.length == 1 &&
-			((str >= 'a' && str <= 'z') || 
-				(str >= 'A' && str <= 'Z') ||
-				(str >= "0" && str <= "9") ||
-				str == "_" ||
-				str == "-"
-			);
-	}
-	console.log(key_event);
 	//select index
+	/** @type {number} */
 	let index = players.length - 1;
 	if (index == -1) index = 0;
 	//grab string/create
+	/** @type {string} */
 	let string = players[index];
 	if (string === undefined) string = "";
 	//modify
-	if (isValid(key_event.key))
+	if (is_valid_tournament_username_character(key_event.key))
 		string += key_event.key;
 	if (key_event.key == "Backspace")
 		string = string.substring(0, string.length - 1);
@@ -173,6 +193,15 @@ export function game_end_callback(winner) {
 		clearInterval(interval);
 	switch (page_state) {
 		case STATES.SP_Game:
+			if (is_online_bot_game) {
+				//FIXME: SEND REAL MESSAGE
+				if (scores[0] > scores[1]) {
+					game_sock.send("win");
+				} else {
+					game_sock.send("lose");
+				}
+				is_online_bot_game = false
+			}
 		case STATES.MP_Game:
 			main_menu();
 			break;

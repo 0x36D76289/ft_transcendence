@@ -16,7 +16,7 @@ export function create_socket() {
 	);
 	online_sock.onmessage = read_sock;
 	console.log("socket created");
-	console.log(online_sock.readyState);
+	console.log(online_sock);
 }
 
 function read_sock(object) {

@@ -1,5 +1,6 @@
 //@ts-check
 
+import { online_sock } from "../../api/socket.js";
 import { page_state, set_page_state, STATES, VIEW, VIEW_DIMENSIONS } from "./globals.js";
 import { local_update } from "./local_gameplay.js";
 import { bots, init, interval, scores, start_simulation } from "./shared_gameplay.js";
@@ -22,9 +23,10 @@ export function canvas_click(param) {
 		case STATES.Tournament:
 			break;
 		case STATES.Menu:
+			/** @type {number} */
 			let clickx = param.clientX - VIEW.getBoundingClientRect().left;
 			init();
-			scores[0] =0;
+			scores[0] = 0;
 			scores[1] = 0;
 			//P1 side
 			if (clickx < VIEW_DIMENSIONS[0] / 2) {
@@ -68,15 +70,18 @@ export function canvas_click(param) {
 //		+ ADD FUNCTION TO REMOVE LISTENERS AND REGISTER LISTENERS
 export function name_enter(key_event) {
 	//HACK: starting match with key, add real UI
-	console.log(key_event.code);
-//	if (key_event.code == "KeyU") {
-//		console.log("STARTING ONLINE MATCH");
-//		online_sock.send("start");
-//	}
+	if (key_event.code == "KeyU") {
+		console.log("STARTING ONLINE MATCH");
+		online_sock.send("start");
+	}
 //	if (key_event.code == "KeyM") {
 //		console.log("JOINING MM QUEUE");
 //		online_sock.send("join_mm");
 //	}
+	if (key_event.code == "KeyL") {
+		console.log("BOTGAME")
+		online_sock.send("BOTGAME");
+	}
 	if (key_event.code == "Backquote") {
 		start_name_entry();
 	}

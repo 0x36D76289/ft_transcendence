@@ -5,6 +5,7 @@ import { set_page_state, STATES } from "./globals.js";
 import { main_menu } from "./main_menu.js";
 import { multiplayer_init, multiplayer_update, player_num, set_player_num } from "./online_gameplay.js";
 import { GAME_SETTINGS, inputs, interval, scores, start_simulation } from "./shared_gameplay.js";
+import { start_online_bot_game } from "./tournament.js";
 
 /**
 	* @param {string} room_name
@@ -29,11 +30,18 @@ export var game_sock = new WebSocket(game_url("test"));
 	* @returns {void}
 */
 export function read_room(object) {
+	/** @type {string} */
 	let room = object.value;
+	if (room === "bot") {
+		start_online_bot_game();
+	}
 	game_sock.close();
 	game_sock = new WebSocket(game_url(room));
 	game_sock.onmessage = game_sock_receive;
+	console.log("CONNECTED TO SOCKET SOCKET THAT IS BOT: (", room==="bot", ") AND IS ", game_sock)
 }
+
+
 
 //TODO: wait for socket to connect ?
 //TODO: error on enemy socket close ?
