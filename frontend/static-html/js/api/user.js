@@ -90,6 +90,7 @@ export class UserAPI {
 		const newUsername = updateData.get('username');
 		if (newUsername != undefined && response.ok) {
 			cookies.setUsername(newUsername);
+			document.getElementById('sidebar-profile-name').textContent = newUsername;
 		}
 		
 		return this._handleResponse(response);

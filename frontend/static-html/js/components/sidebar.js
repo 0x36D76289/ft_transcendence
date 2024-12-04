@@ -39,10 +39,10 @@ export async function initSidebar() {
 	</div>
 
 	<a href="/user" class="profile">
-		<img src="/media/${user.pfp}" alt="${i18n.t('sidebar.profile.alt')}" class="profile-image">
+		<img id="sidebar-profile-image" src="/media/${user.pfp}" alt="${i18n.t('sidebar.profile.alt')}" class="profile-image">
 		<div class="status-led ${user.is_online ? 'online' : 'offline'}"></div>
 		<div class="profile-info">
-			<span class="profile-name">${user.username}</span>
+			<span id="sidebar-profile-name" class="profile-name">${user.username}</span>
 		</div>
 	</a>
 </nav>
