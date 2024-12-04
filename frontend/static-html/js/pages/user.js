@@ -194,12 +194,11 @@ export async function init() {
 		});
 
 		// Update avatar when a new file is selected
-		// document.getElementById('pfp-input').addEventListener('change', async () => {
-		// 	const file = document.getElementById('pfp-input').files[0];
-		// 	const updatedData = await UserAPI.updateProfile({}, file);
+		document.getElementById('pfp-input').addEventListener('change', async () => {
+			const file = document.getElementById('pfp-input').files[0];
 
-		// 	document.getElementById('profile-image').src = `/media/${updatedData.pfp}`;
-		// });
+			document.getElementById('profile-image').src = URL.createObjectURL(file);
+		});
 	} catch (error) {
 		console.error(error);
 		popupSystem('error', 'Failed to load user data');
