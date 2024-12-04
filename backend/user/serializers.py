@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from user.models import User, UserFriend
+import os
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta(object):
@@ -19,7 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
 			instance.set_password(validated_data['password'])
 		instance.username = validated_data.get('username', instance.username)
 		instance.bio = validated_data.get('bio', instance.bio)
-		instance.pfp = validated_data.get('pfp', instance.pfp)
+		if validated_data.get('pfp'):
+			if (instance.pfp.name != 'pfp/default_pfp.svg'):
+				os.remove(instance.pfp.path)
+			instance.pfp = validated_data['pfp']
 		instance.save()
 		return instance
 	
