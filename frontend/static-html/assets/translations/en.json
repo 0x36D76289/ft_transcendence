@@ -79,12 +79,12 @@
 		}
 	},
 	"messages": {
-		"friends": "Friends",
-		"search": "Search friends...",
-		"welcome": "Welcome to your messages",
-		"select_friend": "Select a friend to start chatting",
+		"title": "Messages",
+		"select_conversation": "Select a conversation",
 		"type_message": "Type a message...",
-		"send": "Send"
+		"send": "Send",
+		"load_error": "Failed to load messages",
+		"send_error": "Failed to send message"
 	},
 	"user": {
 		"title": "Profile",

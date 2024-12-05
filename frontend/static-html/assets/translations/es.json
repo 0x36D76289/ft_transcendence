@@ -78,13 +78,13 @@
 			"error": "Error de registro"
 		}
 	},
-	"messages": {
-		"friends": "Amigos",
-		"search": "Buscar amigos",
-		"welcome": "Bienvenido al chat",
-		"select_friend": "Selecciona un amigo para empezar a chatear",
-		"type_message": "Escribe tu mensaje aquí...",
-		"send": "Enviar"
+	"mensajes": {
+		"title": "Mensajes",
+		"select_conversation": "Selecciona una conversación",
+		"type_message": "Escribe un mensaje...",
+		"send": "Enviar",
+		"load_error": "Error al cargar mensajes",
+		"send_error": "Error al enviar mensaje"
 	},
 	"user": {
 		"title": "Perfil",

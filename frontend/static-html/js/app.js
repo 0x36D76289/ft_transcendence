@@ -22,6 +22,8 @@ const ROUTES = {
 	"/pong": "pong/main",
 };
 
+export const API_URL = `https://${window.location.host}/api`
+export const WS_URL = `wss://${window.location.host}/ws`
 /* ******************** Security Middleware ******************** */
 async function checkAuth() {
 	const token = getToken();
@@ -222,7 +224,7 @@ async function initApp() {
 	}
 }
 
-const data = fetch("https://localhost:8443/api/debug/test_data", {
+const data = await fetch("https://localhost:8443/api/debug/test_data", {
 	method: "POST",
 });
 

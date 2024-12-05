@@ -79,12 +79,12 @@
 		}
 	},
 	"messages": {
-		"friends": "Amis",
-		"search": "Rechercher des amis",
-		"welcome": "Bienvenue dans le chat",
-		"select_friend": "Sélectionnez un ami pour commencer à discuter",
-		"type_message": "Tapez votre message ici...",
-		"send": "Envoyer"
+		"title": "Messages",
+		"select_conversation": "Sélectionnez une conversation",
+		"type_message": "Tapez un message...",
+		"send": "Envoyer",
+		"load_error": "Échec du chargement des messages",
+		"send_error": "Échec de l'envoi du message"
 	},
 	"user": {
 		"title": "Profil",

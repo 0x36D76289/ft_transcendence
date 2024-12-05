@@ -1,21 +1,18 @@
 import * as cookies from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
-
-
-const BASE_URL = `https://${window.location.hostname}/api`;
+import { API_URL } from '../app.js';
 
 export class ChatAPI {
-	// Helper method to handle API responses
 	static async _handleResponse(response) {
+		const responseData = await response.json();
+		console.log(responseData);
 		if (!response.ok) {
-			const errorData = await response.json();
-			popupSystem('error', errorData.detail || 'An error occurred');
-			throw new Error(errorData.detail || 'An error occurred');
+			popupSystem('error', responseData.detail || 'An error occurred');
+			throw new Error(responseData.detail || 'An error occurred');
 		}
-		return response.json();
+		return responseData;
 	}
 
-	// Helper method to get default headers
 	static _getHeaders() {
 		const token = cookies.getToken();
 		return {
@@ -24,9 +21,29 @@ export class ChatAPI {
 		};
 	}
 
-	// Start a new conversation with a user
+	// Get conversation by ID
+	static async getConversation(convo_id) {
+		const response = await fetch(`${API_URL}/chat/${convo_id}`, {
+			method: 'GET',
+			headers: this._getHeaders()
+		});
+
+		return this._handleResponse(response);
+	}
+
+	// Get all conversations of the user
+	static async getConversations() {
+		const response = await fetch(`${API_URL}/chat/conversations`, {
+			method: 'GET',
+			headers: this._getHeaders()
+		});
+
+		return this._handleResponse(response);
+	}
+
+	// Start or get a conversation with another user
 	static async startConversation(username) {
-		const response = await fetch(`${BASE_URL}/chat/start`, {
+		const response = await fetch(`${API_URL}/chat/start`, {
 			method: 'POST',
 			headers: this._getHeaders(),
 			body: JSON.stringify({ username })
@@ -35,29 +52,9 @@ export class ChatAPI {
 		return this._handleResponse(response);
 	}
 
-	// Get a specific conversation by ID
-	static async getConversation(convoId) {
-		const response = await fetch(`${BASE_URL}/chat/${convoId}`, {
-			method: 'GET',
-			headers: this._getHeaders()
-		});
-
-		return this._handleResponse(response);
-	}
-
-	// Get all conversations for the current user
-	static async getConversations() {
-		const response = await fetch(`${BASE_URL}/chat/conversations`, {
-			method: 'GET',
-			headers: this._getHeaders(),
-		});
-
-		return this._handleResponse(response);
-	}
-
 	// Block a user
 	static async blockUser(username) {
-		const response = await fetch(`${BASE_URL}/chat/block`, {
+		const response = await fetch(`${API_URL}/chat/block`, {
 			method: 'POST',
 			headers: this._getHeaders(),
 			body: JSON.stringify({ username })
@@ -68,7 +65,7 @@ export class ChatAPI {
 
 	// Unblock a user
 	static async unblockUser(username) {
-		const response = await fetch(`${BASE_URL}/chat/unblock`, {
+		const response = await fetch(`${API_URL}/chat/unblock`, {
 			method: 'POST',
 			headers: this._getHeaders(),
 			body: JSON.stringify({ username })
@@ -79,24 +76,10 @@ export class ChatAPI {
 
 	// Check if a user is blocked
 	static async isUserBlocked(username) {
-		const response = await fetch(`${BASE_URL}/chat/is_user_blocked`, {
+		const response = await fetch(`${API_URL}/chat/is_user_blocked`, {
 			method: 'GET',
-			headers: this._getHeaders()
-		});
-
-		const data = await this._handleResponse(response);
-		return data.detail;
-	}
-
-	// Send a message (this method would need to be implemented on the backend)
-	static async sendMessage(conversationId, messageContent) {
-		const response = await fetch(`${BASE_URL}/chat/send_message`, {
-			method: 'POST',
 			headers: this._getHeaders(),
-			body: JSON.stringify({
-				conversation_id: conversationId,
-				content: messageContent
-			})
+			body: JSON.stringify({ username })
 		});
 
 		return this._handleResponse(response);

@@ -1,7 +1,6 @@
 import * as cookies from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
-
-const BASE_URL = 'https://' + window.location.host + '/api/user';
+import { API_URL } from '../app.js';
 
 export class UserAPI {
 	// Helper method to handle API responses
@@ -26,7 +25,7 @@ export class UserAPI {
 
 	// Login with username and password
 	static async login(username, password) {
-		const response = await fetch(`${BASE_URL}/login`, {
+		const response = await fetch(`${API_URL}/user/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username, password })
@@ -42,7 +41,7 @@ export class UserAPI {
 
 	// Register a new user
 	static async register(userData) {
-		const response = await fetch(`${BASE_URL}/register`, {
+		const response = await fetch(`${API_URL}/user/register`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(userData)
@@ -53,7 +52,7 @@ export class UserAPI {
 
 	// Create a guest account
 	static async createGuestAccount() {
-		const response = await fetch(`${BASE_URL}/create_guest`, {
+		const response = await fetch(`${API_URL}/user/create_guest`, {
 			method: 'POST'
 		});
 
@@ -67,7 +66,7 @@ export class UserAPI {
 
 	// Logout
 	static async logout() {
-		const response = await fetch(`${BASE_URL}/logout`, {
+		const response = await fetch(`${API_URL}/user/logout`, {
 			method: 'POST',
 			headers: this._getHeaders()
 		});
@@ -81,7 +80,7 @@ export class UserAPI {
 
 	// Update user profile
 	static async updateProfile(updateData) {
-		const response = await fetch(`${BASE_URL}/update_user`, {
+		const response = await fetch(`${API_URL}/user/update_user`, {
 			method: 'POST',
 			headers: { 'Authorization': `Token ${cookies.getToken()}` },
 			body: updateData
@@ -98,7 +97,7 @@ export class UserAPI {
 
 	// Get user profile
 	static async getProfile(username) {
-		const response = await fetch(`${BASE_URL}/profile/${username}`, {
+		const response = await fetch(`${API_URL}/user/profile/${username}`, {
 			method: 'GET',
 			headers: this._getHeaders()
 		});
@@ -108,7 +107,7 @@ export class UserAPI {
 
 	// Get user stats
 	static async getUserStats(username) {
-		const response = await fetch(`${BASE_URL}/stats/${username}`, {
+		const response = await fetch(`${API_URL}/user/stats/${username}`, {
 			method: 'GET',
 			headers: this._getHeaders()
 		});
@@ -118,7 +117,7 @@ export class UserAPI {
 
 	// List recent users
 	static async listUsers() {
-		const response = await fetch(`${BASE_URL}/list`, {
+		const response = await fetch(`${API_URL}/user/list`, {
 			method: 'GET',
 			headers: this._getHeaders()
 		});
@@ -128,7 +127,7 @@ export class UserAPI {
 
 	// Friend-related methods
 	static async sendFriendRequest(username) {
-		const response = await fetch(`${BASE_URL}/send_friend_request`, {
+		const response = await fetch(`${API_URL}/user/send_friend_request`, {
 			method: 'POST',
 			headers: this._getHeaders(),
 			body: JSON.stringify({ username })
@@ -138,7 +137,7 @@ export class UserAPI {
 	}
 
 	static async removeFriendRequest(username) {
-		const response = await fetch(`${BASE_URL}/remove_friend_request`, {
+		const response = await fetch(`${API_URL}/user/remove_friend_request`, {
 			method: 'POST',
 			headers: this._getHeaders(),
 			body: JSON.stringify({ username })
@@ -148,7 +147,7 @@ export class UserAPI {
 	}
 
 	static async getFriendship(username) {
-		const response = await fetch(`${BASE_URL}/get_friendship`, {
+		const response = await fetch(`${API_URL}/user/get_friendship`, {
 			method: 'GET',
 			headers: this._getHeaders(),
 			body: JSON.stringify({ username })
@@ -158,7 +157,7 @@ export class UserAPI {
 	}
 
 	static async getFriends(username) {
-		const response = await fetch(`${BASE_URL}/get_friends/${username}`, {
+		const response = await fetch(`${API_URL}/user/get_friends/${username}`, {
 			method: 'GET',
 			headers: this._getHeaders()
 		});
@@ -168,7 +167,7 @@ export class UserAPI {
 
 	// Token validation
 	static async isTokenValid(token) {
-		const response = await fetch(`${BASE_URL}/is_token_valid`, {
+		const response = await fetch(`${API_URL}/user/is_token_valid`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ token })
@@ -180,7 +179,7 @@ export class UserAPI {
 
 	// Delete user account
 	static async delete_account() {
-		const response = await fetch(`${BASE_URL}/delete_user`, {
+		const response = await fetch(`${API_URL}/user/delete_user`, {
 			method: 'POST',
 			headers: this._getHeaders()
 		});
