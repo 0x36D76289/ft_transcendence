@@ -7,91 +7,91 @@ import { popupSystem } from '../services/popup.js';
 export function render() {
 	return `
 <div class="profile-container">
-    <header class="profile-header">
-        <h1>${i18n.t('user.title')}</h1>
-    </header>
-    
-    <div class="profile-content">
-        <div class="profile-section">
-            <div class="profile-info-card">
-                <div class="profile-avatar">
-                    <img src="/media/pfp/default_pfp.svg" class="avatar-placeholder" id="profile-image"></img>
-                    <input type="file" id="pfp-input" class="hidden" accept="image/*"/>
-                </div>
-                
-                <div class="profile-details">
-                    <div class="info-group">
-                        <label>${i18n.t('user.username')}</label>
-                        <input type="text" id="username-input"/>
-                    </div>
-                    
-                    <div class="info-group">
-                        <label>${i18n.t('user.bio')}</label>
-                        <textarea id="bio-input" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="info-group">
-                        <label>${i18n.t('user.joined')}</label>
-                        <span id="date-joined"></span>
-                    </div>
-                </div>
-                
-                <div class="profile-actions">
-                    <button id="save-profile" class="save-button">
-                        ${i18n.t('user.save')}
-                    </button>
-                </div>
-            </div>
+	<header class="profile-header">
+		<h1>${i18n.t('user.title')}</h1>
+	</header>
+	
+	<div class="profile-content">
+		<div class="profile-section">
+			<div class="profile-info-card">
+				<div class="profile-avatar">
+					<img src="/media/pfp/default_pfp.svg" class="avatar-placeholder" id="profile-image"></img>
+					<input type="file" id="pfp-input" class="hidden" accept="image/*"/>
+				</div>
+				
+				<div class="profile-details">
+					<div class="info-group">
+						<label>${i18n.t('user.username')}</label>
+						<input type="text" id="username-input"/>
+					</div>
+					
+					<div class="info-group">
+						<label>${i18n.t('user.bio')}</label>
+						<textarea id="bio-input" rows="3"></textarea>
+					</div>
+					
+					<div class="info-group">
+						<label>${i18n.t('user.joined')}</label>
+						<span id="date-joined"></span>
+					</div>
+				</div>
+				
+				<div class="profile-actions">
+					<button id="save-profile" class="save-button">
+						${i18n.t('user.save')}
+					</button>
+				</div>
+			</div>
 
-            <div class="profile-stats-card">
-                <h3>${i18n.t('user.stats')}</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-value" id="games-played">0</span>
-                        <span class="stat-label">${i18n.t('user.games_played')}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="win-rate">0%</span>
-                        <span class="stat-label">${i18n.t('user.win_rate')}</span>
-                    </div>
-                </div>
-            </div>
+			<div class="profile-stats-card">
+				<h3>${i18n.t('user.stats')}</h3>
+				<div class="stats-grid">
+					<div class="stat-item">
+						<span class="stat-value" id="games-played">0</span>
+						<span class="stat-label">${i18n.t('user.games_played')}</span>
+					</div>
+					<div class="stat-item">
+						<span class="stat-value" id="win-rate">0%</span>
+						<span class="stat-label">${i18n.t('user.win_rate')}</span>
+					</div>
+				</div>
+			</div>
 
-            <div class="game-history-card">
-                <h3>${i18n.t('user.game_history')}</h3>
-                <div id="game-history-list" class="game-history-list">
-                    <!-- Game history will be populated here -->
-                </div>
-            </div>
-        </div>
+			<div class="game-history-card">
+				<h3>${i18n.t('user.game_history')}</h3>
+				<div id="game-history-list" class="game-history-list">
+					<!-- Game history will be populated here -->
+				</div>
+			</div>
+		</div>
 
-        <div class="account-actions-card">
-            <h3>${i18n.t('user.account_actions')}</h3>
-            <div class="account-actions">
-                <button id="logout-button" class="action-button logout-button">
-                    <span class="material-icons">logout</span>
-                    ${i18n.t('user.logout')}
-                </button>
-                
-                <button id="delete-account-button" class="action-button delete-button">
-                    <span class="material-icons">delete_forever</span>
-                    ${i18n.t('user.delete_account')}
-                </button>
-            </div>
+		<div class="account-actions-card">
+			<h3>${i18n.t('user.account_actions')}</h3>
+			<div class="account-actions">
+				<button id="logout-button" class="action-button logout-button">
+					<span class="material-icons">logout</span>
+					${i18n.t('user.logout')}
+				</button>
+				
+				<button id="delete-account-button" class="action-button delete-button">
+					<span class="material-icons">delete_forever</span>
+					${i18n.t('user.delete_account')}
+				</button>
+			</div>
 
-            <div id="delete-confirmation" class="delete-confirmation hidden">
-                <p>${i18n.t('user.delete_confirmation')}</p>
-                <div class="confirmation-actions">
-                    <button id="confirm-delete" class="delete-button">
-                        ${i18n.t('user.confirm_delete')}
-                    </button>
-                    <button id="cancel-delete" class="cancel-button">
-                        ${i18n.t('user.cancel')}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div id="delete-confirmation" class="delete-confirmation hidden">
+				<p>${i18n.t('user.delete_confirmation')}</p>
+				<div class="confirmation-actions">
+					<button id="confirm-delete" class="delete-button">
+						${i18n.t('user.confirm_delete')}
+					</button>
+					<button id="cancel-delete" class="cancel-button">
+						${i18n.t('user.cancel')}
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 `;
 }
@@ -155,7 +155,7 @@ export async function init() {
 			if (newPfp != undefined) {
 				formData.append('pfp', newPfp)
 			}
-			
+
 			console.log(formData);
 
 			const updatedData = await UserAPI.updateProfile(formData);

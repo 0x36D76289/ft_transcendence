@@ -31,7 +31,7 @@ function createProfilePreviewPopup(userData, userStats) {
 					<img src="/media${userData.pfp}" alt="${userData.username}" class="preview-avatar">
 				</div>
 				<h2 class="preview-username">${userData.username}</h2>
-				<p class="preview-bio">${userData.bio || i18n.t('user.no_bio')}</p>
+				<p class="preview-bio">${userData.bio}</p>
 				
 				<div class="preview-stats">
 					<div class="stat-item">
@@ -113,7 +113,8 @@ async function handleActionButton(event) {
 
 	switch (action) {
 		case 'message':
-			await ChatAPI.createChat(username);
+			await ChatAPI.startConversation(username);
+			popupSystem('info', i18n.t('friends.message_sent') + ' ' + username);
 			break;
 		case 'play':
 			online_sock.send("fight " + username);
@@ -170,13 +171,15 @@ async function showProfilePreview(username) {
 
 function renderContacts(friends) {
 	const contactGrid = document.getElementById('contactGrid');
-	contactGrid.innerHTML = '';
-
-	friends.forEach(friend => {
-		let e = document.createElement("div");
-		e.innerHTML = createContactCard(friend.user);
-		contactGrid.appendChild(e);
-	});
+	contactGrid.innerHTML = friends.map(friend =>
+		`<div class="contact-card" data-user-id="${friend.user.username}">
+			<img src="/media${friend.user.pfp}" alt="${friend.user.username}" class="contact-avatar">
+			<h3 class="contact-username">${friend.user.username}</h3>
+			<p class="contact-status" data-status="${friend.user.is_online ? 'online' : 'offline'}">
+				${friend.user.is_online ? i18n.t('friends.online') : i18n.t('friends.offline')}
+			</p>
+		</div>`
+	).join('');
 
 	const contactCards = document.querySelectorAll('.contact-card');
 	contactCards.forEach((card) => {
@@ -186,7 +189,6 @@ function renderContacts(friends) {
 		});
 	});
 }
-
 export async function init() {
 	const searchInput = document.getElementById('searchInput');
 	const addFriendBtn = document.getElementById('addFriendBtn');
@@ -203,6 +205,6 @@ export async function init() {
 		popupSystem('info', i18n.t('friends.friend_request_sent'));
 	});
 
-	renderContacts(friends);	
+	renderContacts(friends);
 	initScrollTopButton();
 }

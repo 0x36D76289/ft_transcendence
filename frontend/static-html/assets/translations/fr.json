@@ -108,17 +108,17 @@
 	},
 	"friends": {
 		"title": "Amis",
-		"search_user": "Rechercher un utilisateur...",
+		"search_user": "Rechercher un utilisateur",
 		"online": "En ligne",
 		"offline": "Hors ligne",
 		"send_message": "Envoyer un message",
 		"invite_to_play": "Inviter à jouer",
 		"block": "Bloquer",
 		"remove": "Supprimer",
-		"add_friend_tooltip": "Ajouter un ami",
-		"empty_username": "Le nom d'utilisateur ne peut pas être vide",
-		"request_sent": "Demande d'ami envoyée à {username}",
-		"profile_load_error": "Échec du chargement du profil",
-		"fetch_error": "Erreur lors de la récupération des amis"
+		"message_sent": "Message envoyé à",
+		"invite_sent": "Invitation envoyée à",
+		"block_success": "Utilisateur bloqué",
+		"remove_success": "Utilisateur supprimé",
+		"profile_load_error": "Échec du chargement du profil"
 	}
 }

@@ -102,7 +102,7 @@
 	justify-content: center;
 	cursor: pointer;
 	transition: var(--transition);
-	margin: 0 var(--margin-s);
+	margin: var(--margin-m) var(--margin-s) 0;
 }
 
 .profile-action-btn:hover {
