@@ -1,5 +1,5 @@
 from channels.generic.websocket import WebsocketConsumer
-from pong.tournament_player import TournamentPlayer
+from pong.tournament_player import TournamentBot, TournamentPlayer
 from user.models import User
 from sys import stderr
 
@@ -31,12 +31,12 @@ class OnlineStatusConsumer(WebsocketConsumer):
 
     def receive(self, text_data: str):
         errprint(text_data)
-        #HACK: testing
+        #HACK: testing | not real feature
         if text_data == "start":
             l: list[User | TournamentPlayer] = list(pong_data.online_users)
-            l.append(TournamentPlayer("kendrick", True, None))
-            l.append(TournamentPlayer("drake", True, None))
-            l.append(TournamentPlayer("cole", False, None))
+            l.append(TournamentBot("kendrick"))
+            l.append(TournamentBot("drake"))
+            l.append(TournamentBot("cole"))
             print("\\" * 20, file=stderr)
             print("online users rn", l, file=stderr)
 #            print("tournaments rn", [t.players for t in pong_data.tournaments], file=stderr)
@@ -47,6 +47,6 @@ class OnlineStatusConsumer(WebsocketConsumer):
             pong_data.join_matchmaking(self.user)
         elif text_data.startswith("fight "):
             pong_data.fight(self.user, text_data[6:])
-        #HACK: testing
+        #HACK: testing | not real feature
         elif text_data == "BOTGAME":
             pong_data.start_bot_game(self.user)

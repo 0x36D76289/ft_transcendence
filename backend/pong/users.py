@@ -1,12 +1,13 @@
+from datetime import datetime
 from typing import Any
 from channels.generic.websocket import WebsocketConsumer
+from game.models import Game
 from user.models import User
-from dataclasses import dataclass
 from uuid import uuid4
 from random import randint
 import sys
 import json
-from pong.tournament_player import TournamentPlayer
+from pong.tournament_player import TournamentPlayer, TournamentBot, TournamentUser
 
 WIN_SCORE = 10
 
@@ -19,19 +20,25 @@ class PongGame():
     p2: User
     spectators: list[User]
     room_name: str
+    start_time: datetime
     # methods
     def __init__(self, p1: User, p2: User):
         self.p1 = p1
         self.p2 = p2
         self.room_name: str = str(uuid4().hex)
         start_message = json.dumps({"type":"game_start", "value":self.room_name})
-        pong_data.online_users[p1].online_socket.send(start_message)
-        pong_data.online_users[p2].online_socket.send(start_message)
+        pu1 = pong_data.get_pong_user(p1)
+        pu2 = pong_data.get_pong_user(p2)
         self.spectators = []
+        self.start_time = datetime.now()
+        if not pu1 or not pu2:
+            return
+        pu1.online_socket.send(start_message)
+        pu2.online_socket.send(start_message)
+        pu1.busy = True
+        pu2.busy = True
 
     def disconnect_user(self, user: User):
-        #TODO: still busy if not in tournament
-        # else remove
         pu = pong_data.get_pong_user(user)
         if pu is None:
             return
@@ -42,22 +49,32 @@ class PongGame():
             pass
         pu.pong_socket = None
         pu.game = None
+        if pu.tournament is not None:
+            pu.busy = False
 
-    def lose_game(self, loser: User):
-        errprint(loser.username, "LOST THE GAME")
+    def lose_game(self, loser: User, data: dict[str, Any]):
         #TODO:
         # save to DB
+        Game(
+                p1 = self.p1,
+                p2 = self.p2,
+                p1_score = data["p1"],
+                p2_score = data["p2"],
+                time_start = self.start_time,
+                time_end = datetime.now()
+        ).save()
         self.close()
         pu = pong_data.get_pong_user(loser)
         if pu is None:
             return
         if pu.tournament:
             pu.tournament.report_game(loser, False)
+
     def report_score(self, data: dict[str, Any]):
         if data["p1"] == WIN_SCORE:
-            self.lose_game(self.p2)
+            self.lose_game(self.p2, data)
         elif data["p2"] == WIN_SCORE:
-            self.lose_game(self.p1)
+            self.lose_game(self.p1, data)
     def close(self):
         self.disconnect_user(self.p1)
         self.disconnect_user(self.p2)
@@ -75,6 +92,11 @@ class PongGame():
 def next_power_of_2(n: int) -> int:
     return 2**(n-1).bit_length()
 
+def get_TP_name(tp: TournamentPlayer | None) -> str:
+    if tp is None:
+        return "None"
+    return tp.name
+
 class Tournament():
     players: list[TournamentPlayer]
     rounds: list[list[TournamentPlayer | None]]
@@ -82,19 +104,25 @@ class Tournament():
 
     _ongoing_round: list[TournamentPlayer | None]
     _next_round: list[TournamentPlayer | None]
-    #TODO: winner of tournament player has to get removed
 
     def __init__(self, player_list: list[User | TournamentPlayer]):
         self.players = []
         for user in player_list:
-            if type(user) == User:
-                self.players.append(TournamentPlayer(user.get_username(), False, user))
-            elif type(user) == TournamentPlayer:
+            if type(user) is User:
+                user = TournamentUser(user)
+            if isinstance(user, TournamentPlayer): #INFO: always true but here for type checker
+                if user.bot == False:
+                    pu = pong_data.get_pong_user(user.user)
+                    if pu is None:
+                        continue
+                    if pu.busy:
+                        continue
+                    pu.tournament = self
+                    pu.busy = True
                 self.players.append(user)
         self.fill_rounds()
         self.current_round_index = 0
-        errprint("BEFORE TOURNAMENT START")
-        self.print_rounds()
+        self._next_round = []
         self.start_round()
 
     def fill_rounds(self) -> None:
@@ -108,21 +136,19 @@ class Tournament():
             return p2
         if p2 is None:
             return p1
-        if p1.bot and p2.bot:
+        if p1.bot == True and p2.bot == True:
             if randint(0, 1):
                 return p2
             return p1
-        if p1.bot:
-            if p2.user:
+        if p1.bot == True:
+            if p2.bot == False: #INFO: always true but here for type check
                 pong_data.start_bot_game(p2.user)
-            return
-        if p2.bot:
-            if p1.user:
-                pong_data.start_bot_game(p1.user)
-            return
-        if not p1.user or not p2.user:
-            return
+            return None
+        if p2.bot == True:
+            pong_data.start_bot_game(p1.user)
+            return None
         pong_data.start_game(p1.user, p2.user)
+        return None
         #TODO: check return value of start_game
         #   if game failed:
         #       if one online:
@@ -131,26 +157,40 @@ class Tournament():
         #           pick at random
         #       IN THAT ORDER
 
-    def start_round(self) -> None:
-        #FIXME:-
-        #TODO: CHECK IF LAST ROUND IF SO STOP
-        # REMOVE CHECK FROM REPORT GAME
+    def remove_player(self, player: TournamentPlayer | None) -> None:
+        if player is None:
+            return
+        self.players.remove(player)
+        if player.bot == True:
+            return
+        pu = pong_data.get_pong_user(player.user)
+        if pu is None:
+            return
+        pu.tournament = None
+        pu.busy = False
+
+    def start_round(self) -> bool:
+        if len(self._next_round) == 1:
+            if self._next_round[0]:
+                self.remove_player(self._next_round[0])
+            #  TODO:
+            #   report tournament?
+            #   delete tournament -> remove tournament from every player and empty tournament data
+            errprint("TOURNAMENT OVER, users left: " + str(self.players))
+            self.players = []
+            self.print_rounds()
+            return True
         self._ongoing_round = self.rounds[self.current_round_index]
         self._next_round = self.rounds[self.current_round_index + 1]
         for i in range(len(self._next_round)):
-            name1 = "None"
-            name2 = "None"
-            p1 = self._ongoing_round[i * 2]
-            p2 = self._ongoing_round[i * 2 + 1]
-            if p1 is not None:
-                name1 = p1.name
-            if p2:
-                name2 = p2.name
-            errprint("STARTING GAME BETWEEN", name1, name2)
+            # name1 = get_TP_name(self._ongoing_round[i * 2])
+            # name2 = get_TP_name(self._ongoing_round[i * 2 + 1])
+            # errprint("STARTING GAME BETWEEN", name1, name2)
             self._next_round[i] = self.start_game(self._ongoing_round[i * 2], self._ongoing_round[i * 2 + 1])
         self.current_round_index += 1
         if self.is_round_over():
-            self.start_round()
+            return self.start_round()
+        return False
 
     def is_round_over(self) -> bool:
         for i in range(len(self._next_round)):
@@ -161,9 +201,11 @@ class Tournament():
     
     def find_round(self, user: User) -> tuple[int, int]:
         for i in range(len(self._next_round)):
-            if self._ongoing_round[i * 2] is not None and self._ongoing_round[i * 2].user == user:
+            player = self._ongoing_round[i * 2]
+            if player is not None and player.user == user:
                 return (i, 0)
-            if self._ongoing_round[i * 2 + 1] is not None and self._ongoing_round[i * 2 + 1].user == user:
+            player = self._ongoing_round[i * 2 + 1]
+            if player is not None and player.user == user:
                 return (i, 1)
         return -1, 0
 
@@ -171,27 +213,18 @@ class Tournament():
         """
         returns True if tournament is over, in which case it should be deleted
         """
-        errprint("report from", user.get_username())
         self.print_rounds()
-        if self.current_round_index == len(self.rounds) - 1:
-            # end of tournament
-            #  TODO:
-            #   remove is_busy status from everyone
-            #   report tournament
-            errprint("TOURNAMENT OVER")
-            self.print_rounds()
-            return True
         round_number, winner = self.find_round(user)
         if round_number == -1:
             return False
         if not user_is_winner:
             winner = 1 - winner
+        loser = 1 - winner
         self._next_round[round_number] = self._ongoing_round[2 * round_number + winner]
-        #TODO: remove loser from tournament
-        # remove busy from loser
+        self.remove_player(self._ongoing_round[2 * round_number + loser])
 
         if self.is_round_over():
-            self.start_round()
+            return self.start_round()
         return False
 
     def print_rounds(self):
@@ -207,6 +240,7 @@ class PongUser():
     pong_socket: WebsocketConsumer | None
     tournament: Tournament | None
     wants_to_fight: str | None
+    busy: bool
     def __init__(self, online_sock: WebsocketConsumer):
         self.user = online_sock.user
         self.online_socket = online_sock
@@ -214,6 +248,7 @@ class PongUser():
         self.pong_socket = None
         self.tournament = None
         self.wants_to_fight = None
+        self.busy = False
 
 class pong_data:
     online_users: dict[User, PongUser] = dict()
@@ -260,6 +295,7 @@ class pong_data:
         pu = cls.get_pong_user(user)
         if pu is None:
             return
+        pu.busy = True
         pu.online_socket.send(json.dumps({"type":"game_start", "value":"bot"}))
 
     @classmethod
@@ -269,6 +305,9 @@ class pong_data:
         pu = cls.get_pong_user(user)
         if pu is None:
             return
+        if pu.busy:
+            return
+        pu.busy = True
         pu.wants_to_fight = opponent
         if opponent in cls.name_to_user:
             opp_user: User = cls.name_to_user[opponent]
@@ -276,6 +315,8 @@ class pong_data:
             return
         opp_pu = cls.get_pong_user(opp_user)
         if opp_pu is None:
+            return
+        if opp_pu.busy:
             return
         if opp_pu.wants_to_fight == user.get_username():
             pu.wants_to_fight = None
@@ -291,6 +332,7 @@ class pong_data:
 
     @classmethod
     def win_bot(cls, user: User):
+        #TODO: report
         pu = cls.get_pong_user(user)
         if pu is None:
             return
@@ -301,6 +343,7 @@ class pong_data:
 
     @classmethod
     def lose_bot(cls, user: User):
+        #TODO: report
         pu = cls.get_pong_user(user)
         if pu is None:
             return
@@ -318,29 +361,22 @@ class pong_data:
     
     @classmethod
     def start_tournament(cls, l: list[User | TournamentPlayer]):
-        tournament: Tournament = Tournament(l)
-        for user in l:
-            if type(user) == User:
-                pu = pong_data.get_pong_user(user)
-                if pu is not None:
-                    pu.tournament = tournament
-            elif type(user) == TournamentPlayer:
-                if user.user == None:
-                    continue
-                pu = pong_data.get_pong_user(user.user)
-                if pu is not None:
-                    pu.tournament = tournament
-
+        Tournament(l)
 
     @classmethod
     def join_matchmaking(cls, user: User):
-        if cls.matchmaking_queue is None:
-            cls.matchmaking_queue = user
-            errprint(user, " joined MM queue")
-            #TODO: set status to busy
+        pu = pong_data.get_pong_user(user)
+        if pu is None:
             return
         if cls.matchmaking_queue == user:
+            cls.matchmaking_queue = None
+            pu.busy = False
+            return
+        if pu.busy:
+            return
+        pu.busy = True
+        if cls.matchmaking_queue is None:
+            cls.matchmaking_queue = user
             return
         cls.start_game(cls.matchmaking_queue, user)
-        errprint("started game between", user, "and", cls.matchmaking_queue)
         cls.matchmaking_queue = None

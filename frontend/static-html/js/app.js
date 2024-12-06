@@ -224,9 +224,10 @@ async function initApp() {
 	}
 }
 
-const data = await fetch("https://localhost:8443/api/debug/test_data", {
-	method: "POST",
-});
+// commented out because it's causing the backend to freak out
+//const data = await fetch("https://localhost:8443/api/debug/test_data", {
+//	method: "POST",
+//});
 
 // Démarrage de l'application
 initApp();
