@@ -1,4 +1,6 @@
-export function popupSystem(type = 'info', message, showButtons = false) {
+const emptyFunction = () => {}
+
+export function popupSystem(type = 'info', message, showButtons = false, accept=emptyFunction, reject=emptyFunction) {
 	// Material Icons mapping
 	const icons = {
 		info: 'info',
@@ -75,11 +77,13 @@ export function popupSystem(type = 'info', message, showButtons = false) {
 
 		acceptButton.addEventListener('click', () => {
 			console.log('Accepted');
+			accept();
 			removePopup();
 		});
 
 		rejectButton.addEventListener('click', () => {
 			console.log('Rejected');
+			reject();
 			removePopup();
 		});
 	}

@@ -118,7 +118,6 @@ async function handleActionButton(event) {
 			break;
 		case 'play':
 			online_sock.send("fight " + username);
-			popupSystem('info', i18n.t('friends.invite_to_play') + ' ' + username);
 			return;
 		case 'block':
 			await ChatAPI.blockUser(username);

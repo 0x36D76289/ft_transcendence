@@ -55,6 +55,7 @@ class ChatConsumer(WebsocketConsumer):
             return
         #TODO: if in game: win for other player
         # set state when game over normally for disconnect to be handled
+        # make function for disconnect in pong_data that calls lose game if in game
         async_to_sync(self.channel_layer.group_discard)(
                 self.room_name,
                 self.channel_name

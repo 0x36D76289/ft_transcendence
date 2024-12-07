@@ -26,15 +26,14 @@ class PongGame():
         self.p1 = p1
         self.p2 = p2
         self.room_name: str = str(uuid4().hex)
-        start_message = json.dumps({"type":"game_start", "value":self.room_name})
         pu1 = pong_data.get_pong_user(p1)
         pu2 = pong_data.get_pong_user(p2)
         self.spectators = []
         self.start_time = datetime.now()
         if not pu1 or not pu2:
             return
-        pu1.online_socket.send(start_message)
-        pu2.online_socket.send(start_message)
+        pu1.send("game_start", self.room_name)
+        pu2.send("game_start", self.room_name)
         pu1.busy = True
         pu2.busy = True
 
@@ -52,9 +51,14 @@ class PongGame():
         if pu.tournament is not None:
             pu.busy = False
 
-    def lose_game(self, loser: User, data: dict[str, Any]):
+    def lose_game(self, loser: User, data: dict[str, Any] | None = None):
         #TODO:
         # save to DB
+        if data is None:
+            if loser == self.p2:
+                data = {"p1": WIN_SCORE, "p2": 0}
+            else:
+                data = {"p1": 0, "p1": WIN_SCORE}
         Game(
                 p1 = self.p1,
                 p2 = self.p2,
@@ -250,6 +254,10 @@ class PongUser():
         self.wants_to_fight = None
         self.busy = False
 
+    def send(self, message_type: str, content: Any) -> None:
+        self.online_socket.send(json.dumps({"type":message_type, "value": content}))
+        pass
+
 class pong_data:
     online_users: dict[User, PongUser] = dict()
     name_to_user: dict[str, User] = dict()
@@ -296,7 +304,7 @@ class pong_data:
         if pu is None:
             return
         pu.busy = True
-        pu.online_socket.send(json.dumps({"type":"game_start", "value":"bot"}))
+        pu.send("game_start", "bot")
 
     @classmethod
     def fight(cls, user: User, opponent: str):
@@ -306,22 +314,59 @@ class pong_data:
         if pu is None:
             return
         if pu.busy:
+            pu.send("notify-error", "You are marked as 'busy'")
             return
-        pu.busy = True
-        pu.wants_to_fight = opponent
+        if pu.wants_to_fight == opponent:
+            pu.send("notify", "invite to " + opponent + " has been cancelled")
+            pu.wants_to_fight = None
+            return
+
+        def offline():
+            pu.send("notify-error", opponent + " is offline")
         if opponent in cls.name_to_user:
             opp_user: User = cls.name_to_user[opponent]
         else:
+            offline()
             return
         opp_pu = cls.get_pong_user(opp_user)
         if opp_pu is None:
+            offline()
             return
-        if opp_pu.busy:
-            return
+
         if opp_pu.wants_to_fight == user.get_username():
+            if opp_pu.busy:
+                pu.send("notify-error", opponent + " is busy")
+            else:
+                pong_data.start_game(user, opp_user)
             pu.wants_to_fight = None
             opp_pu.wants_to_fight = None
-            cls.start_game(user, opp_user)
+            return
+
+        pu.wants_to_fight = opponent
+        pu.send("notify-success", "invite sent to " + opponent)
+        opp_pu.send("game-invite", user.get_username())
+        return
+
+
+# if not opp not online:
+# 	error can't start fight
+# 	return
+#
+# if opp wants_to_fight_you:
+# 	if opp busy:
+# 		error opp is busy
+# 	else:
+# 		start game
+# 	 remove from both
+# 	 return
+#
+# opp_doesn't_want_to_fight_you:
+# 	update wants_to_fight
+# 	if opp online:
+# 		notify invite sent (and cancelled invite)
+# 		send invite to other
+# 	if opp offline:
+# 		notify opp offline
 
     @classmethod
     def set_fighting_bot(cls, user: User):
