@@ -120,5 +120,12 @@
 		"block_success": "Utilisateur bloqué",
 		"remove_success": "Utilisateur supprimé",
 		"profile_load_error": "Échec du chargement du profil"
+	},
+	"tournaments": {
+		"title": "Tournois",
+		"current_tournament": "Tournoi actuel",
+		"enter_username": "Entrez le nom d'utilisateur",
+		"enter_bot_name": "Entrez le nom du bot",
+		"start_tournament": "Commencer le tournoi"
 	}
 }

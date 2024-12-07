@@ -120,5 +120,12 @@
 		"request_sent": "Richiesta di amicizia inviata a {username}",
 		"profile_load_error": "Impossibile caricare il profilo",
 		"fetch_error": "Errore nel recupero degli amici"
+	},
+	"tournaments": {
+		"title": "Tornei",
+		"current_tournament": "Torneo attuale",
+		"enter_username": "Inserisci nome utente",
+		"enter_bot_name": "Inserisci nome del bot",
+		"start_tournament": "Inizia torneo"
 	}
 }

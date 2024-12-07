@@ -120,5 +120,12 @@
 		"block_success": "User blocked",
 		"remove_success": "User removed",
 		"profile_load_error": "Failed to load profile"
+	},
+	"tournaments": {
+		"title": "Tournaments",
+		"current_tournament": "Current Tournament",
+		"enter_username": "Enter username",
+		"enter_bot_name": "Enter bot name",
+		"start_tournament": "Start Tournament"
 	}
 }
