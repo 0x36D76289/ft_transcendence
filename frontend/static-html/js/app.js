@@ -106,7 +106,6 @@ async function renderPage(path, options) {
 		// Marquer comme chargé et ajouter la transition
 		document.body.classList.add('loaded');
 		pageContent.classList.add("fade-in");
-		console.log("CHECKPOINT");
 		if (init) await init(options);
 	} catch (error) {
 		console.error("Erreur lors du rendu de la page:", error);
