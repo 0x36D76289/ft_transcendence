@@ -202,7 +202,7 @@ class Tournament():
                 if self._ongoing_round[i * 2] != None and self._ongoing_round[i * 2 + 1] != None:
                     return False
         return True
-    
+
     def find_round(self, user: User) -> tuple[int, int]:
         for i in range(len(self._next_round)):
             player = self._ongoing_round[i * 2]
@@ -245,6 +245,8 @@ class PongUser():
     tournament: Tournament | None
     wants_to_fight: str | None
     busy: bool
+    invited_tournement_users: list[str]
+    accepted_tournament_invites: list[str]
     def __init__(self, online_sock: WebsocketConsumer):
         self.user = online_sock.user
         self.online_socket = online_sock
@@ -253,6 +255,8 @@ class PongUser():
         self.tournament = None
         self.wants_to_fight = None
         self.busy = False
+        self.invited_tournement_users = []
+        self.accepted_tournament_invites = []
 
     def send(self, message_type: str, content: Any) -> None:
         self.online_socket.send(json.dumps({"type":message_type, "value": content}))
@@ -275,7 +279,7 @@ class pong_data:
         user: User = online_sock.user
         cls.online_users[user] = PongUser(online_sock)
         cls.name_to_user[user.get_username()] = user
-    
+
     @classmethod
     def unregister(cls, online_sock: WebsocketConsumer):
         user: User = online_sock.user
@@ -347,26 +351,54 @@ class pong_data:
         opp_pu.send("game-invite", user.get_username())
         return
 
+    @classmethod
+    def invite_to_tournament(cls, user: User, invitee: str):
+        # don't invite if invitee already invited
 
-# if not opp not online:
-# 	error can't start fight
-# 	return
-#
-# if opp wants_to_fight_you:
-# 	if opp busy:
-# 		error opp is busy
-# 	else:
-# 		start game
-# 	 remove from both
-# 	 return
-#
-# opp_doesn't_want_to_fight_you:
-# 	update wants_to_fight
-# 	if opp online:
-# 		notify invite sent (and cancelled invite)
-# 		send invite to other
-# 	if opp offline:
-# 		notify opp offline
+        # check invitee is online
+        # if offline:
+        #   send error back and return
+        # else
+        #   add to list
+        #   send notif to them
+        #   say invite was sent
+        #   add string to pu
+        pass
+
+    @classmethod
+    def accept_tournament_invite(cls, user: User, inviter: str):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        if inviter in cls.name_to_user:
+            inviter_user = cls.name_to_user[inviter]
+        else:
+            return
+        inviter_pu = cls.get_pong_user(inviter_user)
+        if inviter_pu == None:
+            return
+        if user.get_username not in inviter_pu.invited_tournement_users:
+            return
+        pu.accepted_tournament_invites.append(inviter)
+        # TODO: send notification to inviter that invite was accepted
+
+    #TODO: function to start tournament, it clears the accepted and sent invites of everyone added to the tournament, organiser of tournament is part of it BY NECESSITY
+
+    @classmethod
+    def reject_tournament_invite(cls, user: User, inviter: str):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        if inviter in cls.name_to_user:
+            inviter_user = cls.name_to_user[inviter]
+        else:
+            return
+        inviter_pu = cls.get_pong_user(inviter_user)
+        if inviter_pu == None:
+            return
+        if user.get_username not in inviter_pu.invited_tournement_users:
+            return
+        # TODO: send notification to inviter that invite was rejected
 
     @classmethod
     def set_fighting_bot(cls, user: User):
@@ -403,7 +435,7 @@ class pong_data:
         if pu is None or pu.game is None:
             return ""
         return pu.game.get_player_number(user)
-    
+
     @classmethod
     def start_tournament(cls, l: list[User | TournamentPlayer]):
         Tournament(l)

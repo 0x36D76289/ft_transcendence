@@ -20,6 +20,7 @@ class OnlineStatusConsumer(WebsocketConsumer):
         user = User.objects.get(id=self.scope['user'].id)
         user.is_online = True
         user.save()
+        self.send('{"type":"online-state"}')
 
     def disconnect(self, code):
         if (self.anonymous_connection):
@@ -32,7 +33,9 @@ class OnlineStatusConsumer(WebsocketConsumer):
     def receive(self, text_data: str):
         errprint(text_data)
         #HACK: testing | not real feature
-        if text_data == "start":
+        if text_data == "ping":
+            self.send('{"type":"pong"}')
+        elif text_data == "start":
             l: list[User | TournamentPlayer] = list(pong_data.online_users)
             l.append(TournamentBot("kendrick"))
             l.append(TournamentBot("drake"))
