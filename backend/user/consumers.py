@@ -50,6 +50,8 @@ class OnlineStatusConsumer(WebsocketConsumer):
             pong_data.join_matchmaking(self.user)
         elif text_data.startswith("fight "):
             pong_data.fight(self.user, text_data[6:])
+        elif text_data.startswith("invite "):
+            pong_data.invite_to_tournament(self.user, text_data[7:])
         #HACK: testing | not real feature
         elif text_data == "BOTGAME":
             pong_data.start_bot_game(self.user)

@@ -10,6 +10,7 @@ import json
 from pong.tournament_player import TournamentPlayer, TournamentBot, TournamentUser
 
 WIN_SCORE = 10
+BOT: User = User.objects.get(username="bot")
 
 def errprint(*kwargs):
     print(*kwargs, file=sys.stderr)
@@ -52,8 +53,6 @@ class PongGame():
             pu.busy = False
 
     def lose_game(self, loser: User, data: dict[str, Any] | None = None):
-        #TODO:
-        # save to DB
         if data is None:
             if loser == self.p2:
                 data = {"p1": WIN_SCORE, "p2": 0}
@@ -245,8 +244,8 @@ class PongUser():
     tournament: Tournament | None
     wants_to_fight: str | None
     busy: bool
-    invited_tournement_users: list[str]
-    accepted_tournament_invites: list[str]
+    invited_tournement_users: set[str]
+    accepted_tournament_invites: set[str]
     def __init__(self, online_sock: WebsocketConsumer):
         self.user = online_sock.user
         self.online_socket = online_sock
@@ -255,8 +254,8 @@ class PongUser():
         self.tournament = None
         self.wants_to_fight = None
         self.busy = False
-        self.invited_tournement_users = []
-        self.accepted_tournament_invites = []
+        self.invited_tournement_users = set()
+        self.accepted_tournament_invites = set()
 
     def send(self, message_type: str, content: Any) -> None:
         self.online_socket.send(json.dumps({"type":message_type, "value": content}))
@@ -352,18 +351,29 @@ class pong_data:
         return
 
     @classmethod
-    def invite_to_tournament(cls, user: User, invitee: str):
-        # don't invite if invitee already invited
+    def invite_to_tournament(cls, user: User, invited: str):
+        pu = cls.get_pong_user(user)
+        if pu is None:
+            return
+        if (invited in pu.invited_tournement_users):
+            return
 
-        # check invitee is online
-        # if offline:
-        #   send error back and return
-        # else
-        #   add to list
-        #   send notif to them
-        #   say invite was sent
-        #   add string to pu
-        pass
+        def offline():
+            pu.send("notify-error", invited + "is offline")
+            pu.send("invite-reject", invited)
+        if invited in cls.name_to_user:
+            invited_user = cls.name_to_user[invited]
+        else:
+            offline()
+            return
+        invited_pu = cls.get_pong_user(invited_user)
+        if invited_pu == None:
+            offline()
+            return
+
+        pu.invited_tournement_users.add(invited)
+        pu.send("tournament-invite", user.get_username())
+        pu.send("notify", "invite was sent to " + invited)
 
     @classmethod
     def accept_tournament_invite(cls, user: User, inviter: str):
@@ -379,8 +389,8 @@ class pong_data:
             return
         if user.get_username not in inviter_pu.invited_tournement_users:
             return
-        pu.accepted_tournament_invites.append(inviter)
-        # TODO: send notification to inviter that invite was accepted
+        pu.accepted_tournament_invites.add(inviter)
+        inviter_pu.send("invite-accept", user.get_username())
 
     #TODO: function to start tournament, it clears the accepted and sent invites of everyone added to the tournament, organiser of tournament is part of it BY NECESSITY
 
@@ -398,7 +408,7 @@ class pong_data:
             return
         if user.get_username not in inviter_pu.invited_tournement_users:
             return
-        # TODO: send notification to inviter that invite was rejected
+        inviter_pu.send("invite-reject", user.get_username())
 
     @classmethod
     def set_fighting_bot(cls, user: User):
@@ -408,8 +418,22 @@ class pong_data:
         pu.is_in_bot_game = True
 
     @classmethod
-    def win_bot(cls, user: User):
-        #TODO: report
+    def save_score(cls, user: User, data: str):
+        try:
+            datadict = json.loads(data.lstrip("win lose"))
+            Game(
+                    p1 = user,
+                    p2 = BOT,
+                    p1_score = datadict["p1"],
+                    p2_score = datadict["p2"],
+                    time_start = datetime.fromtimestamp(datadict["start"] / 1000),
+                    time_end = datetime.fromtimestamp(datadict["end"] / 1000)
+            ).save()
+        except:
+            errprint("data is", data)
+
+    @classmethod
+    def win_bot(cls, user: User, data: str):
         pu = cls.get_pong_user(user)
         if pu is None:
             return
@@ -417,10 +441,10 @@ class pong_data:
             return
         if pu.tournament:
             pu.tournament.report_game(user, True)
+        cls.save_score(user, data)
 
     @classmethod
-    def lose_bot(cls, user: User):
-        #TODO: report
+    def lose_bot(cls, user: User, data: str):
         pu = cls.get_pong_user(user)
         if pu is None:
             return
@@ -428,6 +452,7 @@ class pong_data:
             return
         if pu.tournament:
             pu.tournament.report_game(user, False)
+        cls.save_score(user, data)
 
     @classmethod
     def get_assign_message(cls, user: User) -> str:

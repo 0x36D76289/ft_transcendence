@@ -1,6 +1,6 @@
 import { navigate } from "../app.js";
-import { initSidebar } from "../components/sidebar.js";
 import { read_room } from "../pages/pong/socket.js";
+import { participants } from "../pages/tournament/participants.js";
 import { popupSystem } from "../services/popup.js";
 import { getToken } from "../utils/cookies.js";
 
@@ -79,7 +79,6 @@ function read_sock(object) {
         navigate("/pong", { game: inner });
       }
       break;
-    //TODO: ADD i18n
     case "notify":
       popupSystem("info", inner.value);
       break;
@@ -92,12 +91,34 @@ function read_sock(object) {
     case "game-invite":
       popupSystem(
         "warning",
+        //TODO: ADD i18n
         inner.value + " wants to play with you",
         true,
         () => {
           send_to_online_sock("fight " + inner.value);
         },
       );
+      break;
+    case "tournament-invite":
+      //TODO: ADD i18n
+      popupSystem(
+        "warning",
+        inner.value + "invites you to a tournament",
+        true,
+        //FIXME: SEND NOTIFS
+        () => {
+          "accept";
+        },
+        () => {
+          "reject";
+        },
+      );
+      break;
+    case "invite-acccept":
+      participants.set_status(inner.value, true);
+      break;
+    case "invite-reject":
+      participants.set_status(inner.value, false);
       break;
     case "online-state":
       let a = document.getElementsByClassName("status-led");

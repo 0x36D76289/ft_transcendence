@@ -1,24 +1,19 @@
 import { i18n } from "../services/i18n.js";
+import { Participant, participants } from "./tournament/participants.js";
 
 //@ts-check
 
-/** class representing a participant in the list for the tournament page */
-class Participant {
-  /**
-   * creates a participant
-   * @param {string} name - the name of the participant
-   * @param {boolean} bot - is the participant a bot
-   */
-  constructor(name, bot) {
-    this.name = name;
-    this.bot = bot;
-    if (bot === true) this.accepted = true;
-    this.accepted = null;
-  }
+/**
+ * @param {Participant} participant - the participant to render
+ * @returns {string}
+ */
+function renderParticipant(participant) {
+  return ` <div class="participant ${participant.getHTMLClass()}">
+			${participant.getName()}
+			${participant.getRenderEmoji()}
+			</div>
+			`;
 }
-
-/** @type {Participant[]} */
-var participants = [];
 
 export function render() {
   return `
@@ -26,16 +21,7 @@ export function render() {
 		<section class="current-tournament">
 		<h2>${i18n.t("tournaments.current_tournament")}</h2>
 		<div class="participant-list">
-		${participants
-      .map(
-        (participant) => `
-			<div class="participant ${getParticipantClass(participant)}">
-			${participant.name}
-			${participant.accepted ? "✅" : participant.accepted === false ? "❌" : "⏳"}
-			</div>
-			`,
-      )
-      .join("")}
+		${[...participants.iter()].map(renderParticipant).join("")}
 		</div>
 		</section>
 
@@ -57,70 +43,58 @@ export function render() {
 		`;
 }
 
-function getParticipantClass(participant) {
-  if (participant.bot) return "participant-bot";
-  if (participant.accepted === true) return "participant-accepted";
-  if (participant.accepted === false) return "participant-rejected";
-  return "participant-pending";
+export function updateParticipantList() {
+  console.log("update: ", [...participants.iter()]);
+  const participantList = document.querySelector(".participant-list");
+  if (participantList) {
+    participantList.innerHTML = [...participants.iter()]
+      .map(renderParticipant)
+      .join("");
+  }
 }
 
 export function init() {
-  function updateParticipantList() {
-    const participantList = document.querySelector(".participant-list");
-    if (participantList) {
-      participantList.innerHTML = participants
-        .map(
-          (participant) => `
-				<div class="participant ${getParticipantClass(participant)}">
-				${participant.name}
-				${
-          participant.bot
-            ? "🤖"
-            : participant.accepted
-              ? "✅"
-              : participant.accepted === false
-                ? "❌"
-                : "⏳"
-        }
-				</div>
-				`,
-        )
-        .join("");
-    }
-  }
-
-  //TODO: make function for both that checks if name already in list before adding
   //TODO: make it so pressing enter also calls the function
 
   /** @type {HTMLTextAreaElement} */
   let username = document.getElementById("username");
-  document.getElementById("add-user-button").onclick = () => {
-    participants.push(new Participant(username.value, false));
+  function invite_player() {
+    participants.invite_player(username.value);
+
     //TODO: send invite
     //add with event from socket
     //make invite reply send message
     //send who invited through the events and back when accepting invitation
     username.value = "";
     updateParticipantList();
+  }
+  document.getElementById("add-user-button").onclick = invite_player;
+  username.onkeyup = (event) => {
+    if (event.key == "Enter") {
+      invite_player();
+    }
   };
+
   /** @type {HTMLTextAreaElement} */
   let botname = document.getElementById("bot-name");
   document.getElementById("add-bot-button").onclick = () => {
-    participants.push(new Participant(botname.value, true));
+    participants.add_bot(botname.value);
     botname.value = "";
     updateParticipantList();
   };
 
-  participants.push(new Participant("Player1", false));
-  participants.push(new Participant("Player1", false));
-  participants.push(new Participant("Bot1", true));
-  participants.push(new Participant("Player2", false));
-  participants.push(new Participant("Bot2", true));
-  participants.push(new Participant("Bot3", true));
-  participants.push(new Participant("Player3", false));
-  participants.push(new Participant("Bot4", true));
-  participants.push(new Participant("Bot5", true));
-  participants.push(new Participant("Player4", false));
+  participants.invite_player("Player1");
+  participants.invite_player("Player1");
+  participants.add_bot("Bot1");
+  participants.invite_player("Player2");
+  participants.add_bot("Bot2");
+  participants.add_bot("Bot3");
+  participants.invite_player("Player3");
+  participants.add_bot("Bot4");
+  participants.add_bot("Bot5");
+  participants.invite_player("Player4");
+  participants.set_status("Player1", true);
+  participants.set_status("Player2", false);
 
   updateParticipantList();
 }
