@@ -9,7 +9,7 @@ export function render() {
 			<div class="vflex">
 				<button type="button" class="pong_nav_button" id="matchmaking">Join Matchmaking</button>
 				<div class="spacer"></div>
-				<button type="button" class="pong_nav_button">Join Tournament?</button>
+				<!--button type="button" class="pong_nav_button">Join Tournament?</button-->
 			</div>
 		</div>
 	`;
