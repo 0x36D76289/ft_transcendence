@@ -37,7 +37,7 @@ export function render() {
 		</section>
 
 		<section class="start-tournament">
-		<button class="start-button">${i18n.t("tournaments.start_tournament")}</button>
+		<button class="start-button" id="start-button">${i18n.t("tournaments.start_tournament")}</button>
 		</section>
 		</div>
 		`;
@@ -53,47 +53,41 @@ export function updateParticipantList() {
 }
 
 export function init() {
-  //TODO: make it so pressing enter also calls the function
-
   /** @type {HTMLTextAreaElement} */
   let username = document.getElementById("username");
-  function invite_player() {
+  /** @type {HTMLButtonElement} */
+  let userbutton = document.getElementById("add-user-button");
+  userbutton.onclick = () => {
+    if (username.value === "") return;
     participants.invite_player(username.value);
-
-    //TODO: send invite
-    //add with event from socket
-    //make invite reply send message
-    //send who invited through the events and back when accepting invitation
     username.value = "";
     updateParticipantList();
-  }
-  document.getElementById("add-user-button").onclick = invite_player;
+  };
   username.onkeyup = (event) => {
     if (event.key == "Enter") {
-      invite_player();
+      userbutton.onclick();
     }
   };
 
   /** @type {HTMLTextAreaElement} */
   let botname = document.getElementById("bot-name");
-  document.getElementById("add-bot-button").onclick = () => {
+  /** @type {HTMLButtonElement} */
+  let botbutton = document.getElementById("add-bot-button");
+  botbutton.onclick = () => {
+    if (botname.value === "") return;
     participants.add_bot(botname.value);
     botname.value = "";
     updateParticipantList();
   };
+  botname.onkeyup = (event) => {
+    if (event.key == "Enter") {
+      botbutton.onclick();
+    }
+  };
 
-  // participants.invite_player("Player1");
-  // participants.invite_player("Player1");
-  // participants.add_bot("Bot1");
-  // participants.invite_player("Player2");
-  // participants.add_bot("Bot2");
-  // participants.add_bot("Bot3");
-  // participants.invite_player("Player3");
-  // participants.add_bot("Bot4");
-  // participants.add_bot("Bot5");
-  // participants.invite_player("Player4");
-  // participants.set_status("Player1", true);
-  // participants.set_status("Player2", false);
-
-  // updateParticipantList();
+  /** @type {HTMLButtonElement} */
+  let startbutton = document.getElementById("start-button");
+  startbutton.onclick = () => {
+    console.log(participants.serialize());
+  };
 }

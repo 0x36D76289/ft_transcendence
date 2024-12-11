@@ -20,8 +20,8 @@ export class Participant {
   constructor(name, bot) {
     this.#name = name;
     this.#bot = bot;
-    if (bot === true) this.#accepted = true;
     this.#accepted = null;
+    if (bot === true) this.#accepted = true;
   }
 
   /** @returns {string} */
@@ -123,6 +123,15 @@ class TournamentParticipantsList {
         return;
       }
     }
+  }
+
+  /** @returns {string} */
+  serialize() {
+    let ret = [];
+    for (/** @type {Participant} */ const p of this.#list) {
+      if (p.getStatus() === true) ret.push(`[${p.getName()},${p.getBot()}]`);
+    }
+    return "[" + ret.join(",") + "]";
   }
 }
 
