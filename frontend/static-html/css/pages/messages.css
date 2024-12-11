@@ -44,8 +44,6 @@
   border-radius: 50%;
   background-color: var(--bg-secondary);
   margin-right: 12px;
-  overflow: hidden;
-  flex-shrink: 0;
 }
 
 .avatar img {

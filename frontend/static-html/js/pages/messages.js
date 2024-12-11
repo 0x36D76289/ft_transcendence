@@ -12,16 +12,13 @@ export function render() {
 		</div>
 		<div class="chat-window" id="chat-window">
 			<div class="chat-header">
-				<h3 id="chat-title">${i18n.t('messages.select_conversation')}</h3>
+				<div id="chat-participants">
+				</div>
 			</div>
 			<div class="messages-list" id="messages-list">
 			</div>
 			<div class="message-input-container">
-				<textarea 
-					id="message-input" 
-					placeholder="${i18n.t('messages.type_message')}" 
-					rows="3"
-				></textarea>
+				<textarea id="message-input" placeholder="${i18n.t('messages.type_message')}" rows="3"></textarea>
 				<button id="send-message-btn" class="btn-accent">
 					${i18n.t('messages.send')}
 				</button>
@@ -33,7 +30,7 @@ export function render() {
 
 export async function init() {
 	const conversationsList = document.getElementById('conversations-list');
-	const chatTitle = document.getElementById('chat-title');
+	const chatParticipants = document.getElementById('chat-participants');
 	const messagesList = document.getElementById('messages-list');
 	const messageInput = document.getElementById('message-input');
 	const sendMessageBtn = document.getElementById('send-message-btn');
@@ -53,7 +50,7 @@ export async function init() {
 							<p class="last-message">${conv.last_message?.content || ''}</p>
 						</div>
 					</div>
-            `;
+				`;
 			}).join('');
 
 			document.querySelectorAll('.conversation-item').forEach(item => {
@@ -79,7 +76,10 @@ export async function init() {
 			const conversation = await ChatAPI.getConversation(conversationId);
 
 			const otherUser = conversation.participants.find(p => p.username !== getUsername());
-			chatTitle.textContent = otherUser.username;
+
+			chatParticipants.innerHTML = conversation.participants.map(participant => `
+				<img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar">
+			`).join('');
 
 			messagesList.innerHTML = conversation.message_set.reverse().map(message => `
 				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
