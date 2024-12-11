@@ -1,46 +1,46 @@
-import { UserAPI } from '../api/user.js';
-import { getUsername, getToken } from '../utils/cookies.js';
-import { i18n } from '../services/i18n.js';
+import { UserAPI } from "../api/user.js";
+import { getUsername, getToken } from "../utils/cookies.js";
+import { i18n } from "../services/i18n.js";
 
 export async function initSidebar() {
-	const user = await UserAPI.getProfile(getUsername());
+  const user = await UserAPI.getProfile(getUsername());
 
-	if (!user) {
-		return;
-	}
+  if (!user) {
+    return;
+  }
 
-	const SIDEBAR = `
+  const SIDEBAR = `
 <nav id="sidebar" class="sidebar">
 	<div class="sidebar-header">
-		<span class="logo-text">${i18n.t('sidebar.title')}</span>
+		<span class="logo-text">${i18n.t("sidebar.title")}</span>
 	</div>
 
 	<div class="nav-items">
 		<a href="/" class="nav-item active">
 			<span class="material-icons nav-icon">home</span>
-			<span class="nav-text">${i18n.t('sidebar.home')}</span>
+			<span class="nav-text">${i18n.t("sidebar.home")}</span>
 		</a>
 		<a href="/friends" class="nav-item">
 			<span class="material-icons nav-icon">group</span>
-			<span class="nav-text">${i18n.t('sidebar.friends')}</span>
+			<span class="nav-text">${i18n.t("sidebar.friends")}</span>
 		</a>
 		<a href="/tournaments" class="nav-item">
 			<span class="material-icons nav-icon">emoji_events</span>
-			<span class="nav-text">${i18n.t('sidebar.tournaments')}</span>
+			<span class="nav-text">${i18n.t("sidebar.tournaments")}</span>
 		</a>
 		<a href="/messages" class="nav-item">
 			<span class="material-icons nav-icon">message</span>
-			<span class="nav-text">${i18n.t('sidebar.messages')}</span>
+			<span class="nav-text">${i18n.t("sidebar.messages")}</span>
 		</a>
 		<a href="/settings" class="nav-item">
 			<span class="material-icons nav-icon">settings</span>
-			<span class="nav-text">${i18n.t('sidebar.settings')}</span>
+			<span class="nav-text">${i18n.t("sidebar.settings")}</span>
 		</a>
 	</div>
 
 	<a href="/user" class="profile">
-		<img id="sidebar-profile-image" src="/media/${user.pfp}" alt="${i18n.t('sidebar.profile.alt')}" class="profile-image">
-		<div class="status-led ${user.is_online ? 'online' : 'offline'}"></div>
+		<img id="sidebar-profile-image" src="/media/${user.pfp}" alt="${i18n.t("sidebar.profile.alt")}" class="profile-image">
+		<div class="status-led ${user.is_online ? "online" : "offline"}"></div>
 		<div class="profile-info">
 			<span id="sidebar-profile-name" class="profile-name">${user.username}</span>
 		</div>
@@ -48,11 +48,11 @@ export async function initSidebar() {
 </nav>
 `;
 
-	const sidebar = document.createElement("div");
-	sidebar.innerHTML = SIDEBAR;
-	document.body.appendChild(sidebar);
+  const sidebar = document.createElement("div");
+  sidebar.innerHTML = SIDEBAR;
+  document.body.appendChild(sidebar);
 
-	if (getToken() === null || UserAPI.isTokenValid(getToken()) === false) {
-		sidebar.querySelector('.profile').style.display = 'none';
-	}
+  if (getToken() === null || UserAPI.isTokenValid(getToken()) === false) {
+    sidebar.querySelector(".profile").style.display = "none";
+  }
 }

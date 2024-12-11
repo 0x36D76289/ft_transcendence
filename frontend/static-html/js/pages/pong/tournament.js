@@ -4,7 +4,13 @@ import { page_state, set_page_state, STATES } from "./globals.js";
 import { local_update } from "./local_gameplay.js";
 import { main_menu } from "./main_menu.js";
 import { render_name, render_rounds } from "./render.js";
-import { bots, init, interval, scores, start_simulation } from "./shared_gameplay.js";
+import {
+  bots,
+  init,
+  interval,
+  scores,
+  start_simulation,
+} from "./shared_gameplay.js";
 import { game_sock } from "./socket.js";
 
 /** @type {Array<Array<string | null>>} */
@@ -19,204 +25,214 @@ let current_game = 0;
 /** @type {number} */
 let current_round = 0;
 
-
 /** @type {Array<?string>} */
-export const game_players = ["", ""]
+export const game_players = ["", ""];
 
 /**
-	* @param {number} n
-	* @returns {number}
-*/
+ * @param {number} n
+ * @returns {number}
+ */
 function next_power_of_2(n) {
-	let ret = 1;
-	while (ret < n)
-		ret <<= 1;
-	return ret;
+  let ret = 1;
+  while (ret < n) ret <<= 1;
+  return ret;
 }
 
 /**
-	* @returns {void}
-*/
+ * @returns {void}
+ */
 function fill_rounds() {
-	rounds.push([]);
-	for (let i = 0; i < next_power_of_2(players.length); i++) {
-		if (i < players.length) {
-			rounds[0][i] = players[i];
-		} else {
-			rounds[0][i] = null;
-		}
-	}
-	while (rounds[rounds.length - 1].length > 1) {
-		rounds.push([]);
-		for (let i = 0; i < rounds[rounds.length - 2].length / 2; i++) {
-			rounds[rounds.length - 1].push(null);
-		}
-	}
+  rounds.push([]);
+  for (let i = 0; i < next_power_of_2(players.length); i++) {
+    if (i < players.length) {
+      rounds[0][i] = players[i];
+    } else {
+      rounds[0][i] = null;
+    }
+  }
+  while (rounds[rounds.length - 1].length > 1) {
+    rounds.push([]);
+    for (let i = 0; i < rounds[rounds.length - 2].length / 2; i++) {
+      rounds[rounds.length - 1].push(null);
+    }
+  }
 }
 
 /**
-	* @returns {void}
-*/
+ * @returns {void}
+ */
 function start_tournament() {
-	rounds = [];
-	fill_rounds();
-	current_game = 0;
-	current_round = 0;
-	set_page_state(STATES.Scores);
-	render_rounds(rounds);
+  rounds = [];
+  fill_rounds();
+  current_game = 0;
+  current_round = 0;
+  set_page_state(STATES.Scores);
+  render_rounds(rounds);
 }
 
 /**
-	* @returns {void}
-*/
+ * @returns {void}
+ */
 export function start_name_entry() {
-	set_page_state(STATES.Name_Entry);
-	render_name(players);
+  set_page_state(STATES.Name_Entry);
+  render_name(players);
 }
 
 /** @type {boolean} */
 var is_online_bot_game = false;
 
+/** @type {number} */
+var bot_game_start_time;
+
 /** @returns {void} */
-export function start_online_bot_game() 
-{
-	init();
-	scores[0] = 0;
-	scores[1] = 0;
-	bots[0] = 0;
-	bots[1] = 1;
-	if (interval)
-		clearInterval(interval);
-	start_simulation(local_update);
-	set_page_state(STATES.SP_Game);
-	is_online_bot_game = true;
+export function start_online_bot_game() {
+  init();
+  scores[0] = 0;
+  scores[1] = 0;
+  bots[0] = 0;
+  bots[1] = 1;
+  if (interval) clearInterval(interval);
+  start_simulation(local_update);
+  set_page_state(STATES.SP_Game);
+  is_online_bot_game = true;
+  bot_game_start_time = Date.now();
 }
 
 /**
-	* @param {string} str
-	* @returns {boolean}
-*/
+ * @param {string} str
+ * @returns {boolean}
+ */
 function is_valid_tournament_username_character(str) {
-	return str.length == 1 &&
-		((str >= 'a' && str <= 'z') || 
-			(str >= 'A' && str <= 'Z') ||
-			(str >= "0" && str <= "9") ||
-			str == "_" ||
-			str == "-"
-		);
+  return (
+    str.length == 1 &&
+    ((str >= "a" && str <= "z") ||
+      (str >= "A" && str <= "Z") ||
+      (str >= "0" && str <= "9") ||
+      str == "_" ||
+      str == "-")
+  );
 }
 
 /**
-	* @param {KeyboardEvent} key_event 
-	* @returns {void}
-*/
+ * @param {KeyboardEvent} key_event
+ * @returns {void}
+ */
 export function name_entry_key(key_event) {
-	//select index
-	/** @type {number} */
-	let index = players.length - 1;
-	if (index == -1) index = 0;
-	//grab string/create
-	/** @type {string} */
-	let string = players[index];
-	if (string === undefined) string = "";
-	//modify
-	if (is_valid_tournament_username_character(key_event.key))
-		string += key_event.key;
-	if (key_event.key == "Backspace")
-		string = string.substring(0, string.length - 1);
-	//save
-	players[index] = string;
-	//enter handling
-	if (key_event.key == "Enter") {
-		if (string == "") {
-			if (players.length > 2) {
-				players.pop();
-				start_tournament();
-				return;
-			}
-		} else {
-			players[players.length] = "";
-		}
-	}
-	//render
-	render_name(players);
+  //select index
+  /** @type {number} */
+  let index = players.length - 1;
+  if (index == -1) index = 0;
+  //grab string/create
+  /** @type {string} */
+  let string = players[index];
+  if (string === undefined) string = "";
+  //modify
+  if (is_valid_tournament_username_character(key_event.key))
+    string += key_event.key;
+  if (key_event.key == "Backspace")
+    string = string.substring(0, string.length - 1);
+  //save
+  players[index] = string;
+  //enter handling
+  if (key_event.key == "Enter") {
+    if (string == "") {
+      if (players.length > 2) {
+        players.pop();
+        start_tournament();
+        return;
+      }
+    } else {
+      players[players.length] = "";
+    }
+  }
+  //render
+  render_name(players);
 }
 
 /**
-	* @param {?string} p1 - player 1
-	* @param {?string} p2 - player 2
-	* @returns {void}
-*/
+ * @param {?string} p1 - player 1
+ * @param {?string} p2 - player 2
+ * @returns {void}
+ */
 function play_game(p1, p2) {
-	set_page_state(STATES.Tournament);
-	game_players[0] = p1;
-	game_players[1] = p2;
-	init();
+  set_page_state(STATES.Tournament);
+  game_players[0] = p1;
+  game_players[1] = p2;
+  init();
 
-	scores[0] = 0;
-	scores[1] = 0;
-	bots[0] = 0;
-	bots[1] = 0;
-	if (p1 === "bot")
-		bots[0] = 1;
-	if (p2 === "bot")
-		bots[1] = 1;
-	if (interval)
-		clearInterval(interval);
-	start_simulation(local_update);
+  scores[0] = 0;
+  scores[1] = 0;
+  bots[0] = 0;
+  bots[1] = 0;
+  if (p1 === "bot") bots[0] = 1;
+  if (p2 === "bot") bots[1] = 1;
+  if (interval) clearInterval(interval);
+  start_simulation(local_update);
 }
 
 /**
-	* @returns {?string}
-*/
+ * @returns {?string}
+ */
 export function next_round() {
-	if (current_round >= rounds.length - 1) {
-		main_menu();
-		return rounds[rounds.length - 1][0];
-	}
-	//start game
-	let p1 = rounds[current_round][current_game * 2];
-	let p2 = rounds[current_round][current_game * 2 + 1];
-	console.log("round " + current_round + " game " + current_game + ": " + p1 + " vs " + p2);
-	if (p2 === null) {
-		set_page_state(STATES.Tournament);
-		game_end_callback(p1);
-	} else {
-		play_game(p1, p2);
-	}
-	return null;
+  if (current_round >= rounds.length - 1) {
+    main_menu();
+    return rounds[rounds.length - 1][0];
+  }
+  //start game
+  let p1 = rounds[current_round][current_game * 2];
+  let p2 = rounds[current_round][current_game * 2 + 1];
+  console.log(
+    "round " +
+      current_round +
+      " game " +
+      current_game +
+      ": " +
+      p1 +
+      " vs " +
+      p2,
+  );
+  if (p2 === null) {
+    set_page_state(STATES.Tournament);
+    game_end_callback(p1);
+  } else {
+    play_game(p1, p2);
+  }
+  return null;
 }
 
 //FIXME: OWN FILE
 export function game_end_callback(winner) {
-	if (interval)
-		clearInterval(interval);
-	switch (page_state) {
-		case STATES.SP_Game:
-			if (is_online_bot_game) {
-				//FIXME: SEND REAL MESSAGE
-				if (scores[0] > scores[1]) {
-					game_sock.send("win");
-				} else {
-					game_sock.send("lose");
-				}
-				is_online_bot_game = false
-			}
-		case STATES.MP_Game:
-			main_menu();
-			break;
-		case STATES.Tournament:
-			set_page_state(STATES.Scores);
-			rounds[current_round + 1][current_game] = winner;
-			current_game += 1;
-			current_game %= rounds[current_round].length / 2;
-			if (current_game == 0)
-				current_round += 1;
-			render_rounds(rounds);
-			break;
-		case STATES.Menu:
-			break;
-		case STATES.Scores:
-			break;
-	}
+  if (interval) clearInterval(interval);
+  switch (page_state) {
+    case STATES.SP_Game:
+      if (is_online_bot_game) {
+        let obj = {
+          p1: scores[0],
+          p2: scores[1],
+          start: bot_game_start_time,
+          end: Date.now(),
+        };
+        if (scores[0] > scores[1]) {
+          game_sock.send("win " + JSON.stringify(obj));
+        } else {
+          game_sock.send("lose " + JSON.stringify(obj));
+        }
+        is_online_bot_game = false;
+      }
+    case STATES.MP_Game:
+      main_menu();
+      break;
+    case STATES.Tournament:
+      set_page_state(STATES.Scores);
+      rounds[current_round + 1][current_game] = winner;
+      current_game += 1;
+      current_game %= rounds[current_round].length / 2;
+      if (current_game == 0) current_round += 1;
+      render_rounds(rounds);
+      break;
+    case STATES.Menu:
+      break;
+    case STATES.Scores:
+      break;
+  }
 }

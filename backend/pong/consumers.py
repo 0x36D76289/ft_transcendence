@@ -64,10 +64,10 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data: str):
         if self.bot_game:
-            if text_data == "win":
-                pong_data.win_bot(self.user)
-            elif text_data == "lose":
-                pong_data.lose_bot(self.user)
+            if text_data.startswith("win "):
+                pong_data.win_bot(self.user, text_data)
+            elif text_data.startswith("lose "):
+                pong_data.lose_bot(self.user, text_data)
             return
         # errprint("+" * 20)
         # errprint("received " + text_data)
