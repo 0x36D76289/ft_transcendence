@@ -44,7 +44,6 @@ export function render() {
 }
 
 export function updateParticipantList() {
-  console.log("update: ", [...participants.iter()]);
   const participantList = document.querySelector(".participant-list");
   if (participantList) {
     participantList.innerHTML = [...participants.iter()]
@@ -83,18 +82,18 @@ export function init() {
     updateParticipantList();
   };
 
-  participants.invite_player("Player1");
-  participants.invite_player("Player1");
-  participants.add_bot("Bot1");
-  participants.invite_player("Player2");
-  participants.add_bot("Bot2");
-  participants.add_bot("Bot3");
-  participants.invite_player("Player3");
-  participants.add_bot("Bot4");
-  participants.add_bot("Bot5");
-  participants.invite_player("Player4");
-  participants.set_status("Player1", true);
-  participants.set_status("Player2", false);
+  // participants.invite_player("Player1");
+  // participants.invite_player("Player1");
+  // participants.add_bot("Bot1");
+  // participants.invite_player("Player2");
+  // participants.add_bot("Bot2");
+  // participants.add_bot("Bot3");
+  // participants.invite_player("Player3");
+  // participants.add_bot("Bot4");
+  // participants.add_bot("Bot5");
+  // participants.invite_player("Player4");
+  // participants.set_status("Player1", true);
+  // participants.set_status("Player2", false);
 
-  updateParticipantList();
+  // updateParticipantList();
 }

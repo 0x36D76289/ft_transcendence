@@ -1,3 +1,4 @@
+import { send_to_online_sock } from "../../api/socket.js";
 import { popupSystem } from "../../services/popup.js";
 import { updateParticipantList } from "../tournaments.js";
 
@@ -86,6 +87,7 @@ class TournamentParticipantsList {
       }
     }
     this.#push(new Participant(name, false));
+    send_to_online_sock("invite " + name);
   }
   /**
    * @param {string} name
@@ -117,8 +119,7 @@ class TournamentParticipantsList {
     for (/** @type {Participant} */ const p of this.#list) {
       if (name === p.getName()) {
         p.setStatus(status);
-        //IF PAGE IS TOURNAMENT:
-        //updateParticipantList();
+        if (window.location.pathname == "/tournaments") updateParticipantList();
         return;
       }
     }

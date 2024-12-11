@@ -12,16 +12,19 @@ from pong.tournament_player import TournamentPlayer, TournamentBot, TournamentUs
 WIN_SCORE = 10
 BOT: User = User.objects.get(username="bot")
 
+
 def errprint(*kwargs):
     print(*kwargs, file=sys.stderr)
 
-class PongGame():
+
+class PongGame:
     # DATA
     p1: User
     p2: User
     spectators: list[User]
     room_name: str
     start_time: datetime
+
     # methods
     def __init__(self, p1: User, p2: User):
         self.p1 = p1
@@ -59,12 +62,12 @@ class PongGame():
             else:
                 data = {"p1": 0, "p1": WIN_SCORE}
         Game(
-                p1 = self.p1,
-                p2 = self.p2,
-                p1_score = data["p1"],
-                p2_score = data["p2"],
-                time_start = self.start_time,
-                time_end = datetime.now()
+            p1=self.p1,
+            p2=self.p2,
+            p1_score=data["p1"],
+            p2_score=data["p2"],
+            time_start=self.start_time,
+            time_end=datetime.now(),
         ).save()
         self.close()
         pu = pong_data.get_pong_user(loser)
@@ -78,29 +81,34 @@ class PongGame():
             self.lose_game(self.p2, data)
         elif data["p2"] == WIN_SCORE:
             self.lose_game(self.p1, data)
+
     def close(self):
         self.disconnect_user(self.p1)
         self.disconnect_user(self.p2)
         for spec in self.spectators:
             self.disconnect_user(spec)
         pass
+
     def get_player_number(self, user: User) -> str:
         number: int = -1
         if user == self.p1:
             number = 1
         if user == self.p2:
             number = 2
-        return json.dumps({"type":"player_assign", "value":number})
+        return json.dumps({"type": "player_assign", "value": number})
+
 
 def next_power_of_2(n: int) -> int:
-    return 2**(n-1).bit_length()
+    return 2 ** (n - 1).bit_length()
+
 
 def get_TP_name(tp: TournamentPlayer | None) -> str:
     if tp is None:
         return "None"
     return tp.name
 
-class Tournament():
+
+class Tournament:
     players: list[TournamentPlayer]
     rounds: list[list[TournamentPlayer | None]]
     current_round_index: int
@@ -113,7 +121,9 @@ class Tournament():
         for user in player_list:
             if type(user) is User:
                 user = TournamentUser(user)
-            if isinstance(user, TournamentPlayer): #INFO: always true but here for type checker
+            if isinstance(
+                user, TournamentPlayer
+            ):  # INFO: always true but here for type checker
                 if user.bot == False:
                     pu = pong_data.get_pong_user(user.user)
                     if pu is None:
@@ -130,11 +140,18 @@ class Tournament():
 
     def fill_rounds(self) -> None:
         self.rounds = []
-        self.rounds.append([self.players[i] if i < len(self.players) else None for i in range(next_power_of_2(len(self.players)))])
-        while (len(self.rounds[-1]) > 1):
-            self.rounds.append([None for _ in range(len(self.rounds[-1])//2)])
+        self.rounds.append(
+            [
+                self.players[i] if i < len(self.players) else None
+                for i in range(next_power_of_2(len(self.players)))
+            ]
+        )
+        while len(self.rounds[-1]) > 1:
+            self.rounds.append([None for _ in range(len(self.rounds[-1]) // 2)])
 
-    def start_game(self, p1: TournamentPlayer | None, p2: TournamentPlayer | None) -> TournamentPlayer | None:
+    def start_game(
+        self, p1: TournamentPlayer | None, p2: TournamentPlayer | None
+    ) -> TournamentPlayer | None:
         if p1 is None:
             return p2
         if p2 is None:
@@ -144,7 +161,7 @@ class Tournament():
                 return p2
             return p1
         if p1.bot == True:
-            if p2.bot == False: #INFO: always true but here for type check
+            if p2.bot == False:  # INFO: always true but here for type check
                 pong_data.start_bot_game(p2.user)
             return None
         if p2.bot == True:
@@ -152,7 +169,7 @@ class Tournament():
             return None
         pong_data.start_game(p1.user, p2.user)
         return None
-        #TODO: check return value of start_game
+        # TODO: check return value of start_game
         #   if game failed:
         #       if one online:
         #           online is winner
@@ -189,7 +206,9 @@ class Tournament():
             # name1 = get_TP_name(self._ongoing_round[i * 2])
             # name2 = get_TP_name(self._ongoing_round[i * 2 + 1])
             # errprint("STARTING GAME BETWEEN", name1, name2)
-            self._next_round[i] = self.start_game(self._ongoing_round[i * 2], self._ongoing_round[i * 2 + 1])
+            self._next_round[i] = self.start_game(
+                self._ongoing_round[i * 2], self._ongoing_round[i * 2 + 1]
+            )
         self.current_round_index += 1
         if self.is_round_over():
             return self.start_round()
@@ -198,7 +217,10 @@ class Tournament():
     def is_round_over(self) -> bool:
         for i in range(len(self._next_round)):
             if self._next_round[i] == None:
-                if self._ongoing_round[i * 2] != None and self._ongoing_round[i * 2 + 1] != None:
+                if (
+                    self._ongoing_round[i * 2] != None
+                    and self._ongoing_round[i * 2 + 1] != None
+                ):
                     return False
         return True
 
@@ -232,10 +254,13 @@ class Tournament():
 
     def print_rounds(self):
         for i, round in enumerate(self.rounds):
-            errprint(f"{i}:", " ".join((thing.name if thing else "empty" for thing in round)))
+            errprint(
+                f"{i}:", " ".join((thing.name if thing else "empty" for thing in round))
+            )
         errprint()
 
-class PongUser():
+
+class PongUser:
     user: User
     online_socket: WebsocketConsumer
     is_in_bot_game: bool
@@ -246,6 +271,7 @@ class PongUser():
     busy: bool
     invited_tournement_users: set[str]
     accepted_tournament_invites: set[str]
+
     def __init__(self, online_sock: WebsocketConsumer):
         self.user = online_sock.user
         self.online_socket = online_sock
@@ -258,8 +284,9 @@ class PongUser():
         self.accepted_tournament_invites = set()
 
     def send(self, message_type: str, content: Any) -> None:
-        self.online_socket.send(json.dumps({"type":message_type, "value": content}))
+        self.online_socket.send(json.dumps({"type": message_type, "value": content}))
         pass
+
 
 class pong_data:
     online_users: dict[User, PongUser] = dict()
@@ -287,8 +314,7 @@ class pong_data:
             pu.game.lose_game(pu.user)
         cls.online_users.pop(user)
         if user.get_username() in cls.name_to_user:
-            del(cls.name_to_user[user.get_username()])
-
+            del cls.name_to_user[user.get_username()]
 
     @classmethod
     def start_game(cls, p1: User, p2: User) -> bool:
@@ -311,7 +337,7 @@ class pong_data:
 
     @classmethod
     def fight(cls, user: User, opponent: str):
-        if (user.get_username() == opponent):
+        if user.get_username() == opponent:
             return
         pu = cls.get_pong_user(user)
         if pu is None:
@@ -326,6 +352,7 @@ class pong_data:
 
         def offline():
             pu.send("notify-error", opponent + " is offline")
+
         if opponent in cls.name_to_user:
             opp_user: User = cls.name_to_user[opponent]
         else:
@@ -355,12 +382,13 @@ class pong_data:
         pu = cls.get_pong_user(user)
         if pu is None:
             return
-        if (invited in pu.invited_tournement_users):
+        if invited in pu.invited_tournement_users:
             return
 
         def offline():
-            pu.send("notify-error", invited + "is offline")
+            pu.send("notify-error", invited + " is offline")
             pu.send("invite-reject", invited)
+
         if invited in cls.name_to_user:
             invited_user = cls.name_to_user[invited]
         else:
@@ -372,7 +400,7 @@ class pong_data:
             return
 
         pu.invited_tournement_users.add(invited)
-        pu.send("tournament-invite", user.get_username())
+        invited_pu.send("tournament-invite", user.get_username())
         pu.send("notify", "invite was sent to " + invited)
 
     @classmethod
@@ -387,12 +415,12 @@ class pong_data:
         inviter_pu = cls.get_pong_user(inviter_user)
         if inviter_pu == None:
             return
-        if user.get_username not in inviter_pu.invited_tournement_users:
+        if user.get_username() not in inviter_pu.invited_tournement_users:
             return
         pu.accepted_tournament_invites.add(inviter)
         inviter_pu.send("invite-accept", user.get_username())
 
-    #TODO: function to start tournament, it clears the accepted and sent invites of everyone added to the tournament, organiser of tournament is part of it BY NECESSITY
+    # TODO: function to start tournament, it clears the accepted and sent invites of everyone added to the tournament, organiser of tournament is part of it BY NECESSITY
 
     @classmethod
     def reject_tournament_invite(cls, user: User, inviter: str):
@@ -406,7 +434,7 @@ class pong_data:
         inviter_pu = cls.get_pong_user(inviter_user)
         if inviter_pu == None:
             return
-        if user.get_username not in inviter_pu.invited_tournement_users:
+        if user.get_username() not in inviter_pu.invited_tournement_users:
             return
         inviter_pu.send("invite-reject", user.get_username())
 
@@ -422,12 +450,12 @@ class pong_data:
         try:
             datadict = json.loads(data.lstrip("win lose"))
             Game(
-                    p1 = user,
-                    p2 = BOT,
-                    p1_score = datadict["p1"],
-                    p2_score = datadict["p2"],
-                    time_start = datetime.fromtimestamp(datadict["start"] / 1000),
-                    time_end = datetime.fromtimestamp(datadict["end"] / 1000)
+                p1=user,
+                p2=BOT,
+                p1_score=datadict["p1"],
+                p2_score=datadict["p2"],
+                time_start=datetime.fromtimestamp(datadict["start"] / 1000),
+                time_end=datetime.fromtimestamp(datadict["end"] / 1000),
             ).save()
         except:
             errprint("data is", data)

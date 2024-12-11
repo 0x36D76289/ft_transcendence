@@ -11,6 +11,22 @@ var online_sock;
 
 /** @type {boolean} */
 var asked_for_init = false;
+/** @type {boolean} */
+var send_reconnect_notif = false;
+
+/** @param {boolean} status
+ * @returns {void}
+ */
+function set_led(status) {
+  let a = document.getElementsByClassName("status-led");
+  if (a.length) {
+    let led = a[0];
+    if (status) led.className = "status-led online";
+    else led.className = "status-led offline";
+  } else {
+    setTimeout(1000, set_led, status);
+  }
+}
 
 /**
  * sends a message through the online sock or notifies the user if it's still getting ready
@@ -32,6 +48,10 @@ export function send_to_online_sock(message) {
 
 /** @returns {void} */
 export function create_socket() {
+  if (send_reconnect_notif) {
+    popupSystem("info", "reconnecting to socket");
+    send_reconnect_notif = false;
+  }
   online_sock = new WebSocket(
     "wss://" +
       window.location.host +
@@ -44,6 +64,7 @@ export function create_socket() {
     console.log(online_sock);
     send_to_online_sock("ping");
     console.log("socket opened and ping sent");
+    send_reconnect_notif = true;
     if (asked_for_init) {
       asked_for_init = false;
       //TODO: i18n
@@ -53,8 +74,8 @@ export function create_socket() {
   };
   online_sock.addEventListener("close", () => {
     //TODO: i18n
-    popupSystem("info", "reconnecting to socket");
-    create_socket;
+    set_led(false);
+    create_socket();
   });
 }
 
@@ -72,6 +93,8 @@ function read_sock(object) {
     return;
   }
   switch (inner.type) {
+    case "pong":
+      break;
     case "game_start":
       if (window.location.pathname == "/pong") {
         read_room(inner);
@@ -80,6 +103,7 @@ function read_sock(object) {
       }
       break;
     case "notify":
+      //TODO: i18n that would recognise the value -> translate to key -> then call regular i18n
       popupSystem("info", inner.value);
       break;
     case "notify-success":
@@ -103,30 +127,24 @@ function read_sock(object) {
       //TODO: ADD i18n
       popupSystem(
         "warning",
-        inner.value + "invites you to a tournament",
+        inner.value + " invites you to a tournament",
         true,
-        //FIXME: SEND NOTIFS
         () => {
-          "accept";
+          send_to_online_sock("accept " + inner.value);
         },
         () => {
-          "reject";
+          send_to_online_sock("reject " + inner.value);
         },
       );
       break;
-    case "invite-acccept":
+    case "invite-accept":
       participants.set_status(inner.value, true);
       break;
     case "invite-reject":
       participants.set_status(inner.value, false);
       break;
     case "online-state":
-      let a = document.getElementsByClassName("status-led");
-      if (a.length) {
-        let led = a[0];
-        led.className = "status-led online";
-        console.log(led);
-      }
+      set_led(true);
       break;
     default:
       console.log("couldn't recognize type: ", inner.type);
