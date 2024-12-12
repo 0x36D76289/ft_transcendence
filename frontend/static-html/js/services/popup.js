@@ -60,7 +60,7 @@ export function popupSystem(
       }
     });
 
-    if (accept !== emptyFunction && reject !== emptyFunction) {
+    if (showButtons) {
       setTimeout(() => {
         popupElement.remove();
       }, 400);
