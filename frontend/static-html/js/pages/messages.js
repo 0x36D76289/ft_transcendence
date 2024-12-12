@@ -88,6 +88,9 @@ export async function init() {
 					<div class="message-content">
 						${message.content}
 					</div>
+					<div class="message-time">
+						${new Date(message.time_created).toLocaleTimeString()}
+					</div>
 				</div>
 			`).join('');
 
@@ -98,7 +101,17 @@ export async function init() {
 	}
 
 	async function sendMessage() {
-		// TODO: Add message logic
+		const messageInput = document.getElementById('message-input');
+
+		if (!messageInput.value) {
+			return;
+		}
+		
+		console.log(messageInput.value);
+		socket.send(JSON.stringify({
+			message: messageInput.value
+		}));
+		messageInput.value = '';
 	}
 
 	function setupWebSocket(conversationId) {
@@ -108,29 +121,19 @@ export async function init() {
 
 		socket = new WebSocket(`${WS_URL}/chat/${conversationId}?token=${getToken()}`);
 
-		document.getElementById('send-message-btn').onclick = () => {
-			const messageInput = document.getElementById('message-input');
-			console.log(messageInput.value);
-			socket.send(JSON.stringify({
-				message: messageInput.value
-			}));
-			messageInput.value = '';
-		};
+		// Removed redundant event listeners
 
 		socket.onmessage = (event) => {
 			const message = JSON.parse(event.data);
 			console.log(message.content);
 
-		// 	<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
-		// 	<div class="message-content">
-		// 		${message.content}
-		// 	</div>
-		// </div>
-
 			messagesList.innerHTML += `
 				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">	
 					<div class="message-content">
 						${message.content}
+					</div>
+					<div class="message-time">
+						${new Date(message.time_created).toLocaleTimeString()}
 					</div>
 				</div>
 			`;
