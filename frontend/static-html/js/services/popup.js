@@ -45,6 +45,7 @@ export function popupSystem(
 
   // Handling close animation
   const removePopup = () => {
+    if (showButtons) return;
     popupElement.style.animation =
       "popupExit 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards";
 
@@ -60,15 +61,15 @@ export function popupSystem(
       }
     });
 
-    if (showButtons) {
-      setTimeout(() => {
-        popupElement.remove();
-      }, 400);
-    }
+    setTimeout(() => {
+      popupElement.remove();
+    }, 400);
   };
 
   // Close button click handler
-  popupClose.addEventListener("click", removePopup);
+  popupClose.onclick = () => {
+    (showButtons = false), removePopup();
+  };
 
   // Auto-close after 5 seconds
   const autoCloseTimeout = setTimeout(removePopup, 5000);
@@ -89,12 +90,14 @@ export function popupSystem(
     const rejectButton = popupElement.querySelector(".popup__button--reject");
 
     acceptButton.addEventListener("click", () => {
+      showButtons = false;
       console.log("Accepted");
       accept();
       removePopup();
     });
 
     rejectButton.addEventListener("click", () => {
+      showButtons = false;
       console.log("Rejected");
       reject();
       removePopup();
