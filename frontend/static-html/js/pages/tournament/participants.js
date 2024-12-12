@@ -129,9 +129,14 @@ class TournamentParticipantsList {
   serialize() {
     let ret = [];
     for (/** @type {Participant} */ const p of this.#list) {
-      if (p.getStatus() === true) ret.push(`[${p.getName()},${p.getBot()}]`);
+      if (p.getStatus() === true) ret.push([p.getName(), p.getBot()]);
     }
-    return "[" + ret.join(",") + "]";
+    return JSON.stringify(ret);
+  }
+
+  /** @returns {void} */
+  empty() {
+    this.#list = [];
   }
 }
 

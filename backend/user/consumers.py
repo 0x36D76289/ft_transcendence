@@ -57,6 +57,8 @@ class OnlineStatusConsumer(WebsocketConsumer):
             pong_data.accept_tournament_invite(self.user, text_data[7:])
         elif text_data.startswith("reject "):
             pong_data.reject_tournament_invite(self.user, text_data[7:])
+        elif text_data.startswith("start "):
+            pong_data.start_tournament_text(self.user, text_data[6:])
         # HACK: testing | not real feature
         elif text_data == "BOTGAME":
             pong_data.start_bot_game(self.user)

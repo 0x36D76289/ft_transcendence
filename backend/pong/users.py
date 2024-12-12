@@ -121,9 +121,8 @@ class Tournament:
         for user in player_list:
             if type(user) is User:
                 user = TournamentUser(user)
-            if isinstance(
-                user, TournamentPlayer
-            ):  # INFO: always true but here for type checker
+            if isinstance(user, TournamentPlayer):
+                # INFO: above always true but here for type checker
                 if user.bot == False:
                     pu = pong_data.get_pong_user(user.user)
                     if pu is None:
@@ -133,6 +132,10 @@ class Tournament:
                     pu.tournament = self
                     pu.busy = True
                 self.players.append(user)
+        if len(self.players) < 2:
+            for player in self.players:
+                self.remove_player(player)
+            return
         self.fill_rounds()
         self.current_round_index = 0
         self._next_round = []
@@ -420,7 +423,60 @@ class pong_data:
         pu.accepted_tournament_invites.add(inviter)
         inviter_pu.send("invite-accept", user.get_username())
 
-    # TODO: function to start tournament, it clears the accepted and sent invites of everyone added to the tournament, organiser of tournament is part of it BY NECESSITY
+    @classmethod
+    def start_tournament_text(cls, user: User, invitelist: str):
+        if invitelist == "[]":
+            return
+        tournament_list: list[TournamentPlayer] = []
+        user_pu = cls.get_pong_user(user)
+        if user_pu is None:
+            return
+        if user_pu.busy:
+            return
+        username: str = user.get_username()
+        decoded: list
+        try:
+            decoded = json.loads(invitelist)
+        except:
+            errprint("couldn't decode invitelist:", invitelist)
+            return
+
+        def add_user(user: tuple[str, bool]):
+            for player in tournament_list:
+                if player.name == user[0]:
+                    return
+            if user[1]:
+                # if is bot
+                if user[0] != username:
+                    tournament_list.append(TournamentBot(user[0]))
+                return
+            # if player
+            if user[0] not in cls.name_to_user:
+                return
+            user_user = cls.name_to_user[user[0]]
+            user_pu = cls.get_pong_user(user_user)
+            if user_pu is None:
+                return
+            if not username in user_pu.accepted_tournament_invites:
+                return
+            user_pu.accepted_tournament_invites.clear()
+            tournament_list.append(TournamentUser(user_user))
+
+        if not type(decoded) == list:
+            return
+        for elem in decoded:
+            if (
+                type(elem) != list
+                or len(elem) != 2
+                or type(elem[0]) != str
+                or type(elem[1]) != bool
+            ):
+                return
+            add_user(elem)
+        if username not in [player.name for player in tournament_list]:
+            tournament_list.append(user)
+        user_pu.invited_tournement_users.clear()
+        cls.start_tournament(tournament_list)
 
     @classmethod
     def reject_tournament_invite(cls, user: User, inviter: str):

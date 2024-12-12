@@ -1,3 +1,4 @@
+import { send_to_online_sock } from "../api/socket.js";
 import { i18n } from "../services/i18n.js";
 import { Participant, participants } from "./tournament/participants.js";
 
@@ -88,6 +89,10 @@ export function init() {
   /** @type {HTMLButtonElement} */
   let startbutton = document.getElementById("start-button");
   startbutton.onclick = () => {
-    console.log(participants.serialize());
+    let userlist = participants.serialize();
+    participants.empty();
+    updateParticipantList();
+    console.log("sending ", userlist);
+    send_to_online_sock("start " + userlist);
   };
 }
