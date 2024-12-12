@@ -566,3 +566,10 @@ class pong_data:
             return
         cls.start_game(cls.matchmaking_queue, user)
         cls.matchmaking_queue = None
+
+    @classmethod
+    def message_notify(cls, user: User):
+        pu = pong_data.get_pong_user(user)
+        if pu is None:
+            return
+        pu.send("notify", "new message")
