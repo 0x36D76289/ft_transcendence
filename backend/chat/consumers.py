@@ -7,6 +7,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from django.core.files.base import ContentFile
 
+from pong.users import pong_data
 from user.models import User
 from chat.models import Message, Conversation
 from chat.serializers import MessageSerializer
@@ -16,22 +17,21 @@ from sys import stderr
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-        print("CONNECTING TO SOCKET", file=stderr)
+        # print("CONNECTING TO SOCKET", file=stderr)
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
         sender = self.scope.get("user")
 
         try:
-            print("on est la", file=stderr)
-            print([obj for obj in Conversation.objects.all()], file=stderr)
+            # print("on est la", file=stderr)
+            # print([obj for obj in Conversation.objects.all()], file=stderr)
             conversation = Conversation.objects.get(id=int(self.room_name))
-            print("on est la 2", file=stderr)
+            # print("on est la 2", file=stderr)
             sender = self.scope["user"]
-            print(sender.username, file=stderr)
-            print(conversation.participants.all(), file=stderr)
+            # print(sender.username, file=stderr)
+            # print(conversation.participants.all(), file=stderr)
             if sender not in conversation.participants.all():
-                print("user not in conv", file=stderr)
-                raise Exception()
+                raise Exception("user not in conv")
         except Exception as e:
             print("found error", e, file=stderr)
             self.close()
@@ -57,6 +57,13 @@ class ChatConsumer(WebsocketConsumer):
 
         conversation = Conversation.objects.get(id=int(self.room_name))
         sender = self.scope["user"]
+
+        for participant in conversation.participants.all():
+            # print("participant:", participant, file=stderr)
+            # print("participant:", type(participant), file=stderr)
+            # print("participant:", participant == sender, file=stderr)
+            if participant != sender:
+                pong_data.message_notify(participant)
 
         _message = Message.objects.create(
             sender=sender, content=message, conversation_id=conversation
