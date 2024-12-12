@@ -34,6 +34,19 @@
   width: 100px;
   height: 100px;
   margin-bottom: var(--margin-m);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50%;
+}
+
+.profile-avatar:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.profile-avatar:active {
+  transform: scale(1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-placeholder {

@@ -73,7 +73,6 @@ export function init() {
 				console.error('Error while registering');
 				return;
 			}
-			mainElement.style.marginLeft = originalMarginLeft;
 			popupSystem('success', 'Compte créé avec succès');
 		} catch (error) {
 			popupSystem('error', 'Erreur d\'enregistrement');

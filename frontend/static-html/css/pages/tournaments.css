@@ -45,9 +45,8 @@
 }
 
 .participant-bot {
-  --bot-color: 0, 180, 210;
-  border: 2px solid rgb(var(--bot-color));
-  background: rgba(var(--bot-color), 0.1);
+  border: 2px solid rgb(rgb(0, 180, 210));
+  background: rgba(rgba(0, 180, 210, 0.1));
 }
 
 .participant-rejected {

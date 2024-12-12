@@ -194,6 +194,7 @@ a {
 @media screen and (max-width: 480px) {
 	main {
 		margin-left: 0;
+		margin-bottom: var(--mobile-height);
 	}
 }
 

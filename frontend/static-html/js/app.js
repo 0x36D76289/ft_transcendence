@@ -23,7 +23,7 @@ const ROUTES = {
 };
 
 export const API_URL = `https://${window.location.host}/api`
-export const WS_URL = `wss://${window.location.host}/ws`
+export const WS_URL = `wss://${window.location.host}/api/ws`
 /* ******************** Security Middleware ******************** */
 async function checkAuth() {
 	const token = getToken();

@@ -42,6 +42,10 @@ export async function init() {
 			const conversations = await ChatAPI.getConversations();
 			conversationsList.innerHTML = conversations.map(conv => {
 				const otherUser = conv.participants[0];
+
+				if (otherUser === undefined) {
+					return '';
+				}
 				return `
 					<div class="conversation-item" data-conv-id="${conv.id}">
 						<img src="/media/${otherUser.pfp}" alt="${otherUser.username}" class="avatar">
@@ -75,8 +79,6 @@ export async function init() {
 		try {
 			const conversation = await ChatAPI.getConversation(conversationId);
 
-			const otherUser = conversation.participants.find(p => p.username !== getUsername());
-
 			chatParticipants.innerHTML = conversation.participants.map(participant => `
 				<img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar">
 			`).join('');
@@ -104,29 +106,35 @@ export async function init() {
 			socket.close();
 		}
 
-		socket = new WebSocket(`${WS_URL}/chat/${conversationId}/?token=${getToken()}`);
+		socket = new WebSocket(`${WS_URL}/chat/${conversationId}?token=${getToken()}`);
 
-		socket.onmessage = function (event) {
-			const data = JSON.parse(event.data);
-			if (data.message) {
-				const messageElement = document.createElement('div');
-				messageElement.className = `message ${data.sender === getUsername() ? 'sent' : 'received'}`;
-				messageElement.innerHTML = `
+		document.getElementById('send-message-btn').onclick = () => {
+			const messageInput = document.getElementById('message-input');
+			console.log(messageInput.value);
+			socket.send(JSON.stringify({
+				message: messageInput.value
+			}));
+			messageInput.value = '';
+		};
+
+		socket.onmessage = (event) => {
+			const message = JSON.parse(event.data);
+			console.log(message.content);
+
+		// 	<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+		// 	<div class="message-content">
+		// 		${message.content}
+		// 	</div>
+		// </div>
+
+			messagesList.innerHTML += `
+				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">	
 					<div class="message-content">
-						${data.message}
+						${message.content}
 					</div>
-				`;
-				messagesList.appendChild(messageElement);
-				messagesList.scrollTop = messagesList.scrollHeight;
-			}
-		};
-
-		socket.onclose = function (event) {
-			console.log('WebSocket closed:', event);
-		};
-
-		socket.onerror = function (error) {
-			console.error('WebSocket error:', error);
+				</div>
+			`;
+			messagesList.scrollTop = messagesList.scrollHeight;
 		};
 	}
 
