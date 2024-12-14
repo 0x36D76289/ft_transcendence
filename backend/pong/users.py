@@ -557,12 +557,14 @@ class pong_data:
         if cls.matchmaking_queue == user:
             cls.matchmaking_queue = None
             pu.busy = False
+            pu.send("notify", "left matchmaking")
             return
         if pu.busy:
             return
         pu.busy = True
         if cls.matchmaking_queue is None:
             cls.matchmaking_queue = user
+            pu.send("notify", "joined matchmaking")
             return
         cls.start_game(cls.matchmaking_queue, user)
         cls.matchmaking_queue = None
