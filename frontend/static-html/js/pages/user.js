@@ -3,6 +3,7 @@ import { GameAPI } from '../api/game.js';
 import { i18n } from '../services/i18n.js';
 import { getUsername } from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
+import { navigate } from '../app.js';
 
 export function render() {
 	return `
@@ -169,7 +170,7 @@ export async function init() {
 		// Logout button
 		document.getElementById('logout-button').addEventListener('click', async () => {
 			await UserAPI.logout();
-			window.location.reload();
+			navigate('/');
 		});
 
 		// Delete account button
@@ -180,7 +181,7 @@ export async function init() {
 		// Confirm delete button
 		document.getElementById('confirm-delete').addEventListener('click', async () => {
 			await UserAPI.deleteAccount();
-			window.location.reload();
+			navigate('/');
 		});
 
 		// Cancel delete button

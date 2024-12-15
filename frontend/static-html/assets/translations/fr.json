@@ -80,11 +80,14 @@
 	},
 	"messages": {
 		"title": "Messages",
-		"select_conversation": "Sélectionnez une conversation",
-		"type_message": "Tapez un message...",
+		"type_message": "Tapez votre message...",
 		"send": "Envoyer",
-		"load_error": "Échec du chargement des messages",
-		"send_error": "Échec de l'envoi du message"
+		"no_conversations": "Aucune conversation",
+		"new_conversation": "Nouvelle conversation",
+		"participants": "Participants",
+		"last_message": "Dernier message",
+		"conversation_load_error": "Échec du chargement de la conversation",
+		"message_send_error": "Échec de l'envoi du message"
 	},
 	"user": {
 		"title": "Profil",
@@ -119,7 +122,8 @@
 		"invite_sent": "Invitation envoyée à",
 		"block_success": "Utilisateur bloqué",
 		"remove_success": "Utilisateur supprimé",
-		"profile_load_error": "Échec du chargement du profil"
+		"profile_load_error": "Échec du chargement du profil",
+		"friend_request_sent": "Demande d'ami envoyée"
 	},
 	"tournaments": {
 		"title": "Tournois",

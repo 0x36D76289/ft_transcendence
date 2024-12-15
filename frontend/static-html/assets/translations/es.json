@@ -78,13 +78,16 @@
 			"error": "Error de registro"
 		}
 	},
-	"mensajes": {
+	"messages": {
 		"title": "Mensajes",
-		"select_conversation": "Selecciona una conversación",
-		"type_message": "Escribe un mensaje...",
+		"type_message": "Escribe tu mensaje...",
 		"send": "Enviar",
-		"load_error": "Error al cargar mensajes",
-		"send_error": "Error al enviar mensaje"
+		"no_conversations": "No hay conversaciones",
+		"new_conversation": "Nueva conversación",
+		"participants": "Participantes",
+		"last_message": "Último mensaje",
+		"conversation_load_error": "Error al cargar la conversación",
+		"message_send_error": "Error al enviar el mensaje"
 	},
 	"user": {
 		"title": "Perfil",
@@ -119,7 +122,8 @@
 		"invite_sent": "Invitación enviada a",
 		"block_success": "Usuario bloqueado",
 		"remove_success": "Usuario eliminado",
-		"profile_load_error": "Error al cargar el perfil"
+		"profile_load_error": "Error al cargar el perfil",
+		"friend_request_sent": "Solicitud de amistad enviada"
 	},
 	"tournaments": {
 		"title": "Torneos",

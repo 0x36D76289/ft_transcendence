@@ -79,20 +79,32 @@ export async function init() {
 		try {
 			const conversation = await ChatAPI.getConversation(conversationId);
 
+			// Dynamic Chat Header
 			chatParticipants.innerHTML = conversation.participants.map(participant => `
-				<img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar">
-			`).join('');
-
-			messagesList.innerHTML = conversation.message_set.reverse().map(message => `
-				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
-					<div class="message-content">
-						${message.content}
-					</div>
-					<div class="message-time">
-						${new Date(message.time_created).toLocaleTimeString()}
-					</div>
+				<div class="chat-participant">
+					<span>${participant.username}</span>
 				</div>
 			`).join('');
+
+			// Messages with Profile Pictures
+			messagesList.innerHTML = conversation.message_set.reverse().map(message => {
+				const sender = conversation.participants.find(p => p.username === message.sender);
+				const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
+
+				return `
+					<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
+							<div class="message-content-wrapper">
+									<div class="message-content">
+											${message.content}
+									</div>
+									<div class="message-time">
+											${new Date(message.time_created).toLocaleTimeString()}
+									</div>
+							</div>
+					</div>
+					`;
+			}).join('');
 
 			messagesList.scrollTop = messagesList.scrollHeight;
 		} catch (error) {
@@ -100,13 +112,14 @@ export async function init() {
 		}
 	}
 
+
 	async function sendMessage() {
 		const messageInput = document.getElementById('message-input');
 
 		if (!messageInput.value) {
 			return;
 		}
-		
+
 		console.log(messageInput.value);
 		socket.send(JSON.stringify({
 			message: messageInput.value
@@ -121,22 +134,28 @@ export async function init() {
 
 		socket = new WebSocket(`${WS_URL}/chat/${conversationId}?token=${getToken()}`);
 
-		// Removed redundant event listeners
-
-		socket.onmessage = (event) => {
+		socket.onmessage = async (event) => {
 			const message = JSON.parse(event.data);
 			console.log(message.content);
 
+			// Fetch conversation details to get sender's profile picture
+			const conversation = await ChatAPI.getConversation(conversationId);
+			const sender = conversation.participants.find(p => p.username === message.sender);
+			const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
+
 			messagesList.innerHTML += `
-				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">	
-					<div class="message-content">
-						${message.content}
-					</div>
-					<div class="message-time">
-						${new Date(message.time_created).toLocaleTimeString()}
-					</div>
+				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+						<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
+						<div class="message-content-wrapper">
+								<div class="message-content">
+										${message.content}
+								</div>
+								<div class="message-time">
+										${new Date(message.time_created).toLocaleTimeString()}
+								</div>
+						</div>
 				</div>
-			`;
+        `;
 			messagesList.scrollTop = messagesList.scrollHeight;
 		};
 	}

@@ -190,11 +190,12 @@ a {
 	padding-bottom: var(--margin-xxs);
 }
 
+
 /* mobile */
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 767px) {
 	main {
 		margin-left: 0;
-		margin-bottom: var(--mobile-height);
+		padding-bottom: var(--mobile-height);
 	}
 }
 

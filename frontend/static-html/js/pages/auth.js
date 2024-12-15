@@ -2,6 +2,8 @@ import { UserAPI } from '../api/user.js';
 import { navigate } from '../app.js';
 import { popupSystem } from '../services/popup.js';
 import { i18n } from '../services/i18n.js';
+import { create_socket } from '../api/socket.js';
+import { initSidebar } from '../components/sidebar.js';
 
 export function render() {
 	return `
@@ -57,7 +59,9 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			window.location.reload();
+			navigate('/');
+			create_socket();
+			await initSidebar();
 		} catch (error) {
 			popupSystem('error', 'Erreur de connexion');
 		}
@@ -88,7 +92,9 @@ export function init() {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
-			window.location.reload();
+			navigate('/');
+			create_socket();
+			await initSidebar();
 		} catch (error) {
 			popupSystem('error', 'Erreur de création de compte invité');
 		}

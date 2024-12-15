@@ -80,11 +80,14 @@
 	},
 	"messages": {
 		"title": "Messages",
-		"select_conversation": "Select a conversation",
-		"type_message": "Type a message...",
+		"type_message": "Type your message...",
 		"send": "Send",
-		"load_error": "Failed to load messages",
-		"send_error": "Failed to send message"
+		"no_conversations": "No conversations",
+		"new_conversation": "New conversation",
+		"participants": "Participants",
+		"last_message": "Last message",
+		"conversation_load_error": "Failed to load conversation",
+		"message_send_error": "Failed to send message"
 	},
 	"user": {
 		"title": "Profile",
@@ -119,7 +122,8 @@
 		"invite_sent": "Invite sent to",
 		"block_success": "User blocked",
 		"remove_success": "User removed",
-		"profile_load_error": "Failed to load profile"
+		"profile_load_error": "Failed to load profile",
+		"friend_request_sent": "Friend request sent"
 	},
 	"tournaments": {
 		"title": "Tournaments",

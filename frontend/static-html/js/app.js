@@ -54,7 +54,7 @@ async function checkAuth() {
 }
 
 /* ******************** CSS Management ******************** */
-async function loadCSS(filename) {
+function loadCSS(filename) {
 	return new Promise((resolve, reject) => {
 		const cssLink = `link[href="${filename}"]`;
 		if (document.querySelector(cssLink)) {
@@ -80,6 +80,26 @@ async function loadCSS(filename) {
 	});
 }
 /* ******************** Page Navigation ******************** */
+function createPageContent(html) {
+	const pageContent = document.createElement("div");
+	pageContent.classList.add("page-transition");
+	pageContent.innerHTML = html;
+	return pageContent;
+}
+
+function renderError(title, message) {
+	CONTENT_ELEMENT.innerHTML = `
+<div class="error-container">
+	<h1>${title}</h1>
+	<p>${message}</p>
+</div>
+	`;
+	const errorContainer = document.querySelector(".error-container");
+	errorContainer.style.color = "red";
+	errorContainer.style.textAlign = "center";
+	errorContainer.style.marginTop = "20px";
+}
+
 async function renderPage(path, options) {
 	const pageModule = ROUTES[path];
 	if (!pageModule) {
@@ -91,8 +111,13 @@ async function renderPage(path, options) {
 		console.log(`Loading page: ${pageModule}`);
 		document.body.classList.remove('loaded');
 
+		// const previousCSS = document.querySelector('link[href^="./css/pages/"]');
+		// if (previousCSS) {
+		// 	previousCSS.remove();
+		// }
+
 		// Charger le CSS en premier
-		await loadCSS(`./css/pages/${pageModule}.css`);
+		loadCSS(`./css/pages/${pageModule}.css`);
 
 		const { render, init } = await import(`./pages/${pageModule}.js`);
 		const pageContent = createPageContent(render());
@@ -113,25 +138,6 @@ async function renderPage(path, options) {
 	}
 }
 
-function createPageContent(html) {
-	const pageContent = document.createElement("div");
-	pageContent.classList.add("page-transition");
-	pageContent.innerHTML = html;
-	return pageContent;
-}
-
-function renderError(title, message) {
-	CONTENT_ELEMENT.innerHTML = `
-<div class="error-container">
-	<h1>${title}</h1>
-	<p>${message}</p>
-</div>
-	`;
-	const errorContainer = document.querySelector(".error-container");
-	errorContainer.style.color = "red";
-	errorContainer.style.textAlign = "center";
-	errorContainer.style.marginTop = "20px";
-}
 
 export function navigate(path, options = {}) {
 	// Vérification préalable de l'authentification
@@ -214,9 +220,6 @@ async function initApp() {
 		} else {
 			navigate("/auth", { replace: true });
 		}
-
-		// Une fois tout chargé, marquer comme prêt
-		document.body.classList.add('loaded');
 	} catch (error) {
 		console.error("Erreur d'initialisation:", error);
 		renderError(i18n.t("errors.page.title"), i18n.t("errors.page.message"));

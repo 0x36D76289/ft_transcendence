@@ -265,7 +265,6 @@
   margin-right: var(--margin-s);
 }
 
-/* Responsive styles */
 /* Tablet */
 @media screen and (max-width: 1024px) {
   .profile-content {

@@ -78,13 +78,16 @@
 			"error": "Errore di registrazione"
 		}
 	},
-	"messaggi": {
+	"messages": {
 		"title": "Messaggi",
-		"select_conversation": "Seleziona una conversazione",
-		"type_message": "Scrivi un messaggio...",
+		"type_message": "Scrivi il tuo messaggio...",
 		"send": "Invia",
-		"load_error": "Impossibile caricare i messaggi",
-		"send_error": "Impossibile inviare il messaggio"
+		"no_conversations": "Nessuna conversazione",
+		"new_conversation": "Nuova conversazione",
+		"participants": "Partecipanti",
+		"last_message": "Ultimo messaggio",
+		"conversation_load_error": "Errore nel caricamento della conversazione",
+		"message_send_error": "Errore nell'invio del messaggio"
 	},
 	"user": {
 		"title": "Profilo",
@@ -119,7 +122,8 @@
 		"empty_username": "Il nome utente non può essere vuoto",
 		"request_sent": "Richiesta di amicizia inviata a {username}",
 		"profile_load_error": "Impossibile caricare il profilo",
-		"fetch_error": "Errore nel recupero degli amici"
+		"fetch_error": "Errore nel recupero degli amici",
+		"friend_request_sent": "Richiesta di amicizia inviata"
 	},
 	"tournaments": {
 		"title": "Tornei",
