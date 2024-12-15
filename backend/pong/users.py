@@ -346,14 +346,17 @@ class pong_data:
         if pu is None:
             return
         if pu.busy:
+            # TODO: i18n key
             pu.send("notify-error", "You are marked as 'busy'")
             return
         if pu.wants_to_fight == opponent:
+            # TODO: i18n key
             pu.send("notify", "invite to " + opponent + " has been cancelled")
             pu.wants_to_fight = None
             return
 
         def offline():
+            # TODO: i18n key
             pu.send("notify-error", opponent + " is offline")
 
         if opponent in cls.name_to_user:
@@ -368,6 +371,7 @@ class pong_data:
 
         if opp_pu.wants_to_fight == user.get_username():
             if opp_pu.busy:
+                # TODO: i18n key
                 pu.send("notify-error", opponent + " is busy")
             else:
                 pong_data.start_game(user, opp_user)
@@ -376,6 +380,7 @@ class pong_data:
             return
 
         pu.wants_to_fight = opponent
+        # TODO: i18n key
         pu.send("notify-success", "invite sent to " + opponent)
         opp_pu.send("game-invite", user.get_username())
         return
@@ -389,6 +394,7 @@ class pong_data:
             return
 
         def offline():
+            # TODO: i18n key
             pu.send("notify-error", invited + " is offline")
             pu.send("invite-reject", invited)
 
@@ -404,6 +410,7 @@ class pong_data:
 
         pu.invited_tournement_users.add(invited)
         invited_pu.send("tournament-invite", user.get_username())
+        # TODO: i18n key
         pu.send("notify", "invite was sent to " + invited)
 
     @classmethod
@@ -557,14 +564,14 @@ class pong_data:
         if cls.matchmaking_queue == user:
             cls.matchmaking_queue = None
             pu.busy = False
-            pu.send("notify", "left matchmaking")
+            pu.send("mm", "left")
             return
         if pu.busy:
             return
         pu.busy = True
         if cls.matchmaking_queue is None:
             cls.matchmaking_queue = user
-            pu.send("notify", "joined matchmaking")
+            pu.send("mm", "join")
             return
         cls.start_game(cls.matchmaking_queue, user)
         cls.matchmaking_queue = None
@@ -574,4 +581,5 @@ class pong_data:
         pu = pong_data.get_pong_user(user)
         if pu is None:
             return
+        # TODO: i18n key
         pu.send("notify", "new message")

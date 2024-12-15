@@ -1,14 +1,15 @@
 .home-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  gap: 10vw;
 }
 
 .play-button {
   padding: var(--padding-l) var(--padding-xxl);
-  font-size: 5rem;
+  font-size: 3rem;
   text-transform: uppercase;
   letter-spacing: 4px;
   border: 3px solid var(--accent-color);

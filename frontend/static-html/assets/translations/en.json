@@ -22,7 +22,9 @@
 		}
 	},
 	"home": {
-		"play": "Play"
+		"play": "Play",
+		"join_mm": "Join Matchmaking",
+		"leave_mm": "Leave Matchmaking"
 	},
 	"settings": {
 		"title": "Settings",
@@ -131,5 +133,9 @@
 		"enter_username": "Enter username",
 		"enter_bot_name": "Enter bot name",
 		"start_tournament": "Start Tournament"
+	},
+	"notifications": {
+		"join": "Joined matchmaking!",
+		"leave": "Left matchmaking"
 	}
 }

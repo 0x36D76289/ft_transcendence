@@ -1,6 +1,8 @@
 import { navigate } from "../app.js";
+import { set_queue } from "../pages/home.js";
 import { read_room } from "../pages/pong/socket.js";
 import { participants } from "../pages/tournament/participants.js";
+import { i18n } from "../services/i18n.js";
 import { popupSystem } from "../services/popup.js";
 import { getToken } from "../utils/cookies.js";
 
@@ -146,6 +148,14 @@ function read_sock(object) {
     case "online-state":
       set_led(true);
       break;
+    case "mm":
+      if (inner.value == "join") {
+        popupSystem("info", i18n.t("notifications.join"));
+        set_queue(true);
+      } else {
+        popupSystem("info", i18n.t("notifications.leave"));
+        set_queue(false);
+      }
     default:
       console.log("couldn't recognize type: ", inner.type);
   }
