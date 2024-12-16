@@ -108,6 +108,13 @@ form .auth-button:hover {
   text-decoration: underline;
 }
 
-#guestButton {
-  margin-top: var(--margin-m);
+.other-login-buttons {
+	display: flex;
+	flex-direction: row;
+}
+
+.other-login-buttons button {
+	margin-top: var(--margin-xs);
+	margin-left: var(--margin-xxs);
+	margin-right: var(--margin-xxs);
 }
