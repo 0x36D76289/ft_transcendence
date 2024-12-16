@@ -39,19 +39,15 @@ export function send_to_online_sock(message) {
   if (online_sock?.readyState === WebSocket.OPEN) {
     online_sock.send(message);
   } else {
-    //TODO: i18n
     asked_for_init = true;
-    popupSystem(
-      "warning",
-      "page is still connecting to server, please wait a bit",
-    );
+    popupSystem("warning", i18n.t("notifications.connection.pending"));
   }
 }
 
 /** @returns {void} */
 export function create_socket() {
   if (send_reconnect_notif) {
-    popupSystem("info", "reconnecting to socket");
+    popupSystem("info", i18n.t("notifications.connection.close"));
     send_reconnect_notif = false;
   }
   online_sock = new WebSocket(
@@ -62,6 +58,7 @@ export function create_socket() {
   );
   online_sock.onmessage = read_sock;
   console.log("socket created");
+
   online_sock.onopen = () => {
     console.log(online_sock);
     send_to_online_sock("ping");
@@ -69,16 +66,26 @@ export function create_socket() {
     send_reconnect_notif = true;
     if (asked_for_init) {
       asked_for_init = false;
-      //TODO: i18n
-      popupSystem("success", "Connection complete");
+      popupSystem("success", i18n.t("notifications.connection.open"));
     }
-    //TODO: send a ping every 50s to keep connection alive
+    //TODO: send a ping every 50s to keep connection  alive
   };
   online_sock.addEventListener("close", () => {
-    //TODO: i18n
     set_led(false);
     create_socket();
   });
+}
+
+/**
+ * @param {string} str - the message to translate
+ * @returns {void}
+ */
+function three_part_translate(str) {
+  const split = str.split(" ");
+  if (split.length == 1) {
+    return i18n.t(str);
+  }
+  return i18n.t(split[0]) + split[1] + i18n.t(split[2]);
 }
 
 /**
@@ -105,20 +112,20 @@ function read_sock(object) {
       }
       break;
     case "notify":
-      //TODO: i18n that would recognise the value -> translate to key -> then call regular i18n
-      popupSystem("info", inner.value);
+      popupSystem("info", three_part_translate(inner.value));
       break;
     case "notify-success":
-      popupSystem("success", inner.value);
+      popupSystem("success", three_part_translate(inner.value));
       break;
     case "notify-error":
-      popupSystem("error", inner.value);
+      popupSystem("error", three_part_translate(inner.value));
       break;
     case "game-invite":
       popupSystem(
         "warning",
-        //TODO: ADD i18n
-        inner.value + " wants to play with you",
+        i18n.t("notifications.fight.invite.receive.pre") +
+          inner.value +
+          i18n.t("notifications.fight.invite.receive.post"),
         true,
         () => {
           send_to_online_sock("fight " + inner.value);
@@ -126,10 +133,11 @@ function read_sock(object) {
       );
       break;
     case "tournament-invite":
-      //TODO: ADD i18n
       popupSystem(
         "warning",
-        inner.value + " invites you to a tournament",
+        i18n.t("notifications.tournament.invite.pre") +
+          inner.value +
+          i18n.t("notifications.tournament.invite.post"),
         true,
         () => {
           send_to_online_sock("accept " + inner.value);
@@ -150,10 +158,10 @@ function read_sock(object) {
       break;
     case "mm":
       if (inner.value == "join") {
-        popupSystem("info", i18n.t("notifications.join"));
+        popupSystem("info", i18n.t("notifications.matchmaking.join"));
         set_queue(true);
       } else {
-        popupSystem("info", i18n.t("notifications.leave"));
+        popupSystem("info", i18n.t("notifications.matchmaking.leave"));
         set_queue(false);
       }
     default:

@@ -312,6 +312,8 @@ class pong_data:
     @classmethod
     def unregister(cls, online_sock: WebsocketConsumer):
         user: User = online_sock.user
+        if cls.matchmaking_queue == user:
+            cls.matchmaking_queue = None
         pu: PongUser = cls.online_users[user]
         if pu.game:
             pu.game.lose_game(pu.user)
@@ -346,18 +348,25 @@ class pong_data:
         if pu is None:
             return
         if pu.busy:
-            # TODO: i18n key
-            pu.send("notify-error", "You are marked as 'busy'")
+            pu.send("notify-error", "notifications.fight.self-busy")
             return
         if pu.wants_to_fight == opponent:
-            # TODO: i18n key
-            pu.send("notify", "invite to " + opponent + " has been cancelled")
+            pu.send(
+                "notify",
+                "notifications.fight.cancel.pre "
+                + opponent
+                + " notifications.fight.cancel.post",
+            )
             pu.wants_to_fight = None
             return
 
         def offline():
-            # TODO: i18n key
-            pu.send("notify-error", opponent + " is offline")
+            pu.send(
+                "notify-error",
+                "notifications.fight.other-offline.pre "
+                + opponent
+                + " notifications.fight.other-offline.post",
+            )
 
         if opponent in cls.name_to_user:
             opp_user: User = cls.name_to_user[opponent]
@@ -371,8 +380,12 @@ class pong_data:
 
         if opp_pu.wants_to_fight == user.get_username():
             if opp_pu.busy:
-                # TODO: i18n key
-                pu.send("notify-error", opponent + " is busy")
+                pu.send(
+                    "notify-error",
+                    "notifications.fight.other-busy.pre "
+                    + opponent
+                    + " notifications.fight.other-busy.post",
+                )
             else:
                 pong_data.start_game(user, opp_user)
             pu.wants_to_fight = None
@@ -380,8 +393,12 @@ class pong_data:
             return
 
         pu.wants_to_fight = opponent
-        # TODO: i18n key
-        pu.send("notify-success", "invite sent to " + opponent)
+        pu.send(
+            "notify-success",
+            "notifications.fight.invite.send.pre "
+            + opponent
+            + " notifications.fight.invite.send.post",
+        )
         opp_pu.send("game-invite", user.get_username())
         return
 
@@ -394,8 +411,12 @@ class pong_data:
             return
 
         def offline():
-            # TODO: i18n key
-            pu.send("notify-error", invited + " is offline")
+            pu.send(
+                "notify-error",
+                "notifications.tournament.other-offline.pre "
+                + invited
+                + " notifications.tournament.other-offline.post",
+            )
             pu.send("invite-reject", invited)
 
         if invited in cls.name_to_user:
@@ -410,8 +431,12 @@ class pong_data:
 
         pu.invited_tournement_users.add(invited)
         invited_pu.send("tournament-invite", user.get_username())
-        # TODO: i18n key
-        pu.send("notify", "invite was sent to " + invited)
+        pu.send(
+            "notify",
+            "notifications.tournament.send-invite.pre "
+            + invited
+            + " notifications.tournament.send-invite.post",
+        )
 
     @classmethod
     def accept_tournament_invite(cls, user: User, inviter: str):
@@ -581,5 +606,4 @@ class pong_data:
         pu = pong_data.get_pong_user(user)
         if pu is None:
             return
-        # TODO: i18n key
-        pu.send("notify", "new message")
+        pu.send("notify", "notifications.message")

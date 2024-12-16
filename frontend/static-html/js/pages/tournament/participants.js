@@ -1,4 +1,5 @@
 import { send_to_online_sock } from "../../api/socket.js";
+import { i18n } from "../../services/i18n.js";
 import { popupSystem } from "../../services/popup.js";
 import { updateParticipantList } from "../tournaments.js";
 
@@ -81,8 +82,12 @@ class TournamentParticipantsList {
   invite_player(name) {
     for (/** @type {Participant} */ const p of this.#list) {
       if (name === p.getName()) {
-        //TODO: i18n
-        popupSystem("error", name + " is already in tournament");
+        popupSystem(
+          "error",
+          i18n.t("notifications.tournament.already-in.pre") +
+            name +
+            i18n.t("notifications.tournament.already-in.post"),
+        );
         return;
       }
     }
@@ -96,8 +101,12 @@ class TournamentParticipantsList {
   add_bot(name) {
     for (/** @type {Participant} */ const p of this.#list) {
       if (name === p.getName()) {
-        //TODO: i18n
-        popupSystem("error", name + " is already in tournament");
+        popupSystem(
+          "error",
+          i18n.t("notifications.tournament.already-in.pre") +
+            name +
+            i18n.t("notifications.tournament.already-in.post"),
+        );
         return;
       }
     }

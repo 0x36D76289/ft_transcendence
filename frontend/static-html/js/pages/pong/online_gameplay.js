@@ -43,48 +43,6 @@ var current_frame = 0;
 /** @type {import("./types").GameState} */
 var last_processed_state = Object.assign({}, current_state);
 
-// /**
-//  * @param {GameState} state
-//  * @param {vec2} input
-//  * @returns {void}
-//  * INFO: MODIFIES STATE
-//  */
-// function multiplayer_tick_bounce_horizontal(state, input) {
-//   if (!is_ball_on_wall(state)) {
-//     return;
-//   }
-//   state.ball_speed_x *= -1;
-//   if (is_ball_on_left(state)) {
-//     if (player_num == 1 && !is_ball_bouncing(state.ball_y, state.p1_height)) {
-//       scores[1] += 1;
-//       game_sock.send(
-//         JSON.stringify({
-//           type: "score",
-//           p1: scores[0],
-//           p2: scores[1],
-//         }),
-//       );
-//       if (interval) clearInterval(interval);
-//     } else {
-//       state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p1_height);
-//     }
-//   } else {
-//     if (player_num == 2 && !is_ball_bouncing(state.ball_y, state.p2_height)) {
-//       scores[0] += 1;
-//       game_sock.send(
-//         JSON.stringify({
-//           type: "score",
-//           p1: scores[0],
-//           p2: scores[1],
-//         }),
-//       );
-//       if (interval) clearInterval(interval);
-//     } else {
-//       state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p2_height);
-//     }
-//   }
-// }
-
 /**
  * @param {GameState} state
  * @returns {void}
@@ -112,7 +70,7 @@ function tick_multiplayer_death_processing(state) {
 	* @param {GameState} state
 	* @param {vec2} input
 	* @returns {GameState}
-	//INFO: takes a state and an input, simulates the next state and returns it
+	// INFO: takes a state and an input, simulates the next state and returns it
 */
 function multiplayer_tick(state, input) {
   let ret = Object.assign({}, state);
@@ -123,8 +81,6 @@ function multiplayer_tick(state, input) {
   tick_move_ball(ret, input);
   tick_bounce_vertical(ret, input);
   tick_bounce_horizontal(ret, input);
-  //shared bounce method
-  // multiplayer_tick_bounce_horizontal(ret, input);
   tick_multiplayer_death_processing(ret);
 
   return ret;

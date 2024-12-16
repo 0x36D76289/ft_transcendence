@@ -135,7 +135,63 @@
 		"start_tournament": "Start Tournament"
 	},
 	"notifications": {
-		"join": "Joined matchmaking!",
-		"leave": "Left matchmaking"
+		"matchmaking": {
+			"join": "Joined matchmaking!",
+			"leave": "Left matchmaking"
+		},
+		"tournament": {
+			"invite": {
+				"pre": "",
+				"post": " invites you to their tournament"
+			},
+			"send-invite": {
+				"pre": "invite was sent to ",
+				"post": ""
+			},
+			"already-in": {
+				"pre": "",
+				"post": " is already in tournament"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " is offline"
+			}
+		},
+		"connection": {
+			"close": "Reconnecting to socket",
+			"open": "Connection complete",
+			"pending": "Page is still connecting to server, please wait a bit"
+		},
+		"fight": {
+			"self-busy": "You are marked as busy",
+			"other-busy": {
+				"pre": "",
+				"post": " is busy"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " is offline"
+			},
+			"invite": {
+				"receive": {
+					"pre": "",
+					"post": " wants to play with you"
+				},
+				"send": {
+					"pre": "invite sent to ",
+					"post": ""
+				},
+				"cancel": {
+					"pre": "invite to ",
+					"post": " has been cancelled"
+				}
+			}
+		},
+		"message": "Message received!",
+		"": {
+			"pre": "",
+			"post": ""
+		},
+		"namespace": {}
 	}
 }
