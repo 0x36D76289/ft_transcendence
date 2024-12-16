@@ -70,6 +70,7 @@
 			"no_account": "Don't have an account?",
 			"register": "Register",
 			"guest": "Login as Guest",
+			"42": "Login with 42",
 			"error": "Login error"
 		},
 		"register": {

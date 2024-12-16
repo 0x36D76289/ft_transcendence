@@ -68,6 +68,7 @@
 			"no_account": "¿No tienes una cuenta?",
 			"register": "Registrarse",
 			"guest": "Iniciar sesión como invitado",
+			"42": "Conexión con 42",
 			"error": "Error de inicio de sesión"
 		},
 		"register": {
