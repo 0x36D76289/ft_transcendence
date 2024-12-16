@@ -63,6 +63,7 @@ export async function init(options={}) {
 		} catch (error) {
 			popupSystem('error', 'Erreur de connexion');
 		}
+		return;
 	}
 
 	document.getElementById('loginForm').addEventListener('submit', async (event) => {
