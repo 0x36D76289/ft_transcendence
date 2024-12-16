@@ -70,17 +70,17 @@ def logout(request):
 from sys import stderr
 
 def get_42_login(request):
-	if not request.query_params.get('code'):
+	if not request.data.get('code'):
 		return Response(
-			{'detail': 'query param \'code\' is missing'},
+			{'detail': 'json field \'code\' is missing'},
 			status=status.HTTP_400_BAD_REQUEST
 		)
 	data = {
-		'code': request.query_params['code'],
+		'code': request.data['code'],
 		'client_id': 'u-s4t2ud-2e658ba79c415d6104fcd1079864d68a3da2c86f054d28f7c5205c8d4abc1080',
 		'client_secret': getenv('API_SECRET_42'),
 		'grant_type': 'authorization_code',
-		'redirect_uri': 'https://localhost:8443/api/user/42_login'
+		'redirect_uri': 'https://localhost:8443/42auth'
 	}
 	request_token = requests.post('https://api.intra.42.fr/oauth/token', data=data)
 	json = request_token.json()
@@ -100,7 +100,7 @@ def get_42_login(request):
 		)
 	return request_info_user.json()
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
 def login_with_42(request):

@@ -225,6 +225,13 @@ async function initApp() {
         updateActiveNavItem(location.pathname);
         await renderPage(location.pathname);
       }
+    } else if (location.pathname === "/42auth") {
+      const searchParams = new URLSearchParams(location.search);
+	  let options = { replace: true }
+      if (searchParams.has("code")) {
+        options = { replace: true, login42: true, code: searchParams.get("code")}
+	  }
+      navigate("/auth", options);
     } else {
       navigate("/auth", { replace: true });
     }

@@ -64,6 +64,22 @@ export class UserAPI {
 		return data;
 	}
 
+	// Log in with 42
+	static async login42(code) {
+		const response = await fetch(`${API_URL}/user/42_login`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({code})
+		});
+
+		const data = await this._handleResponse(response);
+
+		cookies.setToken(data.token);
+		cookies.setUsername(data.username);
+
+		return data;
+	}
+
 	// Logout
 	static async logout() {
 		const response = await fetch(`${API_URL}/user/logout`, {

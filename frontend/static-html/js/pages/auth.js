@@ -23,6 +23,7 @@ export function render() {
 		</form>
 		<p>${i18n.t('auth.login.no_account')} <a id="showRegister">${i18n.t('auth.login.register')}</a></p>
 		<button id="guestButton" class="auth-button">${i18n.t('auth.login.guest')}</button>
+		<button id="42Button" class="auth-button">Login with 42</button>
 	</div>
 	<div class="auth-form" style="display: none;">
 		<h1>${i18n.t('auth.register.title')}</h1>
@@ -43,10 +44,26 @@ export function render() {
 	`;
 }
 
-export function init() {
+export async function init(options={}) {
 	const mainElement = document?.querySelector('main');
 	const originalMarginLeft = getComputedStyle(mainElement).marginLeft;
 	mainElement.style.marginLeft = '0';
+
+	if (options.login42) {
+		try {
+			const response = await UserAPI.login42(options.code)
+			if (!response) {
+				console.error('Error while logging in');
+				return;
+			}
+			mainElement.style.marginLeft = originalMarginLeft;
+			navigate('/');
+			create_socket();
+			await initSidebar();
+		} catch (error) {
+			popupSystem('error', 'Erreur de connexion');
+		}
+	}
 
 	document.getElementById('loginForm').addEventListener('submit', async (event) => {
 		event.preventDefault();
@@ -97,6 +114,15 @@ export function init() {
 			await initSidebar();
 		} catch (error) {
 			popupSystem('error', 'Erreur de création de compte invité');
+		}
+	});
+
+	document.getElementById('42Button').addEventListener('click', async (event) => {
+		event.preventDefault();
+		try {
+			location.replace("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2e658ba79c415d6104fcd1079864d68a3da2c86f054d28f7c5205c8d4abc1080&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2F42auth&response_type=code");
+		} catch (error) {
+			popupSystem('error', 'Erreur de connexion avec 42');
 		}
 	});
 
