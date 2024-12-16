@@ -22,8 +22,10 @@ export function render() {
 			<button type="submit" class="auth-button">${i18n.t('auth.login.submit')}</button>
 		</form>
 		<p>${i18n.t('auth.login.no_account')} <a id="showRegister">${i18n.t('auth.login.register')}</a></p>
-		<button id="guestButton" class="auth-button">${i18n.t('auth.login.guest')}</button>
-		<button id="42Button" class="auth-button">Login with 42</button>
+		<div class="other-login-buttons">
+			<button id="guestButton" class="auth-button">${i18n.t('auth.login.guest')}</button>
+			<button id="42Button" class="auth-button">Login with 42</button>
+		</div>
 	</div>
 	<div class="auth-form" style="display: none;">
 		<h1>${i18n.t('auth.register.title')}</h1>
