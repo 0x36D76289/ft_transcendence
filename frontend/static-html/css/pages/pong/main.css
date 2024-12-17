@@ -51,3 +51,84 @@
 	/* min-width: var(--sidebar-width); */
 	min-height: 1rem;
 }
+
+.page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Canvas Section Layout */
+.canvas-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Main Canvas */
+.canvas {
+	width: 40vw;
+	aspect-ratio: 4 / 3;
+    background-color: #555;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+}
+
+.left-buttons, .right-buttons {
+    flex-direction: column;
+    height: 70%;
+    top: 15%;
+}
+
+.left-buttons {
+    left: 0;
+    transform: translateX(-130%);
+}
+
+.right-buttons {
+    right: 0;
+    transform: translateX(130%);
+}
+.bottom-buttons {
+    flex-direction: row;
+    width: 70%;
+    left: 15%; /* (100 - 70) / 2 */
+    bottom:0;
+    transform: translateY(130%);
+}
+
+/* Buttons */
+.button {
+    background-color: #777;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #444;
+}

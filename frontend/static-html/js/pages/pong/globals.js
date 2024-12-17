@@ -23,14 +23,19 @@ export var ctx;
 var buff_ctx;
 
 export function init_globals() {
+  /** @type {HTMLCanvasElement} */
   VIEW = document.getElementById("game");
   if (VIEW == undefined) {
     setTimeout(init_globals, 500);
     return;
   }
   VIEW.onclick = canvas_click;
+  VIEW.onresize = init_globals;
 
+  VIEW.width = VIEW.clientWidth;
+  VIEW.height = VIEW.clientHeight;
   VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
+  console.log("VIEW IS ", VIEW_DIMENSIONS);
 
   if (BUFF != undefined) {
     BUFF.remove();
