@@ -35,7 +35,6 @@ export function init_globals() {
   VIEW.width = VIEW.clientWidth;
   VIEW.height = VIEW.clientHeight;
   VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
-  console.log("VIEW IS ", VIEW_DIMENSIONS);
 
   if (BUFF != undefined) {
     BUFF.remove();

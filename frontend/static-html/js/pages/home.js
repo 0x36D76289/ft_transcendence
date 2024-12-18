@@ -3,13 +3,15 @@ import { navigate } from "../app.js";
 import { i18n } from "../services/i18n.js";
 
 /** @type {boolean} */
-var in_queue = false;
+export var in_queue = false;
 
 export function render() {
   return `
 <div class="home-container">
 	<button class="play-button">${i18n.t("home.play")}</button>
-	<button class="play-button" id="queue-button"></button>
+	<button class="play-button" id="queue-button">
+		${in_queue ? i18n.t("home.leave_mm") : i18n.t("home.join_mm")}
+	</button>
 </div>
 	`;
 }
@@ -28,7 +30,7 @@ function renderButton() {
  */
 export function set_queue(val) {
   in_queue = val;
-  if (window.location.pathname == "/") {
+  if (window.location.pathname == "/" || window.location.pathname == "/pong") {
     renderButton();
   }
 }

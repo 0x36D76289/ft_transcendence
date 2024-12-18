@@ -1,6 +1,6 @@
-.pong_nav_button {
-  padding: var(--padding-l) var(--padding-xxl);
-  font-size: 1rem;
+.pong-nav-button {
+  padding: var(--padding-s) var(--padding-m);
+  font-size: 0.3rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 3px solid var(--accent-color);
@@ -12,12 +12,12 @@
   backdrop-filter: blur(var(--blur));
 }
 
-.pong_nav_button:hover {
+.pong-nav-button:hover {
   background: var(--accent-gradient);
   transform: scale(1.1);
 }
 
-.pong_nav_button:active {
+.pong-nav-button:active {
   transform: scale(1);
 }
 
