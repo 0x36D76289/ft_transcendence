@@ -76,25 +76,23 @@ export function canvas_click(param) {
 //FIXME: TYPES
 //		+ RENAME
 //		+ ADD KEYS.ADD IN HERE
-//		+ ADD FUNCTION FOR KEYUP
-//		+ ADD FUNCTION TO REMOVE LISTENERS AND REGISTER LISTENERS
 export function name_enter(key_event) {
   //HACK: starting match with key, add real UI
-  if (key_event.code == "KeyU") {
-    console.log("STARTING ONLINE MATCH");
-    send_to_online_sock("start");
-  }
+  // if (key_event.code == "KeyU") {
+  //   console.log("STARTING ONLINE MATCH");
+  //   send_to_online_sock("start");
+  // }
   //	if (key_event.code == "KeyM") {
   //		console.log("JOINING MM QUEUE");
   //		send_to_online_sock("join_mm");
   //	}
-  if (key_event.code == "KeyL") {
-    console.log("BOTGAME");
-    send_to_online_sock("BOTGAME");
-  }
-  if (key_event.code == "Backquote") {
-    start_name_entry();
-  }
+  // if (key_event.code == "KeyL") {
+  //   console.log("BOTGAME");
+  //   send_to_online_sock("BOTGAME");
+  // }
+  // if (key_event.code == "Backquote") {
+  //   start_name_entry();
+  // }
   if (page_state != STATES.Name_Entry) return;
 
   name_entry_key(key_event);

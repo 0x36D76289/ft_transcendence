@@ -5,7 +5,6 @@ from user.models import User
 from pong.users import errprint, pong_data
 
 
-# TODO: check if self.user and user are exactly equivalent
 class OnlineStatusConsumer(WebsocketConsumer):
     user: User
     anonymous_connection: bool

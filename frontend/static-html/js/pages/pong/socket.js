@@ -70,35 +70,46 @@ export function read_room(object) {
 function game_sock_receive(object) {
   try {
     let inner = JSON.parse(object.data);
-    if (inner.type == "player_assign") {
-      let player_num = inner.value;
-      set_player_num(player_num);
-      console.log("Assigned to player ", player_num);
-      if (player_num == 1 || player_num == 2) {
-        scores[0] = 0;
-        scores[1] = 0;
-        game_sock.send('{"type":"score","p1":0, "p2": 0}');
-      }
-    } else if (inner.type == "score") {
-      console.log("received score update ", inner);
-      set_page_state(STATES.MP_Game);
-      scores[0] = inner.p1;
-      scores[1] = inner.p2;
-      if (interval) clearInterval(interval);
-      if (
-        scores[0] == GAME_SETTINGS.win_score ||
-        scores[1] == GAME_SETTINGS.win_score
-      ) {
+    switch (inner.type) {
+      case "end":
+        game_sock.close();
+        if (interval) clearInterval(interval);
         main_menu();
-      } else {
-        multiplayer_init();
-        start_simulation(multiplayer_update);
-      }
-    } else if (inner.type == "input") {
-      while (inner.frame >= inputs.length) {
-        inputs[inputs.length] = [undefined, undefined];
-      }
-      inputs[inner.frame][inner.player - 1] = inner.input;
+        break;
+      case "player_assign":
+        let player_num = inner.value;
+        set_player_num(player_num);
+        console.log("Assigned to player ", player_num);
+        if (player_num == 1 || player_num == 2) {
+          scores[0] = 0;
+          scores[1] = 0;
+          game_sock.send('{"type":"score","p1":0, "p2": 0}');
+        }
+        break;
+      case "score":
+        console.log("received score update ", inner);
+        set_page_state(STATES.MP_Game);
+        scores[0] = inner.p1;
+        scores[1] = inner.p2;
+        if (interval) clearInterval(interval);
+        if (
+          scores[0] == GAME_SETTINGS.win_score ||
+          scores[1] == GAME_SETTINGS.win_score
+        ) {
+          main_menu();
+        } else {
+          multiplayer_init();
+          start_simulation(multiplayer_update);
+        }
+        break;
+      case "input":
+        while (inner.frame >= inputs.length) {
+          inputs[inputs.length] = [undefined, undefined];
+        }
+        inputs[inner.frame][inner.player - 1] = inner.input;
+        break;
+      default:
+        console.log("[game sock] couldn't recognize type: ", inner.type);
     }
   } catch (e) {
     console.log("[game sock] couldn't parse: ", object.data);

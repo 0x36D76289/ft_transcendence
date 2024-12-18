@@ -47,20 +47,23 @@ class PongGame:
             return
         try:
             if pu.pong_socket:
+                pu.pong_socket.send('{"type":"end"}')
                 pu.pong_socket.close()
         except:
             pass
         pu.pong_socket = None
         pu.game = None
-        if pu.tournament is not None:
+        if pu.tournament is None:
             pu.busy = False
 
     def lose_game(self, loser: User, data: dict[str, Any] | None = None):
+        if loser != self.p1 and loser != self.p2:
+            return
         if data is None:
             if loser == self.p2:
                 data = {"p1": WIN_SCORE, "p2": 0}
             else:
-                data = {"p1": 0, "p1": WIN_SCORE}
+                data = {"p1": 0, "p2": WIN_SCORE}
         Game(
             p1=self.p1,
             p2=self.p2,
@@ -170,15 +173,19 @@ class Tournament:
         if p2.bot == True:
             pong_data.start_bot_game(p1.user)
             return None
-        pong_data.start_game(p1.user, p2.user)
-        return None
-        # TODO: check return value of start_game
-        #   if game failed:
-        #       if one online:
-        #           online is winner
-        #       else:
-        #           pick at random
-        #       IN THAT ORDER
+        if pong_data.start_game(p1.user, p2.user):
+            # if game started correctly
+            return None
+        # if game couldn't start give win to online user or random if both disappeared
+        pu1 = pong_data.get_pong_user(p1.user)
+        pu2 = pong_data.get_pong_user(p2.user)
+        if pu1:
+            return p1
+        elif pu2:
+            return p2
+        if randint(0, 1):
+            return p2
+        return p1
 
     def remove_player(self, player: TournamentPlayer | None) -> None:
         if player is None:
@@ -196,9 +203,10 @@ class Tournament:
         if len(self._next_round) == 1:
             if self._next_round[0]:
                 self.remove_player(self._next_round[0])
-            #  TODO:
+            #  FEAT:
             #   report tournament?
-            #   delete tournament -> remove tournament from every player and empty tournament data
+            while self.players:
+                self.remove_player(self.players[0])
             errprint("TOURNAMENT OVER, users left: " + str(self.players))
             self.players = []
             self.print_rounds()
@@ -323,6 +331,9 @@ class pong_data:
 
     @classmethod
     def start_game(cls, p1: User, p2: User) -> bool:
+        """
+        returns False if game couldn't start else True
+        """
         pu1 = pong_data.get_pong_user(p1)
         pu2 = pong_data.get_pong_user(p2)
         if pu1 is None or pu2 is None:
@@ -557,6 +568,7 @@ class pong_data:
             return
         if pu.tournament:
             pu.tournament.report_game(user, True)
+        pu.is_in_bot_game = False
         cls.save_score(user, data)
 
     @classmethod
@@ -566,6 +578,7 @@ class pong_data:
             return
         if not pu.is_in_bot_game:
             return
+        pu.is_in_bot_game = False
         if pu.tournament:
             pu.tournament.report_game(user, False)
         cls.save_score(user, data)

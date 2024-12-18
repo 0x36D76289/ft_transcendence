@@ -105,11 +105,7 @@ function read_sock(object) {
     case "pong":
       break;
     case "game_start":
-      if (window.location.pathname == "/pong") {
-        read_room(inner);
-      } else {
-        navigate("/pong", { game: inner });
-      }
+      navigate("/pong", { game: inner });
       break;
     case "notify":
       popupSystem("info", three_part_translate(inner.value));
