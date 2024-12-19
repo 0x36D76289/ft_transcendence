@@ -5,6 +5,7 @@ import { participants } from "../pages/tournament/participants.js";
 import { i18n } from "../services/i18n.js";
 import { popupSystem } from "../services/popup.js";
 import { getToken } from "../utils/cookies.js";
+import { WS_URL } from "../app.js";
 
 //@ts-check
 
