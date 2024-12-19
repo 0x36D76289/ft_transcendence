@@ -128,6 +128,18 @@
 		"profile_load_error": "Failed to load profile",
 		"friend_request_sent": "Friend request sent"
 	},
+	"pong": {
+		"local_tournament": "Local Tournament",
+		"setting": {
+			"paddle_width": "Paddle Width",
+			"paddle_height": "Paddle Height",
+			"paddle_speed": "Paddle Speed",
+			"ball_size": "Ball Size",
+			"ball_speed": "Ball X Speed",
+			"ball_y_speed_factor": "Corner Bounce Strength",
+			"win_score": "Win Score"
+		}
+	},
 	"tournaments": {
 		"title": "Tournaments",
 		"current_tournament": "Current Tournament",

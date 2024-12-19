@@ -1,5 +1,6 @@
 //@ts-check
 
+import { i18n } from "../../services/i18n.js";
 import { GAME_DIMENSIONS } from "./globals.js";
 import { GAME_SETTINGS } from "./shared_gameplay.js";
 
@@ -42,13 +43,13 @@ export function online_layout() {
  * @param {String} name
  * @returns {void}
  */
-function add_slider(pageContainer, paramName, min, max, name) {
+function add_slider(pageContainer, paramName, min, max) {
   /** @type {Node} */
   let node = htmlToNode(
     `<div class="setting-container">` +
-      `<label for="pongsetting-${paramName}" id="pongtext-${paramName}">${name}: </label>` +
+      `<label for="pongsetting-${paramName}" id="pongtext-${paramName}">${i18n.t("pong.setting." + paramName)}: </label>` +
       `<input type="range" min=${min} max=${max} class="setting-slider" id="pongsetting-${paramName}">` +
-      `<input type="text" readonly size="3" id="pongshow-${paramName}">` +
+      `<input type="text" readonly size="2" id="pongshow-${paramName}">` +
       `</div>`,
   );
   pageContainer.insertBefore(node, pageContainer.firstChild);
@@ -80,35 +81,11 @@ export function offline_layout() {
   let pageContainer = document.getElementById("pong-fullpage");
   if (!pageContainer) return;
 
-  add_slider(
-    pageContainer,
-    "paddle_width",
-    1,
-    (GAME_DIMENSIONS[0] / 4) | 0,
-    "Paddle Width",
-  );
-  add_slider(
-    pageContainer,
-    "paddle_height",
-    1,
-    (GAME_DIMENSIONS[1] / 2) | 0,
-    "Paddle Height",
-  );
-  add_slider(
-    pageContainer,
-    "paddle_speed",
-    0,
-    (GAME_DIMENSIONS[1] / 10) | 0,
-    "Paddle Speed",
-  );
-  add_slider(pageContainer, "ball_size", 1, 30, "Ball Size");
-  add_slider(pageContainer, "ball_speed", 1, 10, "Ball X Speed");
-  add_slider(
-    pageContainer,
-    "ball_y_speed_factor",
-    1,
-    20,
-    "Corner Bounce Strength",
-  );
-  add_slider(pageContainer, "win_score", 1, 100, "Win Score!");
+  add_slider(pageContainer, "paddle_width", 1, (GAME_DIMENSIONS[0] / 4) | 0);
+  add_slider(pageContainer, "paddle_height", 1, (GAME_DIMENSIONS[1] / 2) | 0);
+  add_slider(pageContainer, "paddle_speed", 0, (GAME_DIMENSIONS[1] / 10) | 0);
+  add_slider(pageContainer, "ball_size", 1, 30);
+  add_slider(pageContainer, "ball_speed", 1, 10);
+  add_slider(pageContainer, "ball_y_speed_factor", 1, 20);
+  add_slider(pageContainer, "win_score", 1, 100);
 }
