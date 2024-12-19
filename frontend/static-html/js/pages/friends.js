@@ -120,6 +120,7 @@ async function handleActionButton(event) {
       break;
     case "play":
       send_to_online_sock("fight " + username);
+      popupSystem("info", `${i18n.t("notifications.fight.invite.send.pre")} ${username}`);
       return;
     case "block":
       await ChatAPI.blockUser(username);
@@ -178,23 +179,41 @@ function renderContacts(friends) {
     .map(
       (friend) =>
         `<div class="contact-card" data-user-id="${friend.user.username}">
-			<img src="/media${friend.user.pfp}" alt="${friend.user.username}" class="contact-avatar">
-			<h3 class="contact-username">${friend.user.username}</h3>
-			<p class="contact-status" data-status="${friend.user.is_online ? "online" : "offline"}">
-				${friend.user.is_online ? i18n.t("friends.online") : i18n.t("friends.offline")}
-			</p>
-		</div>`,
+            <img src="/media${friend.user.pfp}" alt="${friend.user.username}" class="contact-avatar">
+            <h3 class="contact-username">${friend.user.username}</h3>
+            <p class="contact-status" data-status="${friend.user.is_online ? "online" : "offline"}">
+                ${friend.user.is_online ? i18n.t("friends.online") : i18n.t("friends.offline")}
+            </p>
+            <button class="quick-play-btn" title="${i18n.t("friends.invite_to_play")}">
+              <span class="material-icons">sports_esports</span>
+            </button>
+        </div>`,
     )
     .join("");
 
+  // Add click handlers for the contact cards
   const contactCards = document.querySelectorAll(".contact-card");
   contactCards.forEach((card) => {
-    card.addEventListener("click", () => {
+    // Profile preview click handler
+    card.addEventListener("click", (e) => {
+      // Don't show profile if clicking the play button
+      if (!e.target.closest('.quick-play-btn')) {
+        const username = card.dataset.userId;
+        showProfilePreview(username);
+      }
+    });
+
+    // Quick play button click handler
+    const playBtn = card.querySelector('.quick-play-btn');
+    playBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent profile preview from opening
       const username = card.dataset.userId;
-      showProfilePreview(username);
+      send_to_online_sock("fight " + username);
+      popupSystem("info", i18n.t("friends.game_invite_sent") + " " + username);
     });
   });
 }
+
 export async function init() {
   const searchInput = document.getElementById("searchInput");
   const addFriendBtn = document.getElementById("addFriendBtn");

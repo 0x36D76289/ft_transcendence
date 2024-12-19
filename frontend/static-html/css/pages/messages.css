@@ -94,14 +94,14 @@
   scrollbar-color: var(--accent-color) var(--bg-primary);
 }
 
-.message {
+.messages {
   display: flex;
   align-items: flex-start;
   gap: var(--margin-xs);
   max-width: 80%;
 }
 
-.message.sent {
+.messages.sent {
   flex-direction: row-reverse;
   align-self: flex-end;
 }
@@ -128,7 +128,7 @@
   font-size: 0.95rem;
 }
 
-.message.sent .message-content {
+.messages.sent .message-content {
   background-color: var(--accent-color);
   color: white;
 }
@@ -165,25 +165,19 @@
 .btn-accent {
   padding: 0 var(--padding-m);
   height: 40px;
-  border: none;
   border-radius: var(--padding-l);
-  background-color: var(--accent-color);
-  color: white;
-  font-weight: 500;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--accent-color);
   cursor: pointer;
   transition: var(--transition);
 }
 
 .btn-accent:hover {
-  background-color: var(--accent-hover);
+  background-color: var(--accent-color);
 }
 
-.btn-accent:active {
-  transform: translateY(0);
-}
-
-.hidden {
-  display: none !important;
+.btn-accent:hover .material-icons {
+  transition: var(--transition);
 }
 
 @media screen and (max-width: 768px) {

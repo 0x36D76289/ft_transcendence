@@ -276,6 +276,34 @@
 	background: var(--bg-secondary);
 }
 
+.quick-play-btn {
+    background: var(--bg-tertiary);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: var(--margin-s);
+    color: var(--bg-primary);
+}
+
+.quick-play-btn:hover {
+    background: var(--bg-secondary);
+    transform: scale(1.1);
+}
+
+.contact-card {
+    position: relative;
+    cursor: pointer;
+    margin: var(--margin-s);
+    min-height: 200px;
+}
+
+
 @media screen and (max-width: 767px) {
 	.contact-grid {
 		grid-template-columns: 1fr;

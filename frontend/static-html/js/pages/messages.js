@@ -20,7 +20,7 @@ export function render() {
 			<div class="message-input-container">
 				<textarea id="message-input" placeholder="${i18n.t('messages.type_message')}" rows="3"></textarea>
 				<button id="send-message-btn" class="btn-accent">
-					${i18n.t('messages.send')}
+					<i class="material-icons">send</i>
 				</button>
 			</div>
 		</div>
@@ -92,7 +92,7 @@ export async function init() {
 				const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
 
 				return `
-					<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+					<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
 							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
 							<div class="message-content-wrapper">
 									<div class="message-content">
@@ -144,7 +144,7 @@ export async function init() {
 			const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
 
 			messagesList.innerHTML += `
-				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+				<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
 						<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
 						<div class="message-content-wrapper">
 								<div class="message-content">

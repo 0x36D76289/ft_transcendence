@@ -114,11 +114,6 @@ async function renderPage(path, options) {
     console.log(`Loading page: ${pageModule}`);
     document.body.classList.remove("loaded");
 
-    // const previousCSS = document.querySelector('link[href^="./css/pages/"]');
-    // if (previousCSS) {
-    // 	previousCSS.remove();
-    // }
-
     // Charger le CSS en premier
     loadCSS(`./css/pages/${pageModule}.css`);
 
@@ -135,12 +130,13 @@ async function renderPage(path, options) {
     CONTENT_ELEMENT.appendChild(pageContent);
 
     // Attendre un frame pour s'assurer que le DOM est prêt
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+    new Promise((resolve) => requestAnimationFrame(resolve));
 
     // Marquer comme chargé et ajouter la transition
     document.body.classList.add("loaded");
     pageContent.classList.add("fade-in");
     if (init) await init(options);
+    await i18n.updateTranslations();
   } catch (error) {
     console.error("Erreur lors du rendu de la page:", error);
     renderError(i18n.t("errors.page.title"), i18n.t("errors.page.message"));
@@ -188,13 +184,11 @@ function initSidebarNavigation() {
 }
 
 /* ******************** Event Listeners ******************** */
-await i18n.init(getLanguages());
-
 window.addEventListener("popstate", () => {
   const currentPath = location.pathname;
   if (!checkAuth()) return;
   renderPage(currentPath);
-});
+}); 
 /* ******************** Initialization ******************** */
 export let currentSettings = new Settings();
 currentSettings.applyToDOM();
@@ -212,6 +206,7 @@ async function initApp() {
       loadCSS("./css/components/popup.css"),
     ]);
 
+    await i18n.init(getLanguages());
     initBackground();
 
     if (getToken() && (await UserAPI.isTokenValid(getToken()))) {

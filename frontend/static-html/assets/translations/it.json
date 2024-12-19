@@ -6,6 +6,9 @@
 			"message": "Si è verificato un errore durante l'inizializzazione dell'applicazione. Per favore riprova più tardi."
 		}
 	},
+	"head": {
+		"title": "ft_transcendance"
+	},
 	"sidebar": {
 		"title": "ft_transcendance",
 		"home": "Benvenuto",
