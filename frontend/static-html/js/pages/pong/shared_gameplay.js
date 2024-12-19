@@ -34,11 +34,20 @@ export const GAME_SETTINGS = {
 /** @type {?ReturnType<typeof setInterval>} */
 export var interval = null;
 
+/** @type {boolean} */
+export var game_paused = false;
+
+/** @returns {void} */
+export function toggle_paused() {
+  game_paused = !game_paused;
+}
+
 /**
  * @param {Function(): void} func
  * @returns {void}
  */
 export function start_simulation(func) {
+  game_paused = false;
   interval = setInterval(func, 1000 / 60); // 60 fps
 }
 

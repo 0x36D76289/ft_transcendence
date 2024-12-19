@@ -1,6 +1,5 @@
 //@ts-check
 
-import { send_to_online_sock } from "../../api/socket.js";
 import {
   page_state,
   set_page_state,
@@ -15,8 +14,9 @@ import {
   interval,
   scores,
   start_simulation,
+  toggle_paused,
 } from "./shared_gameplay.js";
-import { name_entry_key, next_round, start_name_entry } from "./tournament.js";
+import { name_entry_key, next_round } from "./tournament.js";
 
 /** @type {Set} */
 export const keys = new Set();
@@ -28,7 +28,7 @@ export const keys = new Set();
 export function canvas_click(param) {
   switch (page_state) {
     case STATES.SP_Game:
-      //TODO: pause/unpause ?
+      toggle_paused();
       break;
     case STATES.MP_Game:
       break;
@@ -71,29 +71,20 @@ export function canvas_click(param) {
   }
 }
 
-//TODO: make "init" function
-
-//FIXME: TYPES
-//		+ RENAME
-//		+ ADD KEYS.ADD IN HERE
-export function name_enter(key_event) {
-  //HACK: starting match with key, add real UI
-  // if (key_event.code == "KeyU") {
-  //   console.log("STARTING ONLINE MATCH");
-  //   send_to_online_sock("start");
-  // }
-  //	if (key_event.code == "KeyM") {
-  //		console.log("JOINING MM QUEUE");
-  //		send_to_online_sock("join_mm");
-  //	}
-  // if (key_event.code == "KeyL") {
-  //   console.log("BOTGAME");
-  //   send_to_online_sock("BOTGAME");
-  // }
-  // if (key_event.code == "Backquote") {
-  //   start_name_entry();
-  // }
+/**
+ * @param {KeyboardEvent} key_event
+ * @returns {void}
+ */
+export function onkeydown(key_event) {
+  keys.add(key_event.code);
   if (page_state != STATES.Name_Entry) return;
-
   name_entry_key(key_event);
+}
+
+/**
+ * @param {KeyboardEvent} key_event
+ * @returns {void}
+ */
+export function onkeyup(key_event) {
+  keys.delete(key_event.code);
 }

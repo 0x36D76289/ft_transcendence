@@ -1,6 +1,7 @@
 //@ts-check
 
-import { page_state, set_page_state, STATES } from "./globals.js";
+import { game_end_callback } from "./game_end_callback.js";
+import { set_page_state, STATES } from "./globals.js";
 import { local_update } from "./local_gameplay.js";
 import { main_menu } from "./main_menu.js";
 import { render_name, render_rounds } from "./render.js";
@@ -11,7 +12,6 @@ import {
   scores,
   start_simulation,
 } from "./shared_gameplay.js";
-import { game_sock } from "./socket.js";
 
 /** @type {Array<Array<string | null>>} */
 var rounds = [];
@@ -77,26 +77,6 @@ export function start_name_entry() {
   players = [];
   set_page_state(STATES.Name_Entry);
   render_name(players);
-}
-
-/** @type {boolean} */
-var is_online_bot_game = false;
-
-/** @type {number} */
-var bot_game_start_time;
-
-/** @returns {void} */
-export function start_online_bot_game() {
-  init();
-  scores[0] = 0;
-  scores[1] = 0;
-  bots[0] = 0;
-  bots[1] = 1;
-  if (interval) clearInterval(interval);
-  start_simulation(local_update);
-  set_page_state(STATES.SP_Game);
-  is_online_bot_game = true;
-  bot_game_start_time = Date.now();
 }
 
 /**
@@ -201,39 +181,15 @@ export function next_round() {
   return null;
 }
 
-//FIXME: OWN FILE
-export function game_end_callback(winner) {
-  if (interval) clearInterval(interval);
-  switch (page_state) {
-    case STATES.SP_Game:
-      if (is_online_bot_game) {
-        let obj = {
-          p1: scores[0],
-          p2: scores[1],
-          start: bot_game_start_time,
-          end: Date.now(),
-        };
-        if (scores[0] > scores[1]) {
-          game_sock.send("win " + JSON.stringify(obj));
-        } else {
-          game_sock.send("lose " + JSON.stringify(obj));
-        }
-        is_online_bot_game = false;
-      }
-    case STATES.MP_Game:
-      main_menu();
-      break;
-    case STATES.Tournament:
-      set_page_state(STATES.Scores);
-      rounds[current_round + 1][current_game] = winner;
-      current_game += 1;
-      current_game %= rounds[current_round].length / 2;
-      if (current_game == 0) current_round += 1;
-      render_rounds(rounds);
-      break;
-    case STATES.Menu:
-      break;
-    case STATES.Scores:
-      break;
-  }
+/**
+ * @param {?string} winner
+ * @returns {void}
+ */
+export function tournament_game_end(winner) {
+  set_page_state(STATES.Scores);
+  rounds[current_round + 1][current_game] = winner;
+  current_game += 1;
+  current_game %= rounds[current_round].length / 2;
+  if (current_game == 0) current_round += 1;
+  render_rounds(rounds);
 }

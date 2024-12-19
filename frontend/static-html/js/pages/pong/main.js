@@ -4,7 +4,7 @@ import { send_to_online_sock } from "../../api/socket.js";
 import { i18n } from "../../services/i18n.js";
 import { in_queue } from "../home.js";
 import { init_globals, page_state, STATES } from "./globals.js";
-import { keys, name_enter } from "./input.js";
+import { keys, onkeydown, onkeyup } from "./input.js";
 import { main_menu } from "./main_menu.js";
 import { interval } from "./shared_gameplay.js";
 import { game_sock, read_room } from "./socket.js";
@@ -75,23 +75,6 @@ function bind_button_to_key(buttonname, keyname, keys) {
   };
 }
 
-/**
- * @param {KeyboardEvent} e
- * @returns {void}
- */
-function addkey(e) {
-  keys.add(e.code);
-  name_enter(e);
-}
-
-/**
- * @param {KeyboardEvent} e
- * @returns {void}
- */
-function removekey(e) {
-  keys.delete(e.code);
-}
-
 function resize() {
   init_globals();
   switch (page_state) {
@@ -128,8 +111,8 @@ export async function init(options) {
     };
   }
 
-  window.addEventListener("keydown", addkey);
-  window.addEventListener("keyup", removekey);
+  window.addEventListener("keydown", onkeydown);
+  window.addEventListener("keyup", onkeyup);
   window.addEventListener("resize", resize);
 
   main_menu();
@@ -143,8 +126,8 @@ export async function init(options) {
 }
 
 export async function unload() {
-  window.removeEventListener("keydown", addkey);
-  window.removeEventListener("keyup", removekey);
+  window.removeEventListener("keydown", onkeydown);
+  window.removeEventListener("keyup", onkeyup);
   window.removeEventListener("resize", resize);
   if (interval) clearInterval(interval);
   game_sock.close();

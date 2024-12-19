@@ -1,5 +1,6 @@
 //@ts-check
 
+import { game_end_callback } from "./game_end_callback.js";
 import { GAME_DIMENSIONS } from "./globals.js";
 import { keys } from "./input.js";
 import { draw } from "./render.js";
@@ -7,6 +8,7 @@ import {
   bots,
   current_state,
   detect_death,
+  game_paused,
   GAME_SETTINGS,
   init,
   inputs,
@@ -16,41 +18,12 @@ import {
   tick_move_ball,
   tick_move_paddle,
 } from "./shared_gameplay.js";
-import { vec2 } from "./types.js";
-import { game_end_callback, game_players } from "./tournament.js";
+import { game_players } from "./tournament.js";
 
 /**
  * @typedef {import("./types").GameState} GameState
  * @typedef {import("./types").input} input
  */
-
-// /**
-// 	* @param {GameState} state
-// 	* @param {vec2} input
-// 	* @returns {void}
-// 	* INFO: MODIFIES STATE
-// */
-// function local_bounce_horizontal(state, input) {
-// 	if (!is_ball_on_wall(state)) {
-// 		return;
-// 	}
-// 	state.ball_speed_x *= -1;
-// 	if (is_ball_on_left(state)) {
-// 		if (!is_ball_bouncing(state.ball_y, state.p1_height)) {
-// 			scores[1] += 1;
-// 			init();
-// 		} else {
-// 			state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p1_height);
-// 		}
-// 	} else {
-// 		if (!is_ball_bouncing(state.ball_y, state.p2_height)) {
-// 			scores[0] += 1;
-// 			init();
-// 		} else {
-// 			state.ball_speed_y = ball_bounce_y_speed(state.ball_y, state.p2_height);
-// 		}
-// 	}
-// }
 
 /**
  * @param {number} p_y - the height of the bot's paddle
@@ -92,6 +65,10 @@ function tick_local_death_processing(state) {
 
 /** @returns {void} */
 export function local_update() {
+  if (game_paused) {
+    draw(current_state, scores);
+    return;
+  }
   inputs[0][0] = 0;
   if (bots[0]) {
     inputs[0][0] = bot_sim(

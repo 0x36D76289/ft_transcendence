@@ -4,10 +4,10 @@ import { getToken } from "../../utils/cookies.js";
 import { set_queue } from "../home.js";
 import { set_page_state, STATES } from "./globals.js";
 import { main_menu } from "./main_menu.js";
+import { start_online_bot_game } from "./online_bot_game.js";
 import {
   multiplayer_init,
   multiplayer_update,
-  player_num,
   set_player_num,
 } from "./online_gameplay.js";
 import {
@@ -17,7 +17,6 @@ import {
   scores,
   start_simulation,
 } from "./shared_gameplay.js";
-import { start_online_bot_game } from "./tournament.js";
 
 /**
  * @param {string} room_name
@@ -59,9 +58,6 @@ export function read_room(object) {
   );
   set_queue(false);
 }
-
-//TODO: wait for socket to connect ?
-//TODO: error on enemy socket close ?
 
 /**
  * @param {Object} object

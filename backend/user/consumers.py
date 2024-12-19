@@ -34,18 +34,6 @@ class OnlineStatusConsumer(WebsocketConsumer):
         errprint(text_data)
         if text_data == "ping":
             self.send('{"type":"pong"}')
-        # HACK: testing | not real feature
-        elif text_data == "start":
-            l: list[User | TournamentPlayer] = list(pong_data.online_users)
-            l.append(TournamentBot("kendrick"))
-            l.append(TournamentBot("drake"))
-            l.append(TournamentBot("cole"))
-            errprint("\\" * 20)
-            errprint("online users rn", l)
-            # errprint("tournaments rn", [t.players for t in pong_data.tournaments])
-            errprint("\\" * 20)
-            pong_data.start_tournament(l)
-            # pong_data.start_game(l[0], l[1])
         elif text_data == "join_mm":
             pong_data.join_matchmaking(self.user)
         elif text_data.startswith("fight "):
@@ -58,6 +46,3 @@ class OnlineStatusConsumer(WebsocketConsumer):
             pong_data.reject_tournament_invite(self.user, text_data[7:])
         elif text_data.startswith("start "):
             pong_data.start_tournament_text(self.user, text_data[6:])
-        # HACK: testing | not real feature
-        elif text_data == "BOTGAME":
-            pong_data.start_bot_game(self.user)

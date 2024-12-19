@@ -30,6 +30,12 @@ function set_led(status) {
   }
 }
 
+/** @returns {void} */
+function send_ping() {
+  if (online_sock?.readyState === WebSocket.OPEN) online_sock.send("ping");
+}
+setInterval(send_ping, 50000); //50 seconds
+
 /**
  * sends a message through the online sock or notifies the user if it's still getting ready
  * @param {string} message - the message sent to the online sock
@@ -61,14 +67,12 @@ export function create_socket() {
 
   online_sock.onopen = () => {
     console.log(online_sock);
-    send_to_online_sock("ping");
-    console.log("socket opened and ping sent");
+    send_ping();
     send_reconnect_notif = true;
     if (asked_for_init) {
       asked_for_init = false;
       popupSystem("success", i18n.t("notifications.connection.open"));
     }
-    //TODO: send a ping every 50s to keep connection  alive
   };
   online_sock.addEventListener("close", () => {
     set_led(false);
