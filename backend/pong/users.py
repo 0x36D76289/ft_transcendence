@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Any
+
+from django.db.models import Count
 from channels.generic.websocket import WebsocketConsumer
+from chat.models import Conversation, Message
 from game.models import Game
 from user.models import User
 from uuid import uuid4
@@ -11,6 +14,7 @@ from pong.tournament_player import TournamentPlayer, TournamentBot, TournamentUs
 
 WIN_SCORE = 10
 BOT: User = User.objects.get(username="bot")
+SYSTEM: User = User.objects.get(username="system")
 
 
 def errprint(*kwargs):
@@ -245,6 +249,34 @@ class Tournament:
                 return (i, 1)
         return -1, 0
 
+    def warn_winner(self, round_number, winner):
+        # if self.is_round_over():
+        #     return
+        winner_tournament_user: TournamentPlayer | None = self._ongoing_round[
+            round_number * 2 + winner
+        ]
+        if not isinstance(winner_tournament_user, TournamentUser):
+            return
+        pu = pong_data.get_pong_user(winner_tournament_user.user)
+        if not pu:
+            return
+        opp_round_num = round_number
+        if round_number % 2:
+            opp_round_num -= 1
+        else:
+            opp_round_num += 1
+        message = "next up: fighting "
+        if self._next_round[opp_round_num]:
+            message += get_TP_name(self._next_round[opp_round_num])
+        else:
+            message += (
+                "the winner of "
+                + get_TP_name(self._ongoing_round[opp_round_num * 2])
+                + " vs "
+                + get_TP_name(self._ongoing_round[opp_round_num * 2 + 1])
+            )
+        pu.chatsend(message)
+
     def report_game(self, user: User, user_is_winner: bool) -> bool:
         """
         returns True if tournament is over, in which case it should be deleted
@@ -258,6 +290,7 @@ class Tournament:
         loser = 1 - winner
         self._next_round[round_number] = self._ongoing_round[2 * round_number + winner]
         self.remove_player(self._ongoing_round[2 * round_number + loser])
+        self.warn_winner(round_number, winner)
 
         if self.is_round_over():
             return self.start_round()
@@ -282,6 +315,7 @@ class PongUser:
     busy: bool
     invited_tournement_users: set[str]
     accepted_tournament_invites: set[str]
+    system_chat: Conversation
 
     def __init__(self, online_sock: WebsocketConsumer):
         self.user = online_sock.user
@@ -293,10 +327,29 @@ class PongUser:
         self.busy = False
         self.invited_tournement_users = set()
         self.accepted_tournament_invites = set()
+        conversation = (
+            Conversation.objects.annotate(n_users=Count("participants"))
+            .filter(n_users=2)
+            .filter(participants=self.user)
+            .filter(participants=SYSTEM)
+        )
+        if conversation.exists():
+            conversation = conversation[0]
+        else:
+            conversation = Conversation()
+            conversation.save()
+            conversation.participants.add(SYSTEM, self.user)
+        self.system_chat = conversation
 
     def send(self, message_type: str, content: Any) -> None:
         self.online_socket.send(json.dumps({"type": message_type, "value": content}))
         pass
+
+    def chatsend(self, message_content: str):
+        _message = Message.objects.create(
+            sender=SYSTEM, content=message_content, conversation_id=self.system_chat
+        )
+        pong_data.message_notify(self.user)
 
 
 class pong_data:

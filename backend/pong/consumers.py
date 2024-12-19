@@ -65,11 +65,7 @@ class ChatConsumer(WebsocketConsumer):
             return
         if self.anonymous_connection:
             return
-        errprint("DISCONNECT FROM", self.user.get_username())
         pu = pong_data.get_pong_user(self.user)
-        errprint("found pu: ", pu)
-        if pu:
-            errprint("found pu.game: ", pu.game)
         if pu and pu.game:
             pu.game.lose_game(self.user)
         async_to_sync(self.channel_layer.group_discard)(
