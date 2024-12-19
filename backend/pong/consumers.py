@@ -5,9 +5,12 @@ from user.models import User
 from channels.generic.websocket import WebsocketConsumer
 from pong.users import pong_data
 from typing import Any
+from datetime import datetime
+
 
 def errprint(*kwargs):
     print(*kwargs, file=sys.stderr)
+
 
 class ChatConsumer(WebsocketConsumer):
     user: User
@@ -21,11 +24,11 @@ class ChatConsumer(WebsocketConsumer):
         self.user: User = self.scope.get("user")
         self.is_closed = False
         self.anonymous_connection: bool = self.user.is_anonymous
-        if (self.anonymous_connection):
+        if self.anonymous_connection:
             self.close()
             return
         self.room_name: str = self.scope["url_route"]["kwargs"]["room_name"]
-        if (self.room_name == "test"):
+        if self.room_name == "test":
             self.anonymous_connection = True
             self.close()
             return
@@ -34,6 +37,12 @@ class ChatConsumer(WebsocketConsumer):
             self.bot_game = True
             pong_data.set_fighting_bot(self.user)
             return
+        pu = pong_data.get_pong_user(self.user)
+        if pu is None or pu.game is None:
+            self.is_closed = True
+            self.close()
+            return
+        pu.pong_socket = self
         self.accept()
         assign_message = pong_data.get_assign_message(self.user)
 
@@ -48,18 +57,24 @@ class ChatConsumer(WebsocketConsumer):
         if self.is_closed:
             return
         self.is_closed = True
+        time = int(datetime.now().timestamp()) * 1000
         if self.bot_game:
-            # TODO: lose by default
-            return
-        if (self.anonymous_connection):
-            return
-        #TODO: if in game: win for other player
-        # set state when game over normally for disconnect to be handled
-        # make function for disconnect in pong_data that calls lose game if in game
-        async_to_sync(self.channel_layer.group_discard)(
-                self.room_name,
-                self.channel_name
+            pong_data.lose_bot(
+                self.user, str({"p1": 0, "p2": 10, "start": time, "end": time})
             )
+            return
+        if self.anonymous_connection:
+            return
+        errprint("DISCONNECT FROM", self.user.get_username())
+        pu = pong_data.get_pong_user(self.user)
+        errprint("found pu: ", pu)
+        if pu:
+            errprint("found pu.game: ", pu.game)
+        if pu and pu.game:
+            pu.game.lose_game(self.user)
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_name, self.channel_name
+        )
 
     # Receive message from WebSocket
     def receive(self, text_data: str):
@@ -74,8 +89,12 @@ class ChatConsumer(WebsocketConsumer):
         # errprint("+" * 20)
         try:
             data: dict[str, Any] = json.loads(text_data)
-            if "type" in data and data["type"] == "score" and "p1" in data and "p2" in data:
-                #TODO: send to report_score
+            if (
+                "type" in data
+                and data["type"] == "score"
+                and "p1" in data
+                and "p2" in data
+            ):
                 pu = pong_data.get_pong_user(self.user)
                 if pu and pu.game:
                     pu.game.report_score(data)
@@ -83,11 +102,7 @@ class ChatConsumer(WebsocketConsumer):
         except:
             pass
         async_to_sync(self.channel_layer.group_send)(
-            self.room_name,
-            {
-                "type": "message",
-                "msg": text_data
-            }
+            self.room_name, {"type": "message", "msg": text_data}
         )
 
     def message(self, event):

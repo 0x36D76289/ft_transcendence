@@ -14,16 +14,16 @@ import {
 import { game_sock } from "./socket.js";
 
 /** @type {Array<Array<string | null>>} */
-let rounds = [];
+var rounds = [];
 
 /** @type {Array<string>} */
-let players = [];
+export var players = [];
 
 /** @type {number} */
-let current_game = 0;
+var current_game = 0;
 
 /** @type {number} */
-let current_round = 0;
+var current_round = 0;
 
 /** @type {Array<?string>} */
 export const game_players = ["", ""];
@@ -74,6 +74,7 @@ function start_tournament() {
  * @returns {void}
  */
 export function start_name_entry() {
+  players = [];
   set_page_state(STATES.Name_Entry);
   render_name(players);
 }
@@ -181,7 +182,7 @@ export function next_round() {
   //start game
   let p1 = rounds[current_round][current_game * 2];
   let p2 = rounds[current_round][current_game * 2 + 1];
-  console.log(
+  console.info(
     "round " +
       current_round +
       " game " +
