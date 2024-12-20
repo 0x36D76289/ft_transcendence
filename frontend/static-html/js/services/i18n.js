@@ -75,5 +75,4 @@ export const i18n = {
 		// if (getToken() && (await UserAPI.isTokenValid(getToken())))
 		// 	await initSidebar();
 	}
-
 };

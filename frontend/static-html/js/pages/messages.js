@@ -2,6 +2,7 @@ import { ChatAPI } from '../api/chat.js';
 import { i18n } from '../services/i18n.js';
 import { getToken, getUsername } from '../utils/cookies.js';
 import { WS_URL } from '../app.js';
+import { send_to_online_sock } from '../api/socket.js';
 
 let socket = null;
 
@@ -22,6 +23,9 @@ export function render() {
 				<button id="send-message-btn" class="btn-accent">
 					<i class="material-icons">send</i>
 				</button>
+				<button id="invite-match-btn" class="btn-accent">
+					${i18n.t('messages.invite_to_match')}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -34,6 +38,7 @@ export async function init() {
 	const messagesList = document.getElementById('messages-list');
 	const messageInput = document.getElementById('message-input');
 	const sendMessageBtn = document.getElementById('send-message-btn');
+	const inviteMatchBtn = document.getElementById('invite-match-btn');
 
 	let currentConversationId = null;
 
@@ -112,7 +117,6 @@ export async function init() {
 		}
 	}
 
-
 	async function sendMessage() {
 		const messageInput = document.getElementById('message-input');
 
@@ -155,9 +159,20 @@ export async function init() {
 								</div>
 						</div>
 				</div>
-        `;
+			`;
 			messagesList.scrollTop = messagesList.scrollHeight;
 		};
+	}
+
+	async function inviteToMatch() {
+		if (currentConversationId) {
+			const conversation = await ChatAPI.getConversation(currentConversationId);
+			const otherUser = conversation.participants.find(p => p.username !== getUsername());
+			if (otherUser) {
+				send_to_online_sock("fight " + otherUser.username);
+				console.log(`Invited ${otherUser.username} to a match`);
+			}
+		}
 	}
 
 	sendMessageBtn.addEventListener('click', sendMessage);
@@ -167,6 +182,8 @@ export async function init() {
 			sendMessage();
 		}
 	});
+
+	inviteMatchBtn.addEventListener('click', inviteToMatch);
 
 	await loadConversations();
 }

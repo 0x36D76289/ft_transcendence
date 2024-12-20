@@ -82,6 +82,7 @@ export function render() {
 </div>
 	`;
 }
+
 const DEFAULT_SETTINGS = {
 	language: getLanguages(),
 	theme: getTheme(),
@@ -136,7 +137,11 @@ export class Settings {
 	}
 
 	reset() {
-		Object.assign(this, DEFAULT_SETTINGS);
+		this.language = DEFAULT_SETTINGS.language;
+		this.theme = DEFAULT_SETTINGS.theme;
+		this.accentColor = DEFAULT_SETTINGS.accentColor;
+		this.notifications = DEFAULT_SETTINGS.notifications;
+
 		this.set();
 	}
 }

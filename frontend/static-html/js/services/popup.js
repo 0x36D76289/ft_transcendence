@@ -74,7 +74,7 @@ export function popupSystem(
     });
 
     popupElement.addEventListener("mouseleave", () => {
-      autoCloseTimeout = setTimeout(removePopup, 2000); // Réassignation du timeout
+      autoCloseTimeout = setTimeout(removePopup, 2000);
     });
   }
 

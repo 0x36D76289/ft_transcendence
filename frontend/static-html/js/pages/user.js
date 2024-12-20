@@ -164,12 +164,15 @@ export async function init() {
 			document.getElementById('username-input').value = updatedData.username;
 			document.getElementById('bio-input').value = updatedData.bio;
 
-			popupSystem('success', 'Profile updated successfully');
+			popupSystem('success', 'notifications.profile.update');
 		});
 
 		// Logout button
 		document.getElementById('logout-button').addEventListener('click', async () => {
 			await UserAPI.logout();
+
+			document.getElementById('sidebar').remove();
+			document.getElementById('content').style.marginLeft = '0';
 			navigate('/');
 		});
 
@@ -181,6 +184,11 @@ export async function init() {
 		// Confirm delete button
 		document.getElementById('confirm-delete').addEventListener('click', async () => {
 			await UserAPI.deleteAccount();
+
+			// delete sidebar
+			document.getElementById('sidebar').remove();
+			document.getElementById('content').style.marginLeft = '0';
+
 			navigate('/');
 		});
 

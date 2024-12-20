@@ -29,3 +29,17 @@
 .play-button:active {
   transform: scale(1);
 }
+
+@media (max-width: 768px) {
+  .home-container {
+    flex-direction: column;
+    gap: 2vh;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .home-container {
+    flex-direction: column;
+    gap: 2vh;
+  }
+}

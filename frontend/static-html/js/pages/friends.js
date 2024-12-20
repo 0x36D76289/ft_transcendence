@@ -194,9 +194,7 @@ function renderContacts(friends) {
   // Add click handlers for the contact cards
   const contactCards = document.querySelectorAll(".contact-card");
   contactCards.forEach((card) => {
-    // Profile preview click handler
     card.addEventListener("click", (e) => {
-      // Don't show profile if clicking the play button
       if (!e.target.closest('.quick-play-btn')) {
         const username = card.dataset.userId;
         showProfilePreview(username);
@@ -206,7 +204,7 @@ function renderContacts(friends) {
     // Quick play button click handler
     const playBtn = card.querySelector('.quick-play-btn');
     playBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent profile preview from opening
+      e.stopPropagation();
       const username = card.dataset.userId;
       send_to_online_sock("fight " + username);
       popupSystem("info", i18n.t("friends.game_invite_sent") + " " + username);

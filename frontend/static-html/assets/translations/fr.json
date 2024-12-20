@@ -21,6 +21,17 @@
 				"pre": "Invitation à un combat annulée pour ",
 				"post": "Invitation à un combat annulée"
 			}
+		},
+		"profile": {
+			"update": "Profil mis à jour avec succès"
+		},
+		"matchmaking": {
+			"join": "Rejoindre le matchmaking",
+			"leave": "Quitter le matchmaking"
+		},
+		"message": {
+			"send": "Message envoyé",
+			"error": "Erreur d'envoi du message"
 		}
 	},
 	"sidebar": {
@@ -105,7 +116,8 @@
 		"participants": "Participants",
 		"last_message": "Dernier message",
 		"conversation_load_error": "Échec du chargement de la conversation",
-		"message_send_error": "Échec de l'envoi du message"
+		"message_send_error": "Échec de l'envoi du message",
+		"invite_to_match": "Inviter à un combat"
 	},
 	"user": {
 		"title": "Profil",
