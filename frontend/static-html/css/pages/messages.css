@@ -170,7 +170,6 @@
 
 #message-input:focus {
   outline: none;
-  border-color: var(--accent-color);
 }
 
 .btn-accent {
@@ -213,7 +212,7 @@
   }
 
   .chat-header {
-    border-bottom: 1.5px solid var(--border-color);
+    padding: var(--padding-s) var(--padding-m);
   }
 
   .messages-list {

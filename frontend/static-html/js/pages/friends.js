@@ -52,14 +52,14 @@ function renderContacts(friends) {
   const contactGrid = document.getElementById("contactGrid");
   contactGrid.innerHTML = friends
     .map((friend) => {
-      let actionButton;
+      let actionButtons = '';
       if (friend.status === "friend") {
-        actionButton = `
+        actionButtons = `
             <button class="card-btn quick-play-btn" title="${i18n.t("friends.invite_to_play")}">
               <span class="material-icons">sports_esports</span>
             </button>`;
       } else if (friend.status === "request_received") {
-        actionButton = `
+        actionButtons = `
               <button class="card-btn accept-friend-btn" title="${i18n.t("friends.accept_request")}">
                 <span class="material-icons">person_add</span>
               </button>
@@ -67,8 +67,8 @@ function renderContacts(friends) {
                 <span class="material-icons">person_add_disabled</span>
               </button>`;
       } else if (friend.status === "request_sent") {
-        actionButton = `
-            <button class="card-btn accept-friend-btn" title="${i18n.t("friends.cancel_request")}">
+        actionButtons = `
+            <button class="card-btn decline-friend-btn" title="${i18n.t("friends.cancel_request")}">
               <span class="material-icons">person_add_disabled</span>
             </button>`;
       }
@@ -80,11 +80,12 @@ function renderContacts(friends) {
             <p class="contact-status" data-status="${friend.user.is_online ? "online" : "offline"}">
               ${friend.user.is_online ? i18n.t("friends.online") : i18n.t("friends.offline")}
             </p>
-            ${actionButton}
+            <div class="action-buttons">
+              ${actionButtons}
+            </div>
           </div>`;
     })
     .join("");
-
   // Add click handlers for the contact cards
   const contactCards = document.querySelectorAll(".contact-card");
   contactCards.forEach((card) => {

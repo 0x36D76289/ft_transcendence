@@ -1,7 +1,6 @@
 import { UserAPI } from "../api/user.js";
 import { getUsername, getToken } from "../utils/cookies.js";
 import { i18n } from "../services/i18n.js";
-
 export async function initSidebar() {
 	const user = await UserAPI.getProfile(getUsername());
 
@@ -55,6 +54,24 @@ export async function initSidebar() {
 	}
 
 	document.body.appendChild(sidebar);
+
+	// Update main element margin based on screen size
+	const updateMainMargin = () => {
+		const main = document.querySelector('main');
+		if (!main) return;
+
+		if (window.innerWidth < 768) {
+			main.style.marginLeft = '0';
+		} else if (window.innerWidth < 1024) {
+			main.style.marginLeft = `${getComputedStyle(document.documentElement).getPropertyValue('--sidebar-collapsed')}`;
+		} else {
+			main.style.marginLeft = `${getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')}`;
+		}
+	};
+
+	// Initial call and add resize listener
+	updateMainMargin();
+	window.addEventListener('resize', updateMainMargin);
 
 	if (getToken() === null || UserAPI.isTokenValid(getToken()) === false) {
 		sidebar.querySelector(".profile").style.display = "none";

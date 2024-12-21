@@ -182,7 +182,6 @@ function initSidebarNavigation() {
     }
   });
 }
-
 /* ******************** Event Listeners ******************** */
 window.addEventListener("popstate", () => {
   const currentPath = location.pathname;
@@ -192,6 +191,20 @@ window.addEventListener("popstate", () => {
 /* ******************** Initialization ******************** */
 export let currentSettings = new Settings();
 currentSettings.applyToDOM();
+
+
+export async function initAuth() {
+  create_socket();
+  await initSidebar();
+  initSidebarNavigation();
+
+  if (location.pathname === "/auth") {
+    navigate("/", { replace: true });
+  } else {
+    updateActiveNavItem(location.pathname);
+    await renderPage(location.pathname);
+  }
+}
 
 // Séquence d'initialisation sécurisée
 async function initApp() {
@@ -213,16 +226,7 @@ async function initApp() {
     initBackground();
 
     if (getToken() && (await UserAPI.isTokenValid(getToken()))) {
-      create_socket();
-      await initSidebar();
-      initSidebarNavigation();
-
-      if (location.pathname === "/auth") {
-        navigate("/", { replace: true });
-      } else {
-        updateActiveNavItem(location.pathname);
-        await renderPage(location.pathname);
-      }
+      initAuth();
     } else if (location.pathname === "/42auth") {
       const searchParams = new URLSearchParams(location.search);
       let options = { replace: true };

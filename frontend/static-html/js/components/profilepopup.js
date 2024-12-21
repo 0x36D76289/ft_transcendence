@@ -8,7 +8,7 @@ import { i18n } from "../services/i18n.js";
 
 
 function createProfilePreviewPopup(userData, userStats, userHistory) {
-  return `
+	return `
   <div id="profile-preview-overlay" class="profile-preview-overlay">
 	<div class="profile-preview-container">
 	  <button id="close-preview" class="close-preview-btn">
@@ -80,66 +80,74 @@ function createProfilePreviewPopup(userData, userStats, userHistory) {
 }
 
 async function handleActionButton(event) {
-  const action = event.currentTarget.classList[1];
-  const username = document.querySelector(".preview-username").textContent;
+	const action = event.currentTarget.classList[1];
+	const username = document.querySelector(".preview-username").textContent;
 
-  switch (action) {
-	case "message":
-	  await ChatAPI.startConversation(username);
-	  popupSystem("info", i18n.t("friends.message_sent") + " " + username);
-	  break;
-	case "play":
-	  send_to_online_sock("fight " + username);
-	  popupSystem("info", `${i18n.t("notifications.fight.invite.send.pre")} ${username}`);
-	  return;
-	case "block":
-	  await ChatAPI.blockUser(username);
-	  popupSystem("info", i18n.t("friends.block"));
-	  break;
-	case "remove":
-	  await UserAPI.removeFriendRequest(username);
-	  popupSystem("info", i18n.t("friends.remove"));
-	  break;
-	default:
-	  console.error("Unknown action:", action);
-	  break;
-  }
-  document.getElementById("profile-preview-overlay").remove();
-  navigate("/friends");
+	switch (action) {
+		case "message":
+			await ChatAPI.startConversation(username);
+			popupSystem("info", i18n.t("friends.message_sent") + " " + username);
+			break;
+		case "play":
+			send_to_online_sock("fight " + username);
+			popupSystem("info", `${i18n.t("notifications.fight.invite.send.pre")} ${username}`);
+			return;
+		case "block":
+			await ChatAPI.blockUser(username);
+			popupSystem("info", i18n.t("friends.block"));
+			break;
+		case "remove":
+			await UserAPI.removeFriendRequest(username);
+			popupSystem("info", i18n.t("friends.remove"));
+			break;
+		default:
+			console.error("Unknown action:", action);
+			break;
+	}
+	document.getElementById("profile-preview-overlay").remove();
+	navigate("/friends");
 }
 
 export async function showProfilePreview(username) {
 	try {
-	  // Fetch user profile and stats
-	  const userData = await UserAPI.getProfile(username);
-	  const userStats = await UserAPI.getUserStats(username);
-	  const userHistory = await GameAPI.getUserGameHistory(username);
-  
-	  // Create and insert popup
-	  const popupHTML = createProfilePreviewPopup(userData, userStats, userHistory);
-	  document.body.insertAdjacentHTML("beforeend", popupHTML);
-  
-	  // Close button
-	  document.getElementById("close-preview").addEventListener("click", () => {
-		document.getElementById("profile-preview-overlay").remove();
-	  });
-  
-	  // Close on outside click
-	  document
-		.getElementById("profile-preview-overlay")
-		.addEventListener("click", (e) => {
-		  if (e.target.id === "profile-preview-overlay") {
-			e.target.remove();
-		  }
+		// Fetch user profile and stats
+		const userData = await UserAPI.getProfile(username);
+		const userStats = await UserAPI.getUserStats(username);
+		const userHistory = await GameAPI.getUserGameHistory(username);
+
+		// Create and insert popup
+		const popupHTML = createProfilePreviewPopup(userData, userStats, userHistory);
+		document.body.insertAdjacentHTML("beforeend", popupHTML);
+
+		// Close button
+		document.getElementById("close-preview").addEventListener("click", () => {
+			document.getElementById("profile-preview-overlay").remove();
 		});
-  
-	  // Add event listeners for profile action buttons
-	  const actionButtons = document.querySelectorAll(".profile-action-btn");
-	  actionButtons.forEach((button) => {
-		button.addEventListener("click", handleActionButton);
-	  });
+
+		// Close on outside click
+		document
+			.getElementById("profile-preview-overlay")
+			.addEventListener("click", (e) => {
+				if (e.target.id === "profile-preview-overlay") {
+					e.target.remove();
+				}
+			});
+
+		// Add event listeners for profile action buttons
+		const actionButtons = document.querySelectorAll(".profile-action-btn");
+		actionButtons.forEach((button) => {
+			button.addEventListener("click", handleActionButton);
+		});
+
+		// si j'appuie sur echap je ferme la fenetre
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape") {
+				document.getElementById("profile-preview-overlay").remove();
+			}
+		});										
+
 	} catch (error) {
-	  console.error("Failed to load profile preview:", error);
-	  popupSystem("error", i18n.t("friends.profile_load_error"));
+		console.error("Failed to load profile preview:", error);
+		popupSystem("error", i18n.t("friends.profile_load_error"));
 	}
-  }
+}

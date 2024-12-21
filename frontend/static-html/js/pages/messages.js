@@ -3,6 +3,7 @@ import { i18n } from '../services/i18n.js';
 import { getToken, getUsername } from '../utils/cookies.js';
 import { WS_URL } from '../app.js';
 import { send_to_online_sock } from '../api/socket.js';
+import { showProfilePreview } from '../components/profilepopup.js';
 
 let socket = null;
 
@@ -53,7 +54,9 @@ export async function init() {
 				}
 				return `
 					<div class="conversation-item" data-conv-id="${conv.id}">
-						<img src="/media/${otherUser.pfp}" alt="${otherUser.username}" class="avatar">
+						<button class="avatar-button" data-username="${otherUser.username}">
+							<img src="/media/${otherUser.pfp}" alt="${otherUser.username}" class="avatar">
+						</button>
 						<div class="conversation-details">
 							<h4>${otherUser.username}</h4>
 							<p class="last-message">${conv.last_message?.content || ''}</p>
@@ -75,6 +78,13 @@ export async function init() {
 					setupWebSocket(currentConversationId);
 				});
 			});
+
+			document.querySelectorAll('.avatar-button').forEach(button => {
+				button.addEventListener('click', (e) => {
+					e.stopPropagation(); // Empêche le déclenchement de l'événement conversation-item
+					showProfilePreview(button.dataset.username);
+				});
+			});
 		} catch (error) {
 			console.error('Failed to load conversations:', error);
 		}
@@ -83,22 +93,30 @@ export async function init() {
 	async function loadConversation(conversationId) {
 		try {
 			const conversation = await ChatAPI.getConversation(conversationId);
-	
+
 			// Dynamic Chat Header
 			chatParticipants.innerHTML = conversation.participants.map(participant => `
 				<div class="chat-participant">
-					<span><img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar" onclick="showProfilePreview('${participant.username}')"></span>
+					<button class="avatar-button" data-username="${participant.username}">
+						<img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar">
+					</button>
 				</div>
-			`).join('');
+			`).join('');     
 	
+			chatParticipants.querySelectorAll('.avatar-button').forEach(button => {
+				button.addEventListener('click', () => {
+					showProfilePreview(button.dataset.username);
+				});
+			});
+
 			// Messages with Profile Pictures
 			messagesList.innerHTML = conversation.message_set.reverse().map(message => {
 				const sender = conversation.participants.find(p => p.username === message.sender);
 				const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
-	
+
 				return `
 					<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
-							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar" onclick="showProfilePreview('${message.sender}')">
+							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
 							<div class="message-content-wrapper">
 									<div class="message-content">
 										${message.content}
@@ -110,13 +128,12 @@ export async function init() {
 					</div>
 					`;
 			}).join('');
-	
 			messagesList.scrollTop = messagesList.scrollHeight;
 		} catch (error) {
 			console.error('Failed to load conversation:', error);
 		}
 	}
-	
+
 	async function sendMessage() {
 		const messageInput = document.getElementById('message-input');
 

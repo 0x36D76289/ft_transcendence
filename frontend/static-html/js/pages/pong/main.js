@@ -25,20 +25,20 @@ export function render() {
 
             <!-- Left Buttons -->
             <div class="button-container left-buttons">
-                <button class="button" id="p1up">
+                <button class="control-button" id="p1up">
 	  				<span class=material-icons>arrow_upward</span>
 	  			</button>
-                <button class="button" id="p1down">
+                <button class="control-button" id="p1down">
 	  				<span class=material-icons>arrow_downward</span>
 	  			</button>
             </div>
 
             <!-- Right Buttons -->
             <div class="button-container right-buttons">
-                <button class="button" id="p2up">
+                <button class="control-button" id="p2up">
 	  				<span class=material-icons>arrow_upward</span>
 	  			</button>
-                <button class="button" id="p2down">
+                <button class="control-button" id="p2down">
 	  				<span class=material-icons>arrow_downward</span>
 	  			</button>
             </div>

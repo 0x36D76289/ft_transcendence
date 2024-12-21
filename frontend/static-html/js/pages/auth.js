@@ -1,9 +1,7 @@
 import { UserAPI } from '../api/user.js';
-import { navigate } from '../app.js';
+import { navigate, initAuth } from '../app.js';
 import { popupSystem } from '../services/popup.js';
 import { i18n } from '../services/i18n.js';
-import { create_socket } from '../api/socket.js';
-import { initSidebar } from '../components/sidebar.js';
 
 export function render() {
 	return `
@@ -47,7 +45,7 @@ export function render() {
 }
 
 export async function init(options={}) {
-	const mainElement = document?.querySelector('main');
+	const mainElement = document.querySelector('main');
 	const originalMarginLeft = getComputedStyle(mainElement).marginLeft;
 	mainElement.style.marginLeft = '0';
 
@@ -59,9 +57,8 @@ export async function init(options={}) {
 				return;
 			}
 			mainElement.style.marginLeft = originalMarginLeft;
+			await initAuth();
 			navigate('/');
-			create_socket();
-			await initSidebar();
 		} catch (error) {
 			popupSystem('error', i18n.t('auth.login.error'));
 		}
@@ -78,10 +75,8 @@ export async function init(options={}) {
 				console.error('Error while logging in');
 				return;
 			}
-			mainElement.style.marginLeft = originalMarginLeft;
+			await initAuth();
 			navigate('/');
-			create_socket();
-			await initSidebar();
 		} catch (error) {
 			popupSystem('error', i18n.t('auth.login.error'));
 		}
@@ -111,10 +106,8 @@ export async function init(options={}) {
 				console.error('Error while creating guest account');
 				return;
 			}
-			mainElement.style.marginLeft = originalMarginLeft;
+			await initAuth();
 			navigate('/');
-			create_socket();
-			await initSidebar();
 		} catch (error) {
 			popupSystem('error', i18n.t("auth.register.guest_error"));
 		}

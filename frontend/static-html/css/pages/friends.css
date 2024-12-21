@@ -185,18 +185,17 @@
 }
 
 .card-btn {
-    background: var(--bg-tertiary);
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-    margin-top: var(--margin-s);
-    color: var(--bg-primary);
+	background: var(--bg-tertiary);
+	border: none;
+	border-radius: 50%;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: var(--transition);
+	color: var(--bg-primary);
 }
 
 .card-btn:hover {
@@ -226,6 +225,13 @@
 .stat-label {
 	font: var(--smallui);
 	color: var(--text-secondary);
+}
+
+.action-buttons {
+	display: flex;
+	gap: var(--margin-s);
+	justify-content: center;
+	margin-top: var(--margin-s);
 }
 
 @media screen and (max-width: 767px) {
