@@ -206,6 +206,8 @@ async function initApp() {
       loadCSS("./css/components/popup.css"),
     ]);
 
+    await Promise.all(Object.values(ROUTES).map((page) => loadCSS(`./css/pages/${page}.css`)));
+
     await i18n.init(getLanguages());
     initBackground();
 

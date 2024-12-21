@@ -161,15 +161,16 @@
 }
 
 .profile-preview-container {
-	background-color: var(--bg-primary);
 	border-radius: 16px;
-	max-width: 500px;
 	width: 90%;
 	padding: var(--padding-l);
 	position: relative;
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 	text-align: center;
 	animation: fadeIn 0.3s ease-out;
+	backdrop-filter: blur(var(--blur));
+	border: 1px solid var(--border-color);
+	background: rgba(255, 255, 255, 0.1);
 }
 
 @keyframes fadeIn {
@@ -259,7 +260,7 @@
 	gap: var(--margin-l);
 }
 
-.add-friend-btn {
+.add-friend-btn, accept-friend-btn {
 	background: var(--bg-tertiary);
 	border: none;
 	border-radius: 8px;
@@ -276,7 +277,11 @@
 	background: var(--bg-secondary);
 }
 
-.quick-play-btn {
+.accept-friend-btn:hover {
+	background: var(--bg-secondary);
+}
+
+.card-btn {
     background: var(--bg-tertiary);
     border: none;
     border-radius: 50%;
@@ -291,7 +296,7 @@
     color: var(--bg-primary);
 }
 
-.quick-play-btn:hover {
+.card-btn:hover {
     background: var(--bg-secondary);
     transform: scale(1.1);
 }
@@ -301,6 +306,90 @@
     cursor: pointer;
     margin: var(--margin-s);
     min-height: 200px;
+}
+
+.profile-preview-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--margin-l);
+	margin-top: var(--margin-l);
+}
+
+.game-history-section {
+	padding: var(--padding-m);
+	background: var(--bg-secondary);
+	border-radius: 12px;
+}
+
+.game-history-list {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.game-history-item {
+	padding: var(--padding-s);
+	margin-bottom: var(--margin-s);
+	border-radius: 8px;
+	background: var(--bg-tertiary);
+	display: grid;
+	gap: var(--margin-xs);
+}
+
+.game-players {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font: var(--pui);
+}
+
+.player-self {
+	color: var(--accent-color);
+	font-weight: bold;
+}
+
+.vs {
+	color: var(--text-secondary);
+	margin: 0 var(--margin-xs);
+}
+
+.game-score {
+	display: flex;
+	justify-content: center;
+	gap: var(--margin-xs);
+	font: var(--h4ui);
+	color: var(--text-primary);
+}
+
+.game-date {
+	font: var(--smallui);
+	color: var(--text-tertiary);
+	text-align: right;
+}
+
+.profile-details-section {
+	padding: var(--padding-m);
+	background: var(--bg-secondary);
+	border-radius: 12px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.stat-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.stat-value {
+	font: var(--h3ui);
+	color: var(--accent-color);
+}
+
+.stat-label {
+	font: var(--smallui);
+	color: var(--text-secondary);
 }
 
 
@@ -330,5 +419,14 @@
 	.search-container {
 		flex-direction: column;
 		gap: var(--margin-m);
+	}
+
+	.profile-preview-grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.profile-preview-container {
+		max-height: 90vh;
+		overflow-y: auto;
 	}
 }
