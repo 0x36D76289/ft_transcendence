@@ -1,10 +1,12 @@
+//@ts-check
+
+import { send_to_online_sock } from "../api/socket.js";
+import { i18n } from "../services/i18n.js";
 import { UserAPI } from "../api/user.js";
 import { ChatAPI } from "../api/chat.js";
 import { popupSystem } from "../services/popup.js";
 import { getUsername } from "../utils/cookies.js";
-import { i18n } from "../services/i18n.js";
 import { navigate } from "../app.js";
-import { send_to_online_sock } from "../api/socket.js";
 
 function createContactCard(friend) {
   let status = friend.is_online

@@ -120,9 +120,9 @@ async function renderPage(path, options) {
     const { render, init, unload } = await import(`./pages/${pageModule}.js`);
     unload_store();
     if (unload) {
-        unload_store = unload;
+      unload_store = unload;
     } else {
-        unload_store = () => {};
+      unload_store = () => {};
     }
     const pageContent = createPageContent(render());
 
@@ -188,7 +188,7 @@ window.addEventListener("popstate", () => {
   const currentPath = location.pathname;
   if (!checkAuth()) return;
   renderPage(currentPath);
-}); 
+});
 /* ******************** Initialization ******************** */
 export let currentSettings = new Settings();
 currentSettings.applyToDOM();
@@ -222,10 +222,14 @@ async function initApp() {
       }
     } else if (location.pathname === "/42auth") {
       const searchParams = new URLSearchParams(location.search);
-	  let options = { replace: true }
+      let options = { replace: true };
       if (searchParams.has("code")) {
-        options = { replace: true, login42: true, code: searchParams.get("code")}
-	  }
+        options = {
+          replace: true,
+          login42: true,
+          code: searchParams.get("code"),
+        };
+      }
       navigate("/auth", options);
     } else {
       navigate("/auth", { replace: true });
