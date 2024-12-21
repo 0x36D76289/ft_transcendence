@@ -186,7 +186,10 @@
 		"remove_success": "Utilisateur supprimé",
 		"profile_load_error": "Échec du chargement du profil",
 		"friend_request_sent": "Demande d'ami envoyée",
-		"game_invite_sent": "Invitation de jeu envoyée"
+		"game_invite_sent": {
+			"pre": "Invitation de jeu envoyée à ",
+			"post": ""
+		}
 	},
 	"pong": {
 		"local_tournament": "Tournoi Local",

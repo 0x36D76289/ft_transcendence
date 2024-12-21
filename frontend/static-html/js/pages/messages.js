@@ -83,40 +83,40 @@ export async function init() {
 	async function loadConversation(conversationId) {
 		try {
 			const conversation = await ChatAPI.getConversation(conversationId);
-
+	
 			// Dynamic Chat Header
 			chatParticipants.innerHTML = conversation.participants.map(participant => `
 				<div class="chat-participant">
-					<span>${participant.username}</span>
+					<span><img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar" onclick="showProfilePreview('${participant.username}')"></span>
 				</div>
 			`).join('');
-
+	
 			// Messages with Profile Pictures
 			messagesList.innerHTML = conversation.message_set.reverse().map(message => {
 				const sender = conversation.participants.find(p => p.username === message.sender);
 				const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
-
+	
 				return `
 					<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
-							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
+							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar" onclick="showProfilePreview('${message.sender}')">
 							<div class="message-content-wrapper">
 									<div class="message-content">
-											${message.content}
+										${message.content}
 									</div>
 									<div class="message-time">
-											${new Date(message.time_created).toLocaleTimeString()}
+										${new Date(message.time_created).toLocaleTimeString()}
 									</div>
 							</div>
 					</div>
 					`;
 			}).join('');
-
+	
 			messagesList.scrollTop = messagesList.scrollHeight;
 		} catch (error) {
 			console.error('Failed to load conversation:', error);
 		}
 	}
-
+	
 	async function sendMessage() {
 		const messageInput = document.getElementById('message-input');
 

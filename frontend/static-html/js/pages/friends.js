@@ -1,72 +1,9 @@
-//@ts-check
-
-import { send_to_online_sock } from "../api/socket.js";
-import { i18n } from "../services/i18n.js";
 import { UserAPI } from "../api/user.js";
-import { ChatAPI } from "../api/chat.js";
 import { popupSystem } from "../services/popup.js";
 import { getUsername } from "../utils/cookies.js";
-import { navigate } from "../app.js";
-
-function createContactCard(friend) {
-  let status = friend.is_online
-    ? i18n.t("friends.online")
-    : i18n.t("friends.offline");
-  return `
-	<div class="contact-card" data-user-id="${friend.username}">
-		<img src="/media${friend.pfp}" alt="${friend.username}" class="contact-avatar">
-		<h3 class="contact-username">${friend.username}</h3>
-		<p class="contact-status" data-status="${status}">
-				${status}
-		</p>
-	</div>
-	`;
-}
-
-function createProfilePreviewPopup(userData, userStats) {
-  return `
-	<div id="profile-preview-overlay" class="profile-preview-overlay">
-		<div class="profile-preview-container">
-			<button id="close-preview" class="close-preview-btn">
-				<span class="material-icons">close</span>
-			</button>
-			<div class="profile-preview-content">
-				<div class="profile-preview-avatar">
-					<img src="/media${userData.pfp}" alt="${userData.username}" class="preview-avatar">
-				</div>
-				<h2 class="preview-username">${userData.username}</h2>
-				<p class="preview-bio">${userData.bio}</p>
-
-				<div class="preview-stats">
-					<div class="stat-item">
-						<span class="stat-value">${userStats.games_played}</span>
-						<span class="stat-label">${i18n.t("user.games_played")}</span>
-					</div>
-					<div class="stat-item">
-						<span class="stat-value">${userStats.win_rate}%</span>
-						<span class="stat-label">${i18n.t("user.win_rate")}</span>
-					</div>
-				</div>
-
-				<div class="profile-actions">
-					<button class="profile-action-btn message" title="${i18n.t("friends.send_message")}">
-						<span class="material-icons">chat</span>
-					</button>
-					<button class="profile-action-btn play" title="${i18n.t("friends.invite_to_play")}">
-						<span class="material-icons">sports_esports</span>
-					</button>
-					<button class="profile-action-btn block" title="${i18n.t("friends.block")}">
-						<span class="material-icons">block</span>
-					</button>
-					<button class="profile-action-btn remove" title="${i18n.t("friends.remove")}">
-						<span class="material-icons">delete</span>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	`;
-}
+import { i18n } from "../services/i18n.js";
+import { showProfilePreview } from "../components/profilepopup.js";
+import { send_to_online_sock } from "../api/socket.js";
 
 export function render() {
   return `
@@ -111,117 +48,98 @@ function initScrollTopButton() {
   });
 }
 
-async function handleActionButton(event) {
-  const action = event.currentTarget.classList[1];
-  const username = document.querySelector(".preview-username").textContent;
-
-  switch (action) {
-    case "message":
-      await ChatAPI.startConversation(username);
-      popupSystem(
-        "info",
-        i18n.t("friends.message_sent.pre") +
-          username +
-          i18n.t("friends.message_sent.post"),
-      );
-      break;
-    case "play":
-      send_to_online_sock("fight " + username);
-      popupSystem(
-        "info",
-        i18n.t("notifications.fight.invite.send.pre") +
-          username +
-          i18n.t("notifications.fight.invite.send.post"),
-      );
-      return;
-    case "block":
-      await ChatAPI.blockUser(username);
-      popupSystem("info", i18n.t("friends.block"));
-      break;
-    case "remove":
-      await UserAPI.removeFriendRequest(username);
-      popupSystem("info", i18n.t("friends.remove"));
-      break;
-    default:
-      console.error("Unknown action:", action);
-      break;
-  }
-  document.getElementById("profile-preview-overlay").remove();
-  navigate("/friends");
-}
-
-async function showProfilePreview(username) {
-  try {
-    // Fetch user profile and stats
-    const userData = await UserAPI.getProfile(username);
-    const userStats = await UserAPI.getUserStats(username);
-
-    // Create and insert popup
-    const popupHTML = createProfilePreviewPopup(userData, userStats);
-    document.body.insertAdjacentHTML("beforeend", popupHTML);
-
-    // Close button
-    document.getElementById("close-preview").addEventListener("click", () => {
-      document.getElementById("profile-preview-overlay").remove();
-    });
-
-    // Close on outside click
-    document
-      .getElementById("profile-preview-overlay")
-      .addEventListener("click", (e) => {
-        if (e.target.id === "profile-preview-overlay") {
-          e.target.remove();
-        }
-      });
-
-    // Add event listeners for profile action buttons
-    const actionButtons = document.querySelectorAll(".profile-action-btn");
-    actionButtons.forEach((button) => {
-      button.addEventListener("click", handleActionButton);
-    });
-  } catch (error) {
-    console.error("Failed to load profile preview:", error);
-    popupSystem("error", i18n.t("friends.profile_load_error"));
-  }
-}
-
 function renderContacts(friends) {
   const contactGrid = document.getElementById("contactGrid");
   contactGrid.innerHTML = friends
-    .map(
-      (friend) =>
-        `<div class="contact-card" data-user-id="${friend.user.username}">
+    .map((friend) => {
+      let actionButton;
+      if (friend.status === "friend") {
+        actionButton = `
+            <button class="card-btn quick-play-btn" title="${i18n.t("friends.invite_to_play")}">
+              <span class="material-icons">sports_esports</span>
+            </button>`;
+      } else if (friend.status === "request_received") {
+        actionButton = `
+              <button class="card-btn accept-friend-btn" title="${i18n.t("friends.accept_request")}">
+                <span class="material-icons">person_add</span>
+              </button>
+              <button class="card-btn decline-friend-btn" title="${i18n.t("friends.decline_request")}">
+                <span class="material-icons">person_add_disabled</span>
+              </button>`;
+      } else if (friend.status === "request_sent") {
+        actionButton = `
+            <button class="card-btn accept-friend-btn" title="${i18n.t("friends.cancel_request")}">
+              <span class="material-icons">person_add_disabled</span>
+            </button>`;
+      }
+
+      return `
+          <div class="contact-card" data-user-id="${friend.user.username}">
             <img src="/media${friend.user.pfp}" alt="${friend.user.username}" class="contact-avatar">
             <h3 class="contact-username">${friend.user.username}</h3>
             <p class="contact-status" data-status="${friend.user.is_online ? "online" : "offline"}">
-                ${friend.user.is_online ? i18n.t("friends.online") : i18n.t("friends.offline")}
+              ${friend.user.is_online ? i18n.t("friends.online") : i18n.t("friends.offline")}
             </p>
-            <button class="quick-play-btn" title="${i18n.t("friends.invite_to_play")}">
-              <span class="material-icons">sports_esports</span>
-            </button>
-        </div>`,
-    )
+            ${actionButton}
+          </div>`;
+    })
     .join("");
 
   // Add click handlers for the contact cards
   const contactCards = document.querySelectorAll(".contact-card");
   contactCards.forEach((card) => {
     card.addEventListener("click", (e) => {
-      if (!e.target.closest(".quick-play-btn")) {
+      if (
+        !e.target.closest(".quick-play-btn") &&
+        !e.target.closest(".add-friend-btn")
+      ) {
         const username = card.dataset.userId;
         showProfilePreview(username);
       }
     });
 
-    // Quick play button click handler
     const playBtn = card.querySelector(".quick-play-btn");
-    playBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const username = card.dataset.userId;
-      send_to_online_sock("fight " + username);
-      popupSystem("info", i18n.t("friends.game_invite_sent") + " " + username);
-    });
+    if (playBtn) {
+      playBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const username = card.dataset.userId;
+        send_to_online_sock("fight " + username);
+        popupSystem(
+          "info",
+          i18n.t("friends.game_invite_sent.pre") +
+            username +
+            i18n.t("friends.game_invite_sent.post"),
+        );
+      });
+    }
+
+    const acceptBtn = card.querySelector(".accept-friend-btn");
+    if (acceptBtn) {
+      acceptBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const username = card.dataset.userId;
+        await UserAPI.sendFriendRequest(username);
+        popupSystem("info", i18n.t("friends.friend_request_accepted"));
+        refreshFriends();
+      });
+    }
+
+    const declineBtn = card.querySelector(".decline-friend-btn");
+    if (declineBtn) {
+      declineBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const username = card.dataset.userId;
+        await UserAPI.removeFriendRequest(username);
+        popupSystem("info", i18n.t("friends.friend_request_declined"));
+        refreshFriends();
+      });
+    }
   });
+}
+
+function refreshFriends() {
+  const friends = UserAPI.getFriends(getUsername());
+  renderContacts(friends);
 }
 
 export async function init() {
@@ -230,16 +148,26 @@ export async function init() {
 
   let friends = await UserAPI.getFriends(getUsername());
 
+  console.log(friends);
+
   searchInput.addEventListener("input", () => {
     const filterFriends = friends.filter((friend) =>
       friend.user.username.includes(searchInput.value),
     );
     renderContacts(filterFriends);
   });
+  searchInput.addEventListener("keypress", async (event) => {
+    if (event.key === "Enter") {
+      await UserAPI.sendFriendRequest(searchInput.value);
+      popupSystem("info", i18n.t("friends.friend_request_sent"));
+      refreshFriends();
+    }
+  });
 
   addFriendBtn.addEventListener("click", async () => {
     await UserAPI.sendFriendRequest(searchInput.value);
     popupSystem("info", i18n.t("friends.friend_request_sent"));
+    refreshFriends();
   });
 
   renderContacts(friends);
