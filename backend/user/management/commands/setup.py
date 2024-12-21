@@ -19,7 +19,7 @@ class Command(BaseCommand):
     help = "set up the application"
 
     def handle(self, *args, **kwargs):
-        pong_data.BOT = create_user("bot", "bip bop")
-        pong_data.SYSTEM = create_user("system", "sys_message")
+        create_user("bot", "bip bop")
+        create_user("system", "sys_message")
 
         self.stdout.write(self.style.SUCCESS("Setup complete !"))

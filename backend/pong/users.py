@@ -358,8 +358,9 @@ class PongUser:
 
 
 class pong_data:
-    BOT: User
-    SYSTEM: User
+    BOT: User = None
+    SYSTEM: User = None
+    appstart = False
     online_users: dict[User, PongUser] = dict()
     name_to_user: dict[str, User] = dict()
 
@@ -373,6 +374,10 @@ class pong_data:
 
     @classmethod
     def register(cls, online_sock: WebsocketConsumer):
+        if cls.appstart == False:
+            cls.BOT = User.objects.get(username="bot")
+            cls.SYSTEM = User.objects.get(username="system")
+            cls.appstart = True
         user: User = online_sock.user
         cls.online_users[user] = PongUser(online_sock)
         cls.name_to_user[user.get_username()] = user
@@ -382,10 +387,11 @@ class pong_data:
         user: User = online_sock.user
         if cls.matchmaking_queue == user:
             cls.matchmaking_queue = None
-        pu: PongUser = cls.online_users[user]
-        if pu.game:
-            pu.game.lose_game(pu.user)
-        cls.online_users.pop(user)
+        pu = cls.get_pong_user(user)
+        if pu:
+            if pu.game:
+                pu.game.lose_game(pu.user)
+            cls.online_users.pop(user)
         if user.get_username() in cls.name_to_user:
             del cls.name_to_user[user.get_username()]
 
