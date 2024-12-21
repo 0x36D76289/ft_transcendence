@@ -22,7 +22,9 @@
 		}
 	},
 	"home": {
-		"play": "Jouer"
+		"play": "Jouer",
+		"join_mm": "Rejoindre le Matchmaking",
+		"leave_mm": "Quitter le Matchmaking"
 	},
 	"settings": {
 		"title": "Paramètres",
@@ -126,11 +128,78 @@
 		"profile_load_error": "Échec du chargement du profil",
 		"friend_request_sent": "Demande d'ami envoyée"
 	},
+	"pong": {
+		"local_tournament": "Tournoi Local",
+		"setting": {
+			"paddle_width": "Largeur de la raquette",
+			"paddle_height": "Hauteur de la raquette",
+			"paddle_speed": "Vitesse du joueur",
+			"ball_size": "Taille de la balle",
+			"ball_speed": "Vitesse horizontale du la balle",
+			"ball_y_speed_factor": "Incidence du rebond",
+			"win_score": "Score de victoire"
+		}
+	},
 	"tournaments": {
 		"title": "Tournois",
 		"current_tournament": "Tournoi actuel",
 		"enter_username": "Entrez le nom d'utilisateur",
 		"enter_bot_name": "Entrez le nom du bot",
 		"start_tournament": "Commencer le tournoi"
+	},
+	"notifications": {
+		"matchmaking": {
+			"join": "Vous avez rejoint le matchmaking!",
+			"leave": "Vous avez quitté le matchmaking"
+		},
+		"tournament": {
+			"invite": {
+				"pre": "",
+				"post": " vous invite a son tournoi"
+			},
+			"send-invite": {
+				"pre": "une invitation a été envoyée à ",
+				"post": ""
+			},
+			"already-in": {
+				"pre": "",
+				"post": " est déjà dans le tournoi"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " est hors-ligne"
+			}
+		},
+		"connection": {
+			"close": "Reconnection au socket en cours",
+			"open": "Connection réussie",
+			"pending": "La page est en cours de connection au serveur, veuillez patienter"
+		},
+		"fight": {
+			"self-busy": "You êtes marqué comme occupé",
+			"other-busy": {
+				"pre": "",
+				"post": " est occupé"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " est hors-ligne"
+			},
+			"invite": {
+				"receive": {
+					"pre": "",
+					"post": " veut jouer avec vous"
+				},
+				"send": {
+					"pre": "invitation envoyée à ",
+					"post": ""
+				},
+				"cancel": {
+					"pre": "l'invitation envoyée à ",
+					"post": " a été annulée"
+				}
+			}
+		},
+		"message": "Message reçu!"
 	}
 }

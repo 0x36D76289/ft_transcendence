@@ -145,8 +145,7 @@
 		"current_tournament": "Current Tournament",
 		"enter_username": "Enter username",
 		"enter_bot_name": "Enter bot name",
-		"start_tournament": "Start Tournament",
-		"local": "Local Tournament"
+		"start_tournament": "Start Tournament"
 	},
 	"notifications": {
 		"matchmaking": {
