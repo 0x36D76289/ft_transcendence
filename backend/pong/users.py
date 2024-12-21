@@ -4,7 +4,7 @@ from typing import Any
 from django.db.models import Count
 from channels.generic.websocket import WebsocketConsumer
 from chat.models import Conversation, Message
-from game.models import Game
+from pong.models import Game
 from user.models import User
 from uuid import uuid4
 from random import randint

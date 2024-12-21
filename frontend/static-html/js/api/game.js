@@ -2,7 +2,7 @@ import * as cookies from "../utils/cookies.js";
 import { popupSystem } from "../services/popup.js";
 import { i18n } from "../services/i18n.js";
 
-const BASE_URL = "https://" + window.location.host + "/api/game";
+const BASE_URL = "https://" + window.location.host + "/api/pong";
 
 export class GameAPI {
   // Helper method to handle API responses (similar to UserAPI)

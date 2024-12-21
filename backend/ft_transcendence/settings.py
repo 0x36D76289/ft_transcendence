@@ -43,7 +43,6 @@ INSTALLED_APPS = [
 	'rest_framework.authtoken',
 	'channels',
 	'user',
-	'game',
 	'chat',
     'pong'
 ]

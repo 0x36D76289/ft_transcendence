@@ -1,1 +1,22 @@
-from django.shortcuts import render
+from pong.models import Game
+from pong.serializers import GameSerializer, GameSerializerUsername
+from rest_framework import generics, status
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from user.models import User
+
+@api_view(['GET'])
+def GameAllHistory(request):
+	games = Game.objects.all()
+	serializer = GameSerializerUsername(games, many=True)
+	return Response(serializer.data)
+
+@api_view(['GET'])
+def GameUserHistory(request, user):
+	try:
+		user = User.objects.get(username=user)
+	except:
+		return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+	games = Game.objects.filter(p1=user.id) | Game.objects.filter(p2=user.id)
+	serializer = GameSerializerUsername(games, many=True)
+	return Response(serializer.data)

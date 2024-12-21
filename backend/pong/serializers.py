@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from game.models import Game
+from pong.models import Game
 from user.serializers import UserSerializer
 
 class GameSerializer(serializers.ModelSerializer):

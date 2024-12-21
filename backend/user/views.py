@@ -13,7 +13,7 @@ from user.models import User, UserFriend
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.db.models import Q, F
-from game.models import Game
+from pong.models import Game
 import requests
 from os import getenv
 from ft_transcendence.utils import clean_serializer_errors
