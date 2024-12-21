@@ -66,7 +66,7 @@ class ChatConsumer(WebsocketConsumer):
                 pong_data.message_notify(participant)
 
         _message = Message.objects.create(
-            sender=sender, content=message, conversation_id=conversation
+            sender=sender, content=message[:300], conversation_id=conversation
         )
         # Send message to room group
         chat_type = {"type": "chat_message"}

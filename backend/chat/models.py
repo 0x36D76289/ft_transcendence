@@ -14,7 +14,7 @@ class Message(models.Model):
     sender = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="message_sender"
     )
-    content = models.TextField(max_length=300)
+    content = models.CharField(max_length=300)
     conversation_id = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, related_name="message_set"
     )
