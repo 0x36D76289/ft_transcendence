@@ -9,17 +9,40 @@
 	"head": {
 		"title": "ft_transcendance"
 	},
+	"popup": {
+		"accept": "Accepter",
+		"reject": "Refuser"
+	},
 	"notifications": {
+		"error": "Une erreur est arrivée",
 		"fight": {
 			"invite": {
 				"send": {
 					"pre": "Invitation à un combat envoyée à ",
-					"post": "Invitation à un combat envoyée"
+					"post": ""
 				}
 			},
 			"cancel": {
-				"pre": "Invitation à un combat annulée pour ",
-				"post": "Invitation à un combat annulée"
+				"pre": "L'invitation à ",
+				"post": " pour un combat a été annulée"
+			}
+		},
+		"tournament": {
+			"invite": {
+				"pre": "",
+				"post": " vous invite a son tournoi"
+			},
+			"send-invite": {
+				"pre": "une invitation a été envoyée à ",
+				"post": ""
+			},
+			"already-in": {
+				"pre": "",
+				"post": " est déjà dans le tournoi"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " est hors-ligne"
 			}
 		},
 		"profile": {
@@ -99,14 +122,17 @@
 			"register": "S'inscrire",
 			"guest": "Connexion en tant qu'invité",
 			"42": "Connexion avec 42",
-			"error": "Erreur de connexion"
+			"error": "Erreur de connexion",
+			"42_error": "Erreur de connexion avec 42"
 		},
 		"register": {
 			"title": "Inscription",
 			"submit": "Inscription",
 			"has_account": "Vous avez déjà un compte?",
 			"login": "Connexion",
-			"error": "Erreur d'inscription"
+			"error": "Erreur d'inscription",
+			"success": "Compte créé avec succès",
+			"guest_error": "Erreur de création de compte invité"
 		}
 	},
 	"messages": {
@@ -139,7 +165,8 @@
 		"confirm_delete": "Confirmer la suppression",
 		"cancel": "Annuler",
 		"game_history": "Historique des parties",
-		"no_games": "Aucune partie jouée"
+		"no_games": "Aucune partie jouée",
+		"data_load_error": "Echec du chargement des donneés de l'utilisateur"
 	},
 	"friends": {
 		"title": "Amis",
@@ -150,7 +177,10 @@
 		"invite_to_play": "Inviter à jouer",
 		"block": "Bloquer",
 		"remove": "Supprimer",
-		"message_sent": "Message envoyé à",
+		"message_sent": {
+			"pre": "Message envoyé à ",
+			"post": ""
+		},
 		"invite_sent": "Invitation envoyée à",
 		"block_success": "Utilisateur bloqué",
 		"remove_success": "Utilisateur supprimé",

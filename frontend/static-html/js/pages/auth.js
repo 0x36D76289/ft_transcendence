@@ -63,7 +63,7 @@ export async function init(options={}) {
 			create_socket();
 			await initSidebar();
 		} catch (error) {
-			popupSystem('error', 'Erreur de connexion');
+			popupSystem('error', i18n.t('auth.login.error'));
 		}
 		return;
 	}
@@ -83,7 +83,7 @@ export async function init(options={}) {
 			create_socket();
 			await initSidebar();
 		} catch (error) {
-			popupSystem('error', 'Erreur de connexion');
+			popupSystem('error', i18n.t('auth.login.error'));
 		}
 	});
 
@@ -97,9 +97,9 @@ export async function init(options={}) {
 				console.error('Error while registering');
 				return;
 			}
-			popupSystem('success', 'Compte créé avec succès');
+			popupSystem('success', i18n.t('auth.register.success'));
 		} catch (error) {
-			popupSystem('error', 'Erreur d\'enregistrement');
+			popupSystem('error', 18n.t('auth.register.error'));
 		}
 	});
 
@@ -116,7 +116,7 @@ export async function init(options={}) {
 			create_socket();
 			await initSidebar();
 		} catch (error) {
-			popupSystem('error', 'Erreur de création de compte invité');
+			popupSystem('error', i18n.t("auth.register.guest_error"));
 		}
 	});
 
@@ -125,7 +125,7 @@ export async function init(options={}) {
 		try {
 			location.replace("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2e658ba79c415d6104fcd1079864d68a3da2c86f054d28f7c5205c8d4abc1080&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2F42auth&response_type=code");
 		} catch (error) {
-			popupSystem('error', 'Erreur de connexion avec 42');
+			popupSystem('error', i18n.t('auth.login.42_error'));
 		}
 	});
 

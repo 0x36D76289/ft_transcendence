@@ -8,8 +8,8 @@ export class UserAPI {
 		const responseData = await response.json();
 		console.log(responseData);
 		if (!response.ok) {
-			popupSystem('error', responseData.detail || 'An error occurred');
-			throw new Error(responseData.detail || 'An error occurred');
+			popupSystem('error', responseData.detail || i18n.t('notifications.error'));
+			throw new Error(responseData.detail || i18n.t('notifications.error'));
 		}
 		return responseData;
 	}

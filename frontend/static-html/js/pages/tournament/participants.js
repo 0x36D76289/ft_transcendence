@@ -82,7 +82,12 @@ class TournamentParticipantsList {
   invite_player(name) {
     for (/** @type {Participant} */ const p of this.#list) {
       if (name === p.getName()) {
-        popupSystem("error", `${i18n.t("notifications.tournament.already-in.pre")} ${name}`);
+        popupSystem(
+          "error",
+          i18n.t("notifications.tournament.already-in.pre") +
+            name +
+            i18n.t("notifications.tournament.already-in.post"),
+        );
         return;
       }
     }
@@ -96,7 +101,12 @@ class TournamentParticipantsList {
   add_bot(name) {
     for (/** @type {Participant} */ const p of this.#list) {
       if (name === p.getName()) {
-        popupSystem("error", `${i18n.t("notifications.tournament.already-in.pre")} ${name}`);
+        popupSystem(
+          "error",
+          i18n.t("notifications.tournament.already-in.pre") +
+            name +
+            i18n.t("notifications.tournament.already-in.post"),
+        );
         return;
       }
     }

@@ -116,11 +116,21 @@ async function handleActionButton(event) {
   switch (action) {
     case "message":
       await ChatAPI.startConversation(username);
-      popupSystem("info", i18n.t("friends.message_sent") + " " + username);
+      popupSystem(
+        "info",
+        i18n.t("friends.message_sent.pre") +
+          username +
+          i18n.t("friends.message_sent.post"),
+      );
       break;
     case "play":
       send_to_online_sock("fight " + username);
-      popupSystem("info", `${i18n.t("notifications.fight.invite.send.pre")} ${username}`);
+      popupSystem(
+        "info",
+        i18n.t("notifications.fight.invite.send.pre") +
+          username +
+          i18n.t("notifications.fight.invite.send.post"),
+      );
       return;
     case "block":
       await ChatAPI.blockUser(username);
@@ -195,14 +205,14 @@ function renderContacts(friends) {
   const contactCards = document.querySelectorAll(".contact-card");
   contactCards.forEach((card) => {
     card.addEventListener("click", (e) => {
-      if (!e.target.closest('.quick-play-btn')) {
+      if (!e.target.closest(".quick-play-btn")) {
         const username = card.dataset.userId;
         showProfilePreview(username);
       }
     });
 
     // Quick play button click handler
-    const playBtn = card.querySelector('.quick-play-btn');
+    const playBtn = card.querySelector(".quick-play-btn");
     playBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       const username = card.dataset.userId;

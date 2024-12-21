@@ -1,14 +1,15 @@
 import * as cookies from '../utils/cookies.js';
 import { popupSystem } from '../services/popup.js';
 import { API_URL } from '../app.js';
+import { i18n } from "../../services/i18n.js";
 
 export class ChatAPI {
 	static async _handleResponse(response) {
 		const responseData = await response.json();
 		console.log(responseData);
 		if (!response.ok) {
-			popupSystem('error', responseData.detail || 'An error occurred');
-			throw new Error(responseData.detail || 'An error occurred');
+			popupSystem('error', responseData.detail || i18n.t('notifications.error'));
+			throw new Error(responseData.detail || i18n.t('notifications.error'));
 		}
 		return responseData;
 	}

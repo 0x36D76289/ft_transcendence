@@ -164,7 +164,7 @@ export async function init() {
 			document.getElementById('username-input').value = updatedData.username;
 			document.getElementById('bio-input').value = updatedData.bio;
 
-			popupSystem('success', 'notifications.profile.update');
+			popupSystem('success', i18n.t('notifications.profile.update'));
 		});
 
 		// Logout button
@@ -211,7 +211,7 @@ export async function init() {
 		});
 	} catch (error) {
 		console.error(error);
-		popupSystem('error', 'Failed to load user data');
+		popupSystem('error', i18n.t('user.data_load_error'));
 		return;
 	}
 }

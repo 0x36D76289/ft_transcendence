@@ -1,7 +1,8 @@
-import * as cookies from '../utils/cookies.js';
-import { popupSystem } from '../services/popup.js';
+import * as cookies from "../utils/cookies.js";
+import { popupSystem } from "../services/popup.js";
+import { i18n } from "../services/i18n.js";
 
-const BASE_URL = 'https://' + window.location.host + '/api/game';
+const BASE_URL = "https://" + window.location.host + "/api/game";
 
 export class GameAPI {
   // Helper method to handle API responses (similar to UserAPI)
@@ -9,8 +10,11 @@ export class GameAPI {
     const responseData = await response.json();
     console.log(responseData);
     if (!response.ok) {
-      popupSystem('error', responseData.detail || 'An error occurred');
-      throw new Error(responseData.detail || 'An error occurred');
+      popupSystem(
+        "error",
+        responseData.detail || i18n.t("notifications.error"),
+      );
+      throw new Error(responseData.detail || i18n.t("notifications.error"));
     }
     return responseData;
   }
@@ -19,16 +23,16 @@ export class GameAPI {
   static _getHeaders() {
     const token = cookies.getToken();
     return {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Token ${token}` })
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Token ${token}` }),
     };
   }
 
   // Get all game history
   static async getAllGameHistory() {
     const response = await fetch(`${BASE_URL}/history`, {
-      method: 'GET',
-      headers: this._getHeaders()
+      method: "GET",
+      headers: this._getHeaders(),
     });
 
     return this._handleResponse(response);
@@ -37,8 +41,8 @@ export class GameAPI {
   // Get game history for a specific user
   static async getUserGameHistory(username) {
     const response = await fetch(`${BASE_URL}/history/${username}`, {
-      method: 'GET',
-      headers: this._getHeaders()
+      method: "GET",
+      headers: this._getHeaders(),
     });
 
     return this._handleResponse(response);
@@ -47,9 +51,9 @@ export class GameAPI {
   // Create a new game
   static async createGame(gameData) {
     const response = await fetch(`${BASE_URL}/`, {
-      method: 'POST',
+      method: "POST",
       headers: this._getHeaders(),
-      body: JSON.stringify(gameData)
+      body: JSON.stringify(gameData),
     });
 
     return this._handleResponse(response);

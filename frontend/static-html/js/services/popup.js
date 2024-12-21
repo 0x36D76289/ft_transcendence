@@ -7,7 +7,7 @@ export function popupSystem(
   message,
   showButtons = false,
   accept = emptyFunction,
-  reject = emptyFunction
+  reject = emptyFunction,
 ) {
   const icons = {
     info: "info",
@@ -23,20 +23,20 @@ export function popupSystem(
   const buttons = showButtons
     ? `
       <div class="popup__buttons">
-        <button class="popup__button popup__button--accept" data-i18n="popup.accept">Accept</button>
-        <button class="popup__button popup__button--reject" data-i18n="popup.reject">Reject</button>
+        <button class="popup__button popup__button--accept" data-i18n="popup.accept">${i18n.t("popup.accept")}</button>
+        <button class="popup__button popup__button--reject" data-i18n="popup.reject">${i18n.t("popup.reject")}</button>
       </div>
     `
     : "";
 
-  // Popup template using data-i18n for the message
+  // Popup template
   const popup = `
     <div class="popup ${type}" id="${popupId}">
       <div class="popup__content">
         <div class="popup__icon">
           <span class="material-icons">${icons[type] || icons["info"]}</span>
         </div>
-        <div class="popup__message" data-i18n="${message}">${i18n.t(message)}</div>
+        <div class="popup__message">${message}</div>
         ${buttons}
         <div class="popup__close">
           <span class="material-icons">close</span>
@@ -98,13 +98,14 @@ export function popupSystem(
     close: removePopup,
     updateMessage: (newMessage) => {
       const messageElement = popupElement.querySelector(".popup__message");
-      messageElement.dataset.i18n = newMessage;
-      messageElement.textContent = i18n.t(newMessage);
+      messageElement.textContent = newMessage;
     },
     changeType: (newType) => {
       popupElement.classList.remove(...Object.keys(icons));
       popupElement.classList.add(newType);
-      const iconElement = popupElement.querySelector(".popup__icon .material-icons");
+      const iconElement = popupElement.querySelector(
+        ".popup__icon .material-icons",
+      );
       iconElement.textContent = icons[newType] || icons["info"];
     },
   };

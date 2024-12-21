@@ -57,7 +57,9 @@ export function create_socket() {
     popupSystem("info", i18n.t("notifications.connection.close"));
     send_reconnect_notif = false;
   }
-  online_sock = new WebSocket(`${WS_URL}/user/online_status?token=${getToken()}`);
+  online_sock = new WebSocket(
+    `${WS_URL}/user/online_status?token=${getToken()}`,
+  );
   online_sock.onmessage = read_sock;
   console.log("socket created");
 
@@ -117,7 +119,15 @@ function read_sock(object) {
       popupSystem("error", three_part_translate(inner.value));
       break;
     case "game-invite":
-      popupSystem( "warning", `${i18n.t("notifications.fight.invite.receive.pre")}${inner.value}`, true, () => {   send_to_online_sock(`fight ${inner.value}`); },
+      popupSystem(
+        "warning",
+        i18n.t("notifications.fight.invite.receive.pre") +
+          inner.value +
+          i18n.t("notifications.fight.invite.receive.post"),
+        true,
+        () => {
+          send_to_online_sock(`fight ${inner.value}`);
+        },
       );
       break;
     case "tournament-invite":
