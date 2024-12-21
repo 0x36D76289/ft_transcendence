@@ -434,6 +434,7 @@ class pong_data:
                 "notify-error",
                 "notifications.fight.invite.other-offline.pre "
                 + opponent
+                + " notifications.fight.invite.other-offline.post"
             )
 
         if opponent in cls.name_to_user:
