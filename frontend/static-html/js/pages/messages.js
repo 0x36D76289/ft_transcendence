@@ -2,6 +2,7 @@ import { ChatAPI } from '../api/chat.js';
 import { i18n } from '../services/i18n.js';
 import { getToken, getUsername } from '../utils/cookies.js';
 import { WS_URL } from '../app.js';
+import { send_to_online_sock } from '../api/socket.js';
 
 let socket = null;
 
@@ -20,7 +21,10 @@ export function render() {
 			<div class="message-input-container">
 				<textarea id="message-input" placeholder="${i18n.t('messages.type_message')}" rows="3"></textarea>
 				<button id="send-message-btn" class="btn-accent">
-					${i18n.t('messages.send')}
+					<i class="material-icons">send</i>
+				</button>
+				<button id="invite-match-btn" class="btn-accent">
+					${i18n.t('messages.invite_to_match')}
 				</button>
 			</div>
 		</div>
@@ -34,6 +38,7 @@ export async function init() {
 	const messagesList = document.getElementById('messages-list');
 	const messageInput = document.getElementById('message-input');
 	const sendMessageBtn = document.getElementById('send-message-btn');
+	const inviteMatchBtn = document.getElementById('invite-match-btn');
 
 	let currentConversationId = null;
 
@@ -92,7 +97,7 @@ export async function init() {
 				const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
 
 				return `
-					<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+					<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
 							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
 							<div class="message-content-wrapper">
 									<div class="message-content">
@@ -111,7 +116,6 @@ export async function init() {
 			console.error('Failed to load conversation:', error);
 		}
 	}
-
 
 	async function sendMessage() {
 		const messageInput = document.getElementById('message-input');
@@ -144,7 +148,7 @@ export async function init() {
 			const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
 
 			messagesList.innerHTML += `
-				<div class="message ${message.sender === getUsername() ? 'sent' : 'received'}">
+				<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
 						<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
 						<div class="message-content-wrapper">
 								<div class="message-content">
@@ -155,9 +159,20 @@ export async function init() {
 								</div>
 						</div>
 				</div>
-        `;
+			`;
 			messagesList.scrollTop = messagesList.scrollHeight;
 		};
+	}
+
+	async function inviteToMatch() {
+		if (currentConversationId) {
+			const conversation = await ChatAPI.getConversation(currentConversationId);
+			const otherUser = conversation.participants.find(p => p.username !== getUsername());
+			if (otherUser) {
+				send_to_online_sock("fight " + otherUser.username);
+				console.log(`Invited ${otherUser.username} to a match`);
+			}
+		}
 	}
 
 	sendMessageBtn.addEventListener('click', sendMessage);
@@ -167,6 +182,8 @@ export async function init() {
 			sendMessage();
 		}
 	});
+
+	inviteMatchBtn.addEventListener('click', inviteToMatch);
 
 	await loadConversations();
 }

@@ -6,6 +6,34 @@
 			"message": "Une erreur s'est produite lors de l'initialisation de l'application. Veuillez réessayer plus tard."
 		}
 	},
+	"head": {
+		"title": "ft_transcendance"
+	},
+	"notifications": {
+		"fight": {
+			"invite": {
+				"send": {
+					"pre": "Invitation à un combat envoyée à ",
+					"post": "Invitation à un combat envoyée"
+				}
+			},
+			"cancel": {
+				"pre": "Invitation à un combat annulée pour ",
+				"post": "Invitation à un combat annulée"
+			}
+		},
+		"profile": {
+			"update": "Profil mis à jour avec succès"
+		},
+		"matchmaking": {
+			"join": "Rejoindre le matchmaking",
+			"leave": "Quitter le matchmaking"
+		},
+		"message": {
+			"send": "Message envoyé",
+			"error": "Erreur d'envoi du message"
+		}
+	},
 	"sidebar": {
 		"title": "ft_transcendance",
 		"home": "Bienvenue",
@@ -90,7 +118,8 @@
 		"participants": "Participants",
 		"last_message": "Dernier message",
 		"conversation_load_error": "Échec du chargement de la conversation",
-		"message_send_error": "Échec de l'envoi du message"
+		"message_send_error": "Échec de l'envoi du message",
+		"invite_to_match": "Inviter à un combat"
 	},
 	"user": {
 		"title": "Profil",
@@ -126,7 +155,8 @@
 		"block_success": "Utilisateur bloqué",
 		"remove_success": "Utilisateur supprimé",
 		"profile_load_error": "Échec du chargement du profil",
-		"friend_request_sent": "Demande d'ami envoyée"
+		"friend_request_sent": "Demande d'ami envoyée",
+		"game_invite_sent": "Invitation de jeu envoyée"
 	},
 	"pong": {
 		"local_tournament": "Tournoi Local",

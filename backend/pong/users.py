@@ -432,9 +432,8 @@ class pong_data:
         def offline():
             pu.send(
                 "notify-error",
-                "notifications.fight.other-offline.pre "
+                "notifications.fight.invite.other-offline.pre "
                 + opponent
-                + " notifications.fight.other-offline.post",
             )
 
         if opponent in cls.name_to_user:

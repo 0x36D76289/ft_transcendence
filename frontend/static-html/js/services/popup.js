@@ -1,3 +1,5 @@
+import { i18n } from "../services/i18n.js";
+
 const emptyFunction = () => {};
 
 export function popupSystem(
@@ -7,32 +9,34 @@ export function popupSystem(
   accept = emptyFunction,
   reject = emptyFunction
 ) {
-  // Material Icons mapping
   const icons = {
     info: "info",
     success: "check_circle",
     warning: "warning",
     error: "error",
+    question: "help_outline",
+    notification: "notifications",
   };
 
-  // Popup buttons (conditionally rendered)
+  const popupId = `popup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
   const buttons = showButtons
     ? `
       <div class="popup__buttons">
-        <button class="popup__button popup__button--accept">Accept</button>
-        <button class="popup__button popup__button--reject">Reject</button>
+        <button class="popup__button popup__button--accept" data-i18n="popup.accept">Accept</button>
+        <button class="popup__button popup__button--reject" data-i18n="popup.reject">Reject</button>
       </div>
     `
     : "";
 
-  // Popup template
+  // Popup template using data-i18n for the message
   const popup = `
-    <div class="popup ${type}">
+    <div class="popup ${type}" id="${popupId}">
       <div class="popup__content">
         <div class="popup__icon">
-          <span class="material-icons">${icons[type]}</span>
+          <span class="material-icons">${icons[type] || icons["info"]}</span>
         </div>
-        <div class="popup__message">${message}</div>
+        <div class="popup__message" data-i18n="${message}">${i18n.t(message)}</div>
         ${buttons}
         <div class="popup__close">
           <span class="material-icons">close</span>
@@ -43,7 +47,7 @@ export function popupSystem(
 
   // Add popup to DOM
   document.body.insertAdjacentHTML("beforeend", popup);
-  const popupElement = document.querySelector(".popup:last-child");
+  const popupElement = document.getElementById(popupId);
   const popupClose = popupElement.querySelector(".popup__close");
 
   // Set stack position
@@ -51,7 +55,7 @@ export function popupSystem(
 
   // Close popup animation
   const removePopup = () => {
-    popupElement.style.animation = "popupExit 0.4s forwards";
+    popupElement.classList.add("popup--exiting");
     setTimeout(() => {
       popupElement.remove();
       updatePopupPositions();
@@ -60,15 +64,17 @@ export function popupSystem(
 
   popupClose.onclick = removePopup;
 
+  let autoCloseTimeout;
+
   if (!showButtons) {
-    const autoCloseTimeout = setTimeout(removePopup, 5000);
+    autoCloseTimeout = setTimeout(removePopup, 5000);
 
     popupElement.addEventListener("mouseenter", () => {
       clearTimeout(autoCloseTimeout);
     });
 
     popupElement.addEventListener("mouseleave", () => {
-      setTimeout(removePopup, 2000);
+      autoCloseTimeout = setTimeout(removePopup, 2000);
     });
   }
 
@@ -87,12 +93,28 @@ export function popupSystem(
     });
   }
 
-  return popupElement;
+  return {
+    element: popupElement,
+    close: removePopup,
+    updateMessage: (newMessage) => {
+      const messageElement = popupElement.querySelector(".popup__message");
+      messageElement.dataset.i18n = newMessage;
+      messageElement.textContent = i18n.t(newMessage);
+    },
+    changeType: (newType) => {
+      popupElement.classList.remove(...Object.keys(icons));
+      popupElement.classList.add(newType);
+      const iconElement = popupElement.querySelector(".popup__icon .material-icons");
+      iconElement.textContent = icons[newType] || icons["info"];
+    },
+  };
 }
 
 function updatePopupPositions() {
-  const popups = document.querySelectorAll(".popup");
-  popups.forEach((popup, index) => {
-    popup.style.bottom = `${index * 95 + 16}px`;
+  const popups = document.querySelectorAll(".popup:not(.popup--exiting)");
+  let offset = 16;
+  popups.forEach((popup) => {
+    popup.style.bottom = `${offset}px`;
+    offset += popup.offsetHeight + 8;
   });
 }

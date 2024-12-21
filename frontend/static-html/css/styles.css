@@ -190,7 +190,6 @@ a {
 	padding-bottom: var(--margin-xxs);
 }
 
-
 /* mobile */
 @media screen and (max-width: 767px) {
 	main {
