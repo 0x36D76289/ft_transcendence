@@ -186,6 +186,7 @@
 		"remove_success": "Utilisateur supprimé",
 		"profile_load_error": "Échec du chargement du profil",
 		"friend_request_sent": "Demande d'ami envoyée",
+		"friend_request_received": "Demande d'ami reçue",
 		"game_invite_sent": {
 			"pre": "Invitation de jeu envoyée à ",
 			"post": ""
