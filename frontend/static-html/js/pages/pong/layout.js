@@ -40,7 +40,6 @@ export function online_layout() {
  * @param {String} paramName
  * @param {number} min
  * @param {number} max
- * @param {String} name
  * @returns {void}
  */
 function add_slider(pageContainer, paramName, min, max) {

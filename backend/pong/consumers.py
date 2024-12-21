@@ -60,7 +60,8 @@ class ChatConsumer(WebsocketConsumer):
         time = int(datetime.now().timestamp()) * 1000
         if self.bot_game:
             pong_data.lose_bot(
-                self.user, str({"p1": 0, "p2": 10, "start": time, "end": time})
+                self.user,
+                f'lose {{"p1":0,"p2":10,"start":{time - 1},"end":{time}}}',
             )
             return
         if self.anonymous_connection:

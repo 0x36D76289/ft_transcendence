@@ -218,12 +218,17 @@ class Tournament:
         self._ongoing_round = self.rounds[self.current_round_index]
         self._next_round = self.rounds[self.current_round_index + 1]
         for i in range(len(self._next_round)):
-            # name1 = get_TP_name(self._ongoing_round[i * 2])
-            # name2 = get_TP_name(self._ongoing_round[i * 2 + 1])
+            p1 = self._ongoing_round[i * 2]
+            p2 = self._ongoing_round[i * 2 + 1]
+            # name1 = get_TP_name(p1)
+            # name2 = get_TP_name(p2)
             # errprint("STARTING GAME BETWEEN", name1, name2)
-            self._next_round[i] = self.start_game(
-                self._ongoing_round[i * 2], self._ongoing_round[i * 2 + 1]
-            )
+            self._next_round[i] = self.start_game(p1, p2)
+            if p1 is None or p2 is None:
+                if p2 is None:
+                    self.warn_winner(i, 0)
+                else:
+                    self.warn_winner(i, 1)
         self.current_round_index += 1
         if self.is_round_over():
             return self.start_round()
@@ -601,16 +606,20 @@ class pong_data:
     def save_score(cls, user: User, data: str):
         try:
             datadict = json.loads(data.lstrip("win lose"))
-            Game(
+            g = Game(
                 p1=user,
                 p2=BOT,
                 p1_score=datadict["p1"],
                 p2_score=datadict["p2"],
                 time_start=datetime.fromtimestamp(datadict["start"] / 1000),
                 time_end=datetime.fromtimestamp(datadict["end"] / 1000),
-            ).save()
+            )
+            g.save()
+            errprint("saved data:", datadict)
         except:
             errprint("data is", data)
+        errprint("REGARDLESS", data)
+        errprint("len is", len(Game.objects.all()))
 
     @classmethod
     def win_bot(cls, user: User, data: str):

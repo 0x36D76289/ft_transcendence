@@ -1,16 +1,15 @@
 import { min } from "../../utils/math.js";
 import { canvas_click } from "./input.js";
-import { vec2 } from "./types.js";
 
 //@ts-check
 
-/** @type {vec2} */
-export const GAME_DIMENSIONS = new vec2(400, 300);
+/** @type {[number, number]} */
+export const GAME_DIMENSIONS = [400, 300];
 
 /** @type {HTMLCanvasElement} */
 var VIEW;
 
-/** @type {vec2} */
+/** @type {[number, number]} */
 export var VIEW_DIMENSIONS;
 
 /** @type {HTMLCanvasElement} */
@@ -34,7 +33,7 @@ export function init_globals() {
 
   VIEW.width = VIEW.clientWidth;
   VIEW.height = VIEW.clientHeight;
-  VIEW_DIMENSIONS = new vec2(VIEW.width, VIEW.height);
+  VIEW_DIMENSIONS = [VIEW.width, VIEW.height];
 
   if (BUFF != undefined) {
     BUFF.remove();

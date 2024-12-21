@@ -1,4 +1,3 @@
-import { vec2 } from "./types.js";
 import { GAME_DIMENSIONS } from "./globals.js";
 
 //@ts-check
@@ -51,14 +50,14 @@ export function start_simulation(func) {
   interval = setInterval(func, 1000 / 60); // 60 fps
 }
 
-/** @type {Array<input | undefined>[]} */
+/** @type {Array<[input, input]>} */
 export var inputs = [];
 
-/** @type {vec2} */
-export const bots = new vec2(0, 0);
+/** @type {[0 | 1, 0 | 1} */
+export const bots = [0, 0];
 
-/** @type {vec2} */
-export var scores = new vec2(0, 0);
+/** @type {[number, number]} */
+export var scores = [0, 0];
 
 /**
  * sets all the values for the start of the round
@@ -95,7 +94,7 @@ function bound(pos, size, min, max) {
 
 /**
  * @param {GameState} state
- * @param {vec2} input
+ * @param {[input, input]} input
  * @returns {void}
  * INFO: MODIFIES STATE
  */
@@ -118,7 +117,7 @@ export function tick_move_paddle(state, input) {
 
 /**
  * @param {GameState} state
- * @param {vec2} input
+ * @param {[input, input]} input
  * @returns {void}
  * INFO: MODIFIES STATE
  */
@@ -145,7 +144,7 @@ export function tick_move_ball(state, input) {
 
 /**
  * @param {GameState} state
- * @param {vec2} input
+ * @param {[input, input]} input
  * @returns {void}
  * INFO: MODIFIES STATE
  */
@@ -194,7 +193,7 @@ function is_ball_in_paddle_y_range(ball_y, paddle_y) {
 
 /**
  * @param {GameState} state
- * @param {vec2} input
+ * @param {[input, input]} input
  * @returns {void}
  * INFO: MODIFIES STATE
  */
@@ -232,7 +231,7 @@ function is_ball_on_right(state) {
 
 /**
  * @param {GameState} state
- * @returns {number} - which player died, 0 if none
+ * @returns {0 | 1 | 2} - which player died, 0 if none
  */
 export function detect_death(state) {
   if (state.ball_speed_x < 0 && is_ball_on_left(state)) return 1;

@@ -8,11 +8,11 @@ import { start_online_bot_game } from "./online_bot_game.js";
 import {
   multiplayer_init,
   multiplayer_update,
+  player_read_message,
   set_player_num,
 } from "./online_gameplay.js";
 import {
   GAME_SETTINGS,
-  inputs,
   interval,
   scores,
   start_simulation,
@@ -99,10 +99,7 @@ function game_sock_receive(object) {
         }
         break;
       case "input":
-        while (inner.frame >= inputs.length) {
-          inputs[inputs.length] = [undefined, undefined];
-        }
-        inputs[inner.frame][inner.player - 1] = inner.input;
+        player_read_message(inner);
         break;
       default:
         console.log("[game sock] couldn't recognize type: ", inner.type);
