@@ -13,8 +13,6 @@ import json
 from pong.tournament_player import TournamentPlayer, TournamentBot, TournamentUser
 
 WIN_SCORE = 10
-BOT: User = User.objects.get(username="bot")
-SYSTEM: User = User.objects.get(username="system")
 
 
 def errprint(*kwargs):
@@ -336,14 +334,14 @@ class PongUser:
             Conversation.objects.annotate(n_users=Count("participants"))
             .filter(n_users=2)
             .filter(participants=self.user)
-            .filter(participants=SYSTEM)
+            .filter(participants=pong_data.SYSTEM)
         )
         if conversation.exists():
             conversation = conversation[0]
         else:
             conversation = Conversation()
             conversation.save()
-            conversation.participants.add(SYSTEM, self.user)
+            conversation.participants.add(pong_data.SYSTEM, self.user)
         self.system_chat = conversation
 
     def send(self, message_type: str, content: Any) -> None:
@@ -352,12 +350,16 @@ class PongUser:
 
     def chatsend(self, message_content: str):
         _message = Message.objects.create(
-            sender=SYSTEM, content=message_content, conversation_id=self.system_chat
+            sender=pong_data.SYSTEM,
+            content=message_content,
+            conversation_id=self.system_chat,
         )
         pong_data.message_notify(self.user)
 
 
 class pong_data:
+    BOT: User
+    SYSTEM: User
     online_users: dict[User, PongUser] = dict()
     name_to_user: dict[str, User] = dict()
 
@@ -434,7 +436,7 @@ class pong_data:
                 "notify-error",
                 "notifications.fight.invite.other-offline.pre "
                 + opponent
-                + " notifications.fight.invite.other-offline.post"
+                + " notifications.fight.invite.other-offline.post",
             )
 
         if opponent in cls.name_to_user:
@@ -608,7 +610,7 @@ class pong_data:
             datadict = json.loads(data.lstrip("win lose"))
             g = Game(
                 p1=user,
-                p2=BOT,
+                p2=pong_data.BOT,
                 p1_score=datadict["p1"],
                 p2_score=datadict["p2"],
                 time_start=datetime.fromtimestamp(datadict["start"] / 1000),
