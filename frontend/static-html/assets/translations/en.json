@@ -201,11 +201,6 @@
 				}
 			}
 		},
-		"message": "Message received!",
-		"": {
-			"pre": "",
-			"post": ""
-		},
-		"namespace": {}
+		"message": "Message received!"
 	}
 }
