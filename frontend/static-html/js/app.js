@@ -204,6 +204,7 @@ async function initApp() {
       loadCSS("./css/components/sidebar.css"),
       loadCSS("./css/components/background.css"),
       loadCSS("./css/components/popup.css"),
+      loadCSS("./css/components/profilepopup.css"),
     ]);
 
     await Promise.all(Object.values(ROUTES).map((page) => loadCSS(`./css/pages/${page}.css`)));
