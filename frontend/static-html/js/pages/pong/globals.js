@@ -1,5 +1,6 @@
 import { min } from "../../utils/math.js";
 import { canvas_click } from "./input.js";
+import { reset_game_settings } from "./shared_gameplay.js";
 
 //@ts-check
 
@@ -22,6 +23,7 @@ export var ctx;
 var buff_ctx;
 
 export function init_globals() {
+  reset_game_settings();
   /** @type {HTMLCanvasElement} */
   VIEW = document.getElementById("game");
   if (VIEW == undefined) {

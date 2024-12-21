@@ -19,7 +19,7 @@ export const current_state = {
   countdown_frames: 0,
 };
 
-export const GAME_SETTINGS = {
+const DEFAULT_GAME_SETTINGS = {
   paddle_width: 5,
   paddle_height: 20,
   paddle_speed: 4,
@@ -29,6 +29,11 @@ export const GAME_SETTINGS = {
   win_score: 10,
   countdown_length: 180,
 };
+export var GAME_SETTINGS = {};
+
+export function reset_game_settings() {
+  GAME_SETTINGS = Object.assign({}, DEFAULT_GAME_SETTINGS);
+}
 
 /** @type {?ReturnType<typeof setInterval>} */
 export var interval = null;
