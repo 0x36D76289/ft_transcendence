@@ -187,7 +187,10 @@ export async function init() {
 			const otherUser = conversation.participants.find(p => p.username !== getUsername());
 			if (otherUser) {
 				send_to_online_sock("fight " + otherUser.username);
-				console.log(`Invited ${otherUser.username} to a match`);
+				console.log(`${getUsername()} ${i18n.t('messages.invite_to_match_message')}`);
+				socket.send(JSON.stringify({
+					message: `${getUsername()} ${i18n.t('messages.invite_to_match_message')}`
+				}));
 			}
 		}
 	}

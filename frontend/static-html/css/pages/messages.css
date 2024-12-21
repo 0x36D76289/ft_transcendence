@@ -34,6 +34,15 @@
   border: none;
 }
 
+.avatar-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
 .avatar {
   width: 45px;
   height: 45px;
@@ -87,7 +96,7 @@
   align-items: center;
 }
 
-.chat-participant img.avatar {
+.chat-participant .avatar-button .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -101,7 +110,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--margin-s);
-  scrollbar-width: thin; 
+  scrollbar-width: thin;
   scrollbar-color: var(--accent-color) var(--bg-primary);
 }
 
@@ -137,6 +146,7 @@
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
   font-size: 0.95rem;
+  word-break: break-word;
 }
 
 .messages.sent .message-content {
@@ -180,14 +190,23 @@
   border: 1px solid var(--accent-color);
   cursor: pointer;
   transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
 }
 
 .btn-accent:hover {
   background-color: var(--accent-color);
+  color: white;
 }
 
-.btn-accent:hover .material-icons {
+.btn-accent .material-icons {
   transition: var(--transition);
+}
+
+#invite-match-btn {
+  white-space: nowrap;
 }
 
 @media screen and (max-width: 768px) {
