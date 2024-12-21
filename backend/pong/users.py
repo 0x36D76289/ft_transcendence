@@ -615,11 +615,8 @@ class pong_data:
                 time_end=datetime.fromtimestamp(datadict["end"] / 1000),
             )
             g.save()
-            errprint("saved data:", datadict)
         except:
             errprint("data is", data)
-        errprint("REGARDLESS", data)
-        errprint("len is", len(Game.objects.all()))
 
     @classmethod
     def win_bot(cls, user: User, data: str):
