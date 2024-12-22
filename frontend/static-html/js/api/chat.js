@@ -82,7 +82,7 @@ export class ChatAPI {
   // Check if a user is blocked
   static async isUserBlocked(username) {
     const response = await fetch(`${API_URL}/chat/is_user_blocked`, {
-      method: "GET",
+      method: "POST",
       headers: this._getHeaders(),
       body: JSON.stringify({ username }),
     });

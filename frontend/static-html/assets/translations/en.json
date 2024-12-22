@@ -139,6 +139,7 @@
 		},
 		"invite_sent": "Invitation sent to",
 		"block_success": "User blocked",
+		"unblock_success": "User unblocked",
 		"remove_success": "User removed",
 		"profile_load_error": "Failed to load profile",
 		"friend_request_sent": "Friend request sent",

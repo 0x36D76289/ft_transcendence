@@ -93,8 +93,14 @@ async function handleActionButton(event) {
 			popupSystem("info", `${i18n.t("notifications.fight.invite.send.pre")} ${username}`);
 			return;
 		case "block":
-			await ChatAPI.blockUser(username);
-			popupSystem("info", i18n.t("friends.block"));
+			const is_blocked = await ChatAPI.isUserBlocked(username);
+			if (is_blocked.detail) {
+				await ChatAPI.unblockUser(username);
+				popupSystem("info", i18n.t("friends.unblock_success"));
+			} else {
+				await ChatAPI.blockUser(username);
+				popupSystem("info", i18n.t("friends.block_success"));
+			}
 			break;
 		case "remove":
 			await UserAPI.removeFriendRequest(username);

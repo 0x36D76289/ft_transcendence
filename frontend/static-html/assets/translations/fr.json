@@ -139,6 +139,7 @@
 		},
 		"invite_sent": "Invitation envoyée à",
 		"block_success": "Utilisateur bloqué",
+		"unblock_success": "Utilisateur debloqué",
 		"remove_success": "Utilisateur supprimé",
 		"profile_load_error": "Échec du chargement du profil",
 		"friend_request_sent": "Demande d'ami envoyée",

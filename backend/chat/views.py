@@ -50,7 +50,7 @@ def get_conversation(request, convo_id):
         )
     if conversation.participants.all().count() == 2:
         other_p = conversation.participants.exclude(id=request.user.id)[0]
-        if UserBlock.objects.filter(uid1=other_p, uid2=request.id).exists():
+        if UserBlock.objects.filter(uid1=request.user, uid2=other_p).exists():
             return Response(
                 {"detail": "You blocked this user"},
                 status=status.HTTP_403_FORBIDDEN
@@ -94,7 +94,7 @@ def unblock_user(request):
         )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def is_user_blocked(request):
     logged_user = request.user
     other_user = get_object_or_404(User, username=request.data.get("username"))
