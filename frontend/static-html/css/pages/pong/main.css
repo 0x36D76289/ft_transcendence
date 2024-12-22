@@ -72,7 +72,6 @@
     position: relative;
 }
 
-/* Main Canvas */
 .canvas {
 	width: 40vw;
 	aspect-ratio: 4 / 3;
@@ -110,25 +109,8 @@
 .bottom-buttons {
     flex-direction: row;
     width: 70%;
-    left: 15%; /* (100 - 70) / 2 */
+    left: 15%;
     bottom:0;
     transform: translateY(130%);
 }
 
-/* Buttons */
-.button {
-    background-color: #777;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    cursor: pointer;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.3s ease;
-}
-
-.button:hover {
-    background-color: #444;
-}

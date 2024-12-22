@@ -265,6 +265,67 @@
   margin-right: var(--margin-s);
 }
 
+.game-history-card {
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: var(--padding-l);
+  backdrop-filter: blur(var(--blur));
+}
+
+.game-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--margin-l);
+}
+
+.game-history-header h3 {
+  font: var(--h3ui);
+}
+
+.game-history-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-s);
+}
+
+.game-history-item {
+  padding: var(--padding-m);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--margin-m);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.game-players {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: var(--pui);
+  gap: var(--margin-s);
+}
+
+.player-self {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.game-score {
+  font: var(--h4ui);
+  color: var(--text-primary);
+  padding: 0 var(--padding-m);
+}
+
+.game-date {
+  font: var(--smallui);
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
 /* Tablet */
 @media screen and (max-width: 1024px) {
   .profile-content {

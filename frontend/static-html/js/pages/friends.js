@@ -28,6 +28,11 @@ export function render() {
 	`;
 }
 
+async function refreshFriends() {
+  const friends = await UserAPI.getFriends(getUsername());
+  renderContacts(friends);
+}
+
 function initScrollTopButton() {
   const scrollBtn = document.getElementById("scrollTopBtn");
   const scrollThreshold = 300;
@@ -108,8 +113,8 @@ function renderContacts(friends) {
         popupSystem(
           "info",
           i18n.t("friends.game_invite_sent.pre") +
-            username +
-            i18n.t("friends.game_invite_sent.post"),
+          username +
+          i18n.t("friends.game_invite_sent.post"),
         );
       });
     }
@@ -121,7 +126,7 @@ function renderContacts(friends) {
         const username = card.dataset.userId;
         await UserAPI.sendFriendRequest(username);
         popupSystem("info", i18n.t("friends.friend_request_accepted"));
-        refreshFriends();
+        await refreshFriends();
       });
     }
 
@@ -132,15 +137,10 @@ function renderContacts(friends) {
         const username = card.dataset.userId;
         await UserAPI.removeFriendRequest(username);
         popupSystem("info", i18n.t("friends.friend_request_declined"));
-        refreshFriends();
+        await refreshFriends();
       });
     }
   });
-}
-
-function refreshFriends() {
-  const friends = UserAPI.getFriends(getUsername());
-  renderContacts(friends);
 }
 
 export async function init() {
@@ -161,14 +161,14 @@ export async function init() {
     if (event.key === "Enter") {
       await UserAPI.sendFriendRequest(searchInput.value);
       popupSystem("info", i18n.t("friends.friend_request_sent"));
-      refreshFriends();
+      await refreshFriends();
     }
   });
 
   addFriendBtn.addEventListener("click", async () => {
     await UserAPI.sendFriendRequest(searchInput.value);
     popupSystem("info", i18n.t("friends.friend_request_sent"));
-    refreshFriends();
+    await refreshFriends();
   });
 
   renderContacts(friends);

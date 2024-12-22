@@ -8,7 +8,7 @@
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  width: 300px;
+  width: 350px; /* Increased width */
   max-width: calc(100% - 32px);
   display: flex;
   flex-direction: column;
@@ -23,14 +23,14 @@
 
 .popup__content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
 }
 
 .popup__icon {
-  font-size: 1.8rem;
-  color: var(--icon-color, #888);
+  font-size: 2rem;
   flex-shrink: 0;
+  margin-top: 4px;
 }
 
 .popup__message {
@@ -38,16 +38,21 @@
   font-size: 1rem;
   line-height: 1.5;
   overflow-wrap: break-word;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
-/* Close Button */
 .popup__close {
   cursor: pointer;
   font-size: 1.4rem;
-  color: var(--close-color, #888);
   align-self: flex-end;
   margin-top: 8px;
   flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.popup__close:hover {
+  color: var(--close-hover-color, #000);
 }
 
 /* Popup Type Indicators */
@@ -81,6 +86,7 @@
   gap: 8px;
   margin-top: 12px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .popup__button {
@@ -90,12 +96,11 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  white-space: nowrap; /* Prevent button text from wrapping */
+  white-space: nowrap;
 }
 
 .popup__button--accept {
   background-color: var(--accept-color, #4caf50);
-  color: white;
 }
 
 .popup__button--accept:hover {
@@ -104,14 +109,12 @@
 
 .popup__button--reject {
   background-color: var(--reject-color, #f44336);
-  color: white;
 }
 
 .popup__button--reject:hover {
   background-color: var(--reject-hover-color, #e53935);
 }
 
-/* Animations */
 @keyframes popupEnter {
   from {
     opacity: 0;
@@ -135,5 +138,15 @@
   to {
     opacity: 0;
     transform: scale(0.9);
+  }
+}
+
+@media (max-width: 400px) {
+  .popup {
+    width: calc(100% - 32px);
+  }
+
+  .popup__buttons {
+    justify-content: center;
   }
 }

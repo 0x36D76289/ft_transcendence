@@ -2,12 +2,16 @@
 	"errors": {
 		"404": "Page not found",
 		"page": {
-			"title": "Initialization error",
-			"message": "An error occurred during the initialization of the application. Please try again later."
+			"title": "Initialization Error",
+			"message": "An error occurred while initializing the application. Please try again later."
 		}
 	},
 	"head": {
 		"title": "ft_transcendance"
+	},
+	"popup": {
+		"accept": "Accept",
+		"reject": "Reject"
 	},
 	"sidebar": {
 		"title": "ft_transcendance",
@@ -35,20 +39,20 @@
 		"language": {
 			"title": "Language",
 			"label": "Language",
-			"description": "Choose the interface language"
+			"description": "Choose interface language"
 		},
 		"appearance": {
 			"title": "Appearance",
 			"theme": {
 				"label": "Theme",
-				"description": "Choose the interface theme",
+				"description": "Choose interface theme",
 				"options": {
 					"dark": "Dark",
 					"light": "Light"
 				}
 			},
 			"accentColor": {
-				"label": "Accent Color",
+				"label": "Accent color",
 				"description": "Main interface color",
 				"reset": "Reset"
 			}
@@ -56,7 +60,7 @@
 		"notifications": {
 			"title": "Notifications",
 			"push": {
-				"label": "Push Notifications",
+				"label": "Push notifications",
 				"description": "Receive notifications"
 			}
 		},
@@ -72,16 +76,19 @@
 			"submit": "Login",
 			"no_account": "Don't have an account?",
 			"register": "Register",
-			"guest": "Login as Guest",
+			"guest": "Login as guest",
 			"42": "Login with 42",
-			"error": "Login error"
+			"error": "Login error",
+			"42_error": "42 login error"
 		},
 		"register": {
 			"title": "Register",
 			"submit": "Register",
 			"has_account": "Already have an account?",
 			"login": "Login",
-			"error": "Registration error"
+			"error": "Registration error",
+			"success": "Account created successfully",
+			"guest_error": "Guest account creation error"
 		}
 	},
 	"messages": {
@@ -93,27 +100,29 @@
 		"participants": "Participants",
 		"last_message": "Last message",
 		"conversation_load_error": "Failed to load conversation",
-		"message_send_error": "Failed to send message"
+		"message_send_error": "Failed to send message",
+		"invite_to_match": "Invite to match"
 	},
 	"user": {
 		"title": "Profile",
 		"username": "Username",
 		"bio": "Bio",
-		"no_bio": "User doesn't have a bio",
+		"no_bio": "User has no bio",
 		"joined": "Joined on",
 		"edit": "Edit",
 		"save": "Save",
 		"stats": "Statistics",
 		"games_played": "Games played",
 		"win_rate": "Win rate",
-		"account_actions": "Account Actions",
+		"account_actions": "Account actions",
 		"logout": "Logout",
-		"delete_account": "Delete Account",
-		"delete_confirmation": "Are you sure you want to delete your account? This action cannot be undone.",
-		"confirm_delete": "Confirm Delete",
+		"delete_account": "Delete account",
+		"delete_confirmation": "Are you sure you want to delete your account? This action is irreversible.",
+		"confirm_delete": "Confirm deletion",
 		"cancel": "Cancel",
-		"game_history": "Game History",
-		"no_games": "No games played"
+		"game_history": "Game history",
+		"no_games": "No games played",
+		"data_load_error": "Failed to load user data"
 	},
 	"friends": {
 		"title": "Friends",
@@ -124,36 +133,44 @@
 		"invite_to_play": "Invite to play",
 		"block": "Block",
 		"remove": "Remove",
-		"message_sent": "Message sent to",
-		"invite_sent": "Invite sent to",
+		"message_sent": {
+			"pre": "Message sent to ",
+			"post": ""
+		},
+		"invite_sent": "Invitation sent to",
 		"block_success": "User blocked",
 		"remove_success": "User removed",
 		"profile_load_error": "Failed to load profile",
-		"friend_request_sent": "Friend request sent"
+		"friend_request_sent": "Friend request sent",
+		"friend_request_received": "Friend request received",
+		"game_invite_sent": {
+			"pre": "Game invitation sent to ",
+			"post": ""
+		}
 	},
 	"pong": {
 		"local_tournament": "Local Tournament",
 		"setting": {
-			"paddle_width": "Paddle Width",
-			"paddle_height": "Paddle Height",
-			"paddle_speed": "Paddle Speed",
-			"ball_size": "Ball Size",
-			"ball_speed": "Ball X Speed",
-			"ball_y_speed_factor": "Corner Bounce Strength",
-			"win_score": "Win Score"
+			"paddle_width": "Paddle width",
+			"paddle_height": "Paddle height",
+			"paddle_speed": "Player speed",
+			"ball_size": "Ball size",
+			"ball_speed": "Ball horizontal speed",
+			"ball_y_speed_factor": "Bounce impact",
+			"win_score": "Win score"
 		}
 	},
 	"tournaments": {
 		"title": "Tournaments",
-		"current_tournament": "Current Tournament",
+		"current_tournament": "Current tournament",
 		"enter_username": "Enter username",
 		"enter_bot_name": "Enter bot name",
-		"start_tournament": "Start Tournament"
+		"start_tournament": "Start tournament"
 	},
 	"notifications": {
 		"matchmaking": {
-			"join": "Joined matchmaking!",
-			"leave": "Left matchmaking"
+			"join": "You have joined matchmaking!",
+			"leave": "You have left matchmaking"
 		},
 		"tournament": {
 			"invite": {
@@ -161,12 +178,12 @@
 				"post": " invites you to their tournament"
 			},
 			"send-invite": {
-				"pre": "invite was sent to ",
+				"pre": "an invitation has been sent to ",
 				"post": ""
 			},
 			"already-in": {
 				"pre": "",
-				"post": " is already in tournament"
+				"post": " is already in the tournament"
 			},
 			"other-offline": {
 				"pre": "",
@@ -175,8 +192,8 @@
 		},
 		"connection": {
 			"close": "Reconnecting to socket",
-			"open": "Connection complete",
-			"pending": "Page is still connecting to server, please wait a bit"
+			"open": "Connection successful",
+			"pending": "The page is connecting to the server, please wait"
 		},
 		"fight": {
 			"self-busy": "You are marked as busy",
@@ -194,15 +211,18 @@
 					"post": " wants to play with you"
 				},
 				"send": {
-					"pre": "invite sent to ",
+					"pre": "invitation sent to ",
 					"post": ""
 				},
 				"cancel": {
-					"pre": "invite to ",
+					"pre": "invitation sent to ",
 					"post": " has been cancelled"
 				}
 			}
 		},
-		"message": "Message received!"
+		"message": "Message received!",
+		"profile": {
+			"update": "Profile updated successfully"
+		}
 	}
 }

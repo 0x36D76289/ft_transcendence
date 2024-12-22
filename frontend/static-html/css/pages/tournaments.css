@@ -84,18 +84,32 @@
   border-color: var(--accent-color);
 }
 
-.add-button {
-  background: var(--accent-color);
+.add-button, .start-button {
+  background: var(--accent-hover);
+  backdrop-filter: blur(var(--blur));
   color: var(--text-primary);
-  border: none;
+  border: 1.5px solid var(--accent-color);
   border-radius: 8px;
   padding: var(--padding-s) var(--padding-m);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.add-button:hover {
+.add-button:hover, .start-button:hover {
   background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-button:active, .start-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .start-tournament {
@@ -105,6 +119,7 @@
 }
 
 .start-button {
+  font-size: 1.1rem;
   background: var(--bg-secondary);
   color: var(--text-secondary);
   padding: var(--padding-m) var(--padding-l);
@@ -135,8 +150,8 @@
     width: 100%;
   }
 
-  .add-button {
+  .add-button, .start-button {
     width: 100%;
-    margin-top: var(--margin-xs);
+    padding: var(--padding-m);
   }
 }

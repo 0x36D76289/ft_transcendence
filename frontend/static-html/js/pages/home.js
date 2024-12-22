@@ -9,9 +9,7 @@ export function render() {
   return `
 <div class="home-container">
 	<button class="play-button">${i18n.t("home.play")}</button>
-	<button class="play-button" id="queue-button">
-		${in_queue ? i18n.t("notifications.matchmaking.leave") : i18n.t("notifications.matchmaking.join")}
-	</button>
+	<button class="play-button" id="queue-button">${in_queue ? i18n.t("home.join_mm") : i18n.t("home.leave_mm")}</button>
 </div>
 	`;
 }
@@ -20,8 +18,8 @@ export function render() {
 function renderButton() {
   let button = document.getElementById("queue-button");
   if (button === undefined) return;
-  if (in_queue) button.innerHTML = i18n.t("notifications.matchmaking.leave");
-  else button.innerHTML = i18n.t("notifications.matchmaking.join");
+  if (in_queue) button.innerHTML = i18n.t("home.leave_mm");
+  else button.innerHTML = i18n.t("home.join_mm");
 }
 
 /**

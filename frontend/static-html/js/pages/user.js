@@ -59,7 +59,7 @@ export function render() {
 			</div>
 
 			<div class="game-history-card">
-				<h3>${i18n.t('user.game_history')}</h3>
+				<h3 class="game-history-header">${i18n.t('user.game_history')}</h3>
 				<div id="game-history-list" class="game-history-list">
 					<!-- Game history will be populated here -->
 				</div>
@@ -116,7 +116,7 @@ export async function init() {
 
 		// Set stats
 		document.getElementById('games-played').innerText = userStat.games_played;
-		document.getElementById('win-rate').innerText = userStat.win_rate;
+		document.getElementById('win-rate').innerText = userStat.win_rate + '%';
 
 		// Populate game history
 		const gameHistoryList = document.getElementById('game-history-list');
@@ -124,19 +124,19 @@ export async function init() {
 			gameHistoryList.innerHTML = `<p>${i18n.t('user.no_games')}</p>`;
 		} else {
 			gameHistoryList.innerHTML = gameHistory.map(game => `
-			<div class="game-history-item">
-				<div class="game-players">
-					<span>${game.p1.username}</span>
-					<span>vs</span>
-					<span>${game.p2.username}</span>
+				<div class="game-history-item">
+					<div class="game-players">
+						<span class="${game.p1_score > game.p2_score ? 'player-self' : ''}">${game.p1.username}</span>
+						<span class="vs">vs</span>
+						<span class="${game.p2_score > game.p1_score ? 'player-self' : ''}">${game.p2.username}</span>
+					</div>
+					<div class="game-score">
+						<span>${game.p1_score} - ${game.p2_score}</span>
+					</div>
+					<div class="game-date">
+						${new Date(game.time_start).toLocaleDateString()}
+					</div>
 				</div>
-				<div class="game-score">
-					<span>${game.p1_score} - ${game.p2_score}</span>
-				</div>
-				<div class="game-date">
-					${new Date(game.time_start).toLocaleDateString()}
-				</div>
-			</div>
 			`).join('');
 		}
 

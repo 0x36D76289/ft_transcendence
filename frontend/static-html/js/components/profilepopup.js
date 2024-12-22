@@ -18,7 +18,7 @@ function createProfilePreviewPopup(userData, userStats, userHistory) {
 		<div class="profile-preview-grid">
 		  <!-- Colonne de gauche: Historique des parties -->
 		  <div class="game-history-section">
-			<h3>${i18n.t("user.game_history")}</h3>
+			<h3 class="game-history-header">${i18n.t("user.game_history")}</h3>
 			<div class="game-history-list">
 			  ${userHistory.length > 0 ? userHistory.map(game => `
 				<div class="game-history-item">

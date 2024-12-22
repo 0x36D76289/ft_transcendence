@@ -4,12 +4,11 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.6);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: 1000;
-	backdrop-filter: blur(5px);
+	backdrop-filter: blur(var(--blur));
 }
 
 .profile-preview-container {
@@ -22,7 +21,6 @@
 	animation: fadeIn 0.3s ease-out;
 	backdrop-filter: blur(var(--blur));
 	border: 1px solid var(--border-color);
-	background: rgba(255, 255, 255, 0.1);
 }
 
 .close-preview-btn {
@@ -36,7 +34,14 @@
 	transition: var(--transition);
 	border-radius: 50%;
 	padding: var(--padding-xs);
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1001;
 }
+
 
 .close-preview-btn:hover {
 	color: var(--accent-color);
@@ -52,8 +57,15 @@
 
 .game-history-section {
 	padding: var(--padding-m);
-	background: var(--bg-secondary);
+	border: 1px solid var(--border-color);
 	border-radius: 12px;
+}
+
+.game-history-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--margin-m);
 }
 
 .game-history-list {
@@ -65,9 +77,10 @@
 	padding: var(--padding-s);
 	margin-bottom: var(--margin-s);
 	border-radius: 8px;
-	background: var(--bg-tertiary);
+	border: 1px solid var(--border-color);
 	display: grid;
 	gap: var(--margin-xs);
+	grid-template-columns: 1fr 1fr 1fr;
 }
 
 .game-players {
@@ -103,7 +116,7 @@
 
 .profile-details-section {
 	padding: var(--padding-m);
-	background: var(--bg-secondary);
+	border: 1px solid var(--border-color);
 	border-radius: 12px;
 	display: flex;
 	flex-direction: column;

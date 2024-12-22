@@ -13,50 +13,6 @@
 		"accept": "Accepter",
 		"reject": "Refuser"
 	},
-	"notifications": {
-		"error": "Une erreur est arrivée",
-		"fight": {
-			"invite": {
-				"send": {
-					"pre": "Invitation à un combat envoyée à ",
-					"post": ""
-				}
-			},
-			"cancel": {
-				"pre": "L'invitation à ",
-				"post": " pour un combat a été annulée"
-			}
-		},
-		"tournament": {
-			"invite": {
-				"pre": "",
-				"post": " vous invite a son tournoi"
-			},
-			"send-invite": {
-				"pre": "une invitation a été envoyée à ",
-				"post": ""
-			},
-			"already-in": {
-				"pre": "",
-				"post": " est déjà dans le tournoi"
-			},
-			"other-offline": {
-				"pre": "",
-				"post": " est hors-ligne"
-			}
-		},
-		"profile": {
-			"update": "Profil mis à jour avec succès"
-		},
-		"matchmaking": {
-			"join": "Rejoindre le matchmaking",
-			"leave": "Quitter le matchmaking"
-		},
-		"message": {
-			"send": "Message envoyé",
-			"error": "Erreur d'envoi du message"
-		}
-	},
 	"sidebar": {
 		"title": "ft_transcendance",
 		"home": "Bienvenue",
@@ -186,11 +142,16 @@
 		"remove_success": "Utilisateur supprimé",
 		"profile_load_error": "Échec du chargement du profil",
 		"friend_request_sent": "Demande d'ami envoyée",
+		"friend_request_accepted": "Demande d'ami acceptée",
 		"friend_request_received": "Demande d'ami reçue",
+		"friend_request_declined": "Demande d'ami refusée",
 		"game_invite_sent": {
 			"pre": "Invitation de jeu envoyée à ",
 			"post": ""
-		}
+		},
+		"accept_request": "Accepter la demande",
+		"decline_request": "Refuser la demande",
+		"cancel_request": "Annuler la demande"
 	},
 	"pong": {
 		"local_tournament": "Tournoi Local",
@@ -264,6 +225,9 @@
 				}
 			}
 		},
-		"message": "Message reçu!"
+		"message": "Message reçu!",
+		"profile": {
+			"update": "Profil mis à jour avec succès"
+		}
 	}
 }

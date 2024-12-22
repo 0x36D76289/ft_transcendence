@@ -3,19 +3,23 @@
 		"404": "Página no encontrada",
 		"page": {
 			"title": "Error de inicialización",
-			"message": "Se produjo un error durante la inicialización de la aplicación. Por favor, inténtelo de nuevo más tarde."
+			"message": "Se produjo un error al inicializar la aplicación. Por favor, inténtelo más tarde."
 		}
 	},
 	"head": {
 		"title": "ft_transcendance"
 	},
+	"popup": {
+		"accept": "Aceptar",
+		"reject": "Rechazar"
+	},
 	"sidebar": {
-		"title": "ft_transcendencia",
+		"title": "ft_transcendance",
 		"home": "Bienvenido",
 		"friends": "Amigos",
 		"tournaments": "Torneos",
 		"messages": "Mensajes",
-		"settings": "Configuraciones",
+		"settings": "Ajustes",
 		"profile": {
 			"alt": "Foto de perfil",
 			"status": {
@@ -25,10 +29,12 @@
 		}
 	},
 	"home": {
-		"play": "Jugar"
+		"play": "Jugar",
+		"join_mm": "Unirse al Matchmaking",
+		"leave_mm": "Salir del Matchmaking"
 	},
 	"settings": {
-		"title": "Configuraciones",
+		"title": "Ajustes",
 		"subtitle": "Personaliza tu experiencia",
 		"language": {
 			"title": "Idioma",
@@ -59,7 +65,7 @@
 			}
 		},
 		"actions": {
-			"reset": "Restablecer configuraciones"
+			"reset": "Restablecer ajustes"
 		}
 	},
 	"auth": {
@@ -68,30 +74,34 @@
 		"login": {
 			"title": "Iniciar sesión",
 			"submit": "Iniciar sesión",
-			"no_account": "¿No tienes una cuenta?",
+			"no_account": "¿No tienes cuenta?",
 			"register": "Registrarse",
 			"guest": "Iniciar sesión como invitado",
-			"42": "Conexión con 42",
-			"error": "Error de inicio de sesión"
+			"42": "Iniciar sesión con 42",
+			"error": "Error de inicio de sesión",
+			"42_error": "Error de inicio de sesión con 42"
 		},
 		"register": {
-			"title": "Registrarse",
+			"title": "Registro",
 			"submit": "Registrarse",
-			"has_account": "¿Ya tienes una cuenta?",
+			"has_account": "¿Ya tienes cuenta?",
 			"login": "Iniciar sesión",
-			"error": "Error de registro"
+			"error": "Error de registro",
+			"success": "Cuenta creada con éxito",
+			"guest_error": "Error al crear cuenta de invitado"
 		}
 	},
 	"messages": {
 		"title": "Mensajes",
 		"type_message": "Escribe tu mensaje...",
 		"send": "Enviar",
-		"no_conversations": "No hay conversaciones",
+		"no_conversations": "Sin conversaciones",
 		"new_conversation": "Nueva conversación",
 		"participants": "Participantes",
 		"last_message": "Último mensaje",
 		"conversation_load_error": "Error al cargar la conversación",
-		"message_send_error": "Error al enviar el mensaje"
+		"message_send_error": "Error al enviar el mensaje",
+		"invite_to_match": "Invitar a una partida"
 	},
 	"user": {
 		"title": "Perfil",
@@ -103,15 +113,16 @@
 		"save": "Guardar",
 		"stats": "Estadísticas",
 		"games_played": "Partidas jugadas",
-		"win_rate": "Tasa de victorias",
-		"account_actions": "Acciones de la cuenta",
+		"win_rate": "Porcentaje de victorias",
+		"account_actions": "Acciones de cuenta",
 		"logout": "Cerrar sesión",
 		"delete_account": "Eliminar cuenta",
-		"delete_confirmation": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.",
+		"delete_confirmation": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.",
 		"confirm_delete": "Confirmar eliminación",
 		"cancel": "Cancelar",
 		"game_history": "Historial de partidas",
-		"no_games": "No se han jugado partidas"
+		"no_games": "Sin partidas jugadas",
+		"data_load_error": "Error al cargar datos del usuario"
 	},
 	"friends": {
 		"title": "Amigos",
@@ -122,18 +133,101 @@
 		"invite_to_play": "Invitar a jugar",
 		"block": "Bloquear",
 		"remove": "Eliminar",
-		"message_sent": "Mensaje enviado a",
+		"message_sent": {
+			"pre": "Mensaje enviado a ",
+			"post": ""
+		},
 		"invite_sent": "Invitación enviada a",
 		"block_success": "Usuario bloqueado",
 		"remove_success": "Usuario eliminado",
 		"profile_load_error": "Error al cargar el perfil",
-		"friend_request_sent": "Solicitud de amistad enviada"
+		"friend_request_sent": "Solicitud de amistad enviada",
+		"friend_request_accepted": "Solicitud de amistad aceptada",
+		"friend_request_received": "Solicitud de amistad recibida",
+		"friend_request_declined": "Solicitud de amistad rechazada",
+		"game_invite_sent": {
+			"pre": "Invitación de juego enviada a ",
+			"post": ""
+		},
+		"accept_request": "Aceptar solicitud",
+		"decline_request": "Rechazar solicitud",
+		"cancel_request": "Cancelar solicitud"
+	},
+	"pong": {
+		"local_tournament": "Torneo Local",
+		"setting": {
+			"paddle_width": "Ancho de la pala",
+			"paddle_height": "Alto de la pala",
+			"paddle_speed": "Velocidad del jugador",
+			"ball_size": "Tamaño de la pelota",
+			"ball_speed": "Velocidad horizontal de la pelota",
+			"ball_y_speed_factor": "Incidencia del rebote",
+			"win_score": "Puntuación para ganar"
+		}
 	},
 	"tournaments": {
 		"title": "Torneos",
 		"current_tournament": "Torneo actual",
-		"enter_username": "Ingrese nombre de usuario",
-		"enter_bot_name": "Ingrese nombre del bot",
-		"start_tournament": "Iniciar torneo"
+		"enter_username": "Introduce el nombre de usuario",
+		"enter_bot_name": "Introduce el nombre del bot",
+		"start_tournament": "Comenzar torneo"
+	},
+	"notifications": {
+		"matchmaking": {
+			"join": "¡Te has unido al matchmaking!",
+			"leave": "Has salido del matchmaking"
+		},
+		"tournament": {
+			"invite": {
+				"pre": "",
+				"post": " te invita a su torneo"
+			},
+			"send-invite": {
+				"pre": "Se ha enviado una invitación a ",
+				"post": ""
+			},
+			"already-in": {
+				"pre": "",
+				"post": " ya está en el torneo"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " está desconectado"
+			}
+		},
+		"connection": {
+			"close": "Reconectando al socket",
+			"open": "Conexión exitosa",
+			"pending": "La página se está conectando al servidor, por favor espere"
+		},
+		"fight": {
+			"self-busy": "Estás marcado como ocupado",
+			"other-busy": {
+				"pre": "",
+				"post": " está ocupado"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " está desconectado"
+			},
+			"invite": {
+				"receive": {
+					"pre": "",
+					"post": " quiere jugar contigo"
+				},
+				"send": {
+					"pre": "Invitación enviada a ",
+					"post": ""
+				},
+				"cancel": {
+					"pre": "La invitación enviada a ",
+					"post": " ha sido cancelada"
+				}
+			}
+		},
+		"message": "¡Mensaje recibido!",
+		"profile": {
+			"update": "Perfil actualizado con éxito"
+		}
 	}
 }

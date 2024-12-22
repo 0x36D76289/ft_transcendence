@@ -3,11 +3,15 @@
 		"404": "Pagina non trovata",
 		"page": {
 			"title": "Errore di inizializzazione",
-			"message": "Si è verificato un errore durante l'inizializzazione dell'applicazione. Per favore riprova più tardi."
+			"message": "Si è verificato un errore durante l'inizializzazione dell'applicazione. Riprova più tardi."
 		}
 	},
 	"head": {
 		"title": "ft_transcendance"
+	},
+	"popup": {
+		"accept": "Accetta",
+		"reject": "Rifiuta"
 	},
 	"sidebar": {
 		"title": "ft_transcendance",
@@ -17,7 +21,7 @@
 		"messages": "Messaggi",
 		"settings": "Impostazioni",
 		"profile": {
-			"alt": "Immagine del profilo",
+			"alt": "Foto profilo",
 			"status": {
 				"online": "Online",
 				"offline": "Offline"
@@ -25,7 +29,9 @@
 		}
 	},
 	"home": {
-		"play": "Gioca"
+		"play": "Gioca",
+		"join_mm": "Unisciti al Matchmaking",
+		"leave_mm": "Lascia il Matchmaking"
 	},
 	"settings": {
 		"title": "Impostazioni",
@@ -46,40 +52,43 @@
 				}
 			},
 			"accentColor": {
-				"label": "Colore Accento",
+				"label": "Colore accent",
 				"description": "Colore principale dell'interfaccia",
-				"reset": "Reimposta"
+				"reset": "Ripristina"
 			}
 		},
 		"notifications": {
 			"title": "Notifiche",
 			"push": {
-				"label": "Notifiche Push",
+				"label": "Notifiche push",
 				"description": "Ricevi notifiche"
 			}
 		},
 		"actions": {
-			"reset": "Reimposta impostazioni"
+			"reset": "Ripristina impostazioni"
 		}
 	},
 	"auth": {
 		"username": "Nome utente",
 		"password": "Password",
 		"login": {
-			"title": "Accedi",
+			"title": "Accesso",
 			"submit": "Accedi",
 			"no_account": "Non hai un account?",
 			"register": "Registrati",
-			"guest": "Accedi come Ospite",
-			"42": "Collegamento con 42",
-			"error": "Errore di accesso"
+			"guest": "Accedi come ospite",
+			"42": "Accedi con 42",
+			"error": "Errore di accesso",
+			"42_error": "Errore di accesso con 42"
 		},
 		"register": {
-			"title": "Registrati",
+			"title": "Registrazione",
 			"submit": "Registrati",
 			"has_account": "Hai già un account?",
 			"login": "Accedi",
-			"error": "Errore di registrazione"
+			"error": "Errore di registrazione",
+			"success": "Account creato con successo",
+			"guest_error": "Errore nella creazione dell'account ospite"
 		}
 	},
 	"messages": {
@@ -91,43 +100,70 @@
 		"participants": "Partecipanti",
 		"last_message": "Ultimo messaggio",
 		"conversation_load_error": "Errore nel caricamento della conversazione",
-		"message_send_error": "Errore nell'invio del messaggio"
+		"message_send_error": "Errore nell'invio del messaggio",
+		"invite_to_match": "Invita a una partita"
 	},
 	"user": {
 		"title": "Profilo",
 		"username": "Nome utente",
-		"bio": "Biografia",
-		"no_bio": "L'utente non ha una biografia",
+		"bio": "Bio",
+		"no_bio": "L'utente non ha una bio",
 		"joined": "Iscritto il",
 		"edit": "Modifica",
 		"save": "Salva",
 		"stats": "Statistiche",
 		"games_played": "Partite giocate",
-		"win_rate": "Percentuale di vittorie",
-		"account_actions": "Azioni dell'account",
-		"logout": "Esci",
-		"delete_account": "Elimina Account",
-		"delete_confirmation": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata.",
-		"confirm_delete": "Conferma Eliminazione",
+		"win_rate": "Percentuale vittorie",
+		"account_actions": "Azioni account",
+		"logout": "Disconnetti",
+		"delete_account": "Elimina account",
+		"delete_confirmation": "Sei sicuro di voler eliminare il tuo account? Questa azione è irreversibile.",
+		"confirm_delete": "Conferma eliminazione",
 		"cancel": "Annulla",
-		"game_history": "Cronologia Partite",
-		"no_games": "Nessuna partita giocata"
+		"game_history": "Cronologia partite",
+		"no_games": "Nessuna partita giocata",
+		"data_load_error": "Errore nel caricamento dei dati utente"
 	},
 	"friends": {
 		"title": "Amici",
-		"search_user": "Cerca utente...",
+		"search_user": "Cerca utente",
 		"online": "Online",
 		"offline": "Offline",
-		"send_message": "Invia Messaggio",
-		"invite_to_play": "Invita a Giocare",
+		"send_message": "Invia messaggio",
+		"invite_to_play": "Invita a giocare",
 		"block": "Blocca",
 		"remove": "Rimuovi",
-		"add_friend_tooltip": "Aggiungi Amico",
-		"empty_username": "Il nome utente non può essere vuoto",
-		"request_sent": "Richiesta di amicizia inviata a {username}",
-		"profile_load_error": "Impossibile caricare il profilo",
-		"fetch_error": "Errore nel recupero degli amici",
-		"friend_request_sent": "Richiesta di amicizia inviata"
+		"message_sent": {
+			"pre": "Messaggio inviato a ",
+			"post": ""
+		},
+		"invite_sent": "Invito inviato a",
+		"block_success": "Utente bloccato",
+		"remove_success": "Utente rimosso",
+		"profile_load_error": "Errore nel caricamento del profilo",
+		"friend_request_sent": "Richiesta di amicizia inviata",
+		"friend_request_accepted": "Richiesta di amicizia accettata",
+		"friend_request_received": "Richiesta di amicizia ricevuta",
+		"friend_request_declined": "Richiesta di amicizia rifiutata",
+		"game_invite_sent": {
+			"pre": "Invito a giocare inviato a ",
+			"post": ""
+		},
+		"accept_request": "Accetta richiesta",
+		"decline_request": "Rifiuta richiesta",
+		"cancel_request": "Annulla richiesta"
+	},
+	"pong": {
+		"local_tournament": "Torneo Locale",
+		"setting": {
+			"paddle_width": "Larghezza racchetta",
+			"paddle_height": "Altezza racchetta",
+			"paddle_speed": "Velocità giocatore",
+			"ball_size": "Dimensione palla",
+			"ball_speed": "Velocità orizzontale palla",
+			"ball_y_speed_factor": "Fattore rimbalzo",
+			"win_score": "Punteggio vittoria"
+		}
 	},
 	"tournaments": {
 		"title": "Tornei",
@@ -135,5 +171,63 @@
 		"enter_username": "Inserisci nome utente",
 		"enter_bot_name": "Inserisci nome del bot",
 		"start_tournament": "Inizia torneo"
+	},
+	"notifications": {
+		"matchmaking": {
+			"join": "Ti sei unito al matchmaking!",
+			"leave": "Hai lasciato il matchmaking"
+		},
+		"tournament": {
+			"invite": {
+				"pre": "",
+				"post": " ti invita al suo torneo"
+			},
+			"send-invite": {
+				"pre": "Un invito è stato inviato a ",
+				"post": ""
+			},
+			"already-in": {
+				"pre": "",
+				"post": " è già nel torneo"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " è offline"
+			}
+		},
+		"connection": {
+			"close": "Riconnessione al socket in corso",
+			"open": "Connessione riuscita",
+			"pending": "La pagina si sta connettendo al server, attendere prego"
+		},
+		"fight": {
+			"self-busy": "Sei segnato come occupato",
+			"other-busy": {
+				"pre": "",
+				"post": " è occupato"
+			},
+			"other-offline": {
+				"pre": "",
+				"post": " è offline"
+			},
+			"invite": {
+				"receive": {
+					"pre": "",
+					"post": " vuole giocare con te"
+				},
+				"send": {
+					"pre": "Invito inviato a ",
+					"post": ""
+				},
+				"cancel": {
+					"pre": "L'invito inviato a ",
+					"post": " è stato annullato"
+				}
+			}
+		},
+		"message": "Messaggio ricevuto!",
+		"profile": {
+			"update": "Profilo aggiornato con successo"
+		}
 	}
 }

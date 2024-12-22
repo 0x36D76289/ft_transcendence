@@ -1,10 +1,9 @@
 .messages-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 2 * var(--padding-l));
   padding: var(--padding-l);
   overflow: hidden;
   gap: var(--margin-m);
-  backdrop-filter: blur(var(--blur));
 }
 
 .conversations-list {
@@ -14,6 +13,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   max-height: 100%;
+  backdrop-filter: blur(var(--blur));
 }
 
 .conversation-item {
@@ -22,7 +22,6 @@
   padding: var(--padding-s) var(--padding-m);
   cursor: pointer;
   transition: var(--transition);
-  border-bottom: 1px solid var(--border-color);
 }
 
 .conversation-item:hover {
@@ -30,8 +29,9 @@
 }
 
 .conversation-item.active {
-  background-color: var(--active-bg);
+  background-color: var(--bg-secondary);
   border: none;
+  border-left: 4px solid var(--accent-color);
 }
 
 .avatar-button {
@@ -76,6 +76,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--padding-l);
   min-width: 0;
+  backdrop-filter: blur(var(--blur));
 }
 
 .chat-header {
@@ -164,7 +165,7 @@
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
-  gap: var(--margin-s);
+  gap: var(--margin-xs);
 }
 
 #message-input {
@@ -172,7 +173,8 @@
   padding: var(--padding-s);
   border: 1px solid var(--border-color);
   border-radius: var(--padding-l);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
+  /* Match setting-control */
   color: var(--text-primary);
   resize: none;
   font-size: 0.95rem;
@@ -180,6 +182,7 @@
 
 #message-input:focus {
   outline: none;
+  border-color: var(--accent-color);
 }
 
 .btn-accent {
@@ -209,24 +212,20 @@
   white-space: nowrap;
 }
 
+/* Mobile */
 @media screen and (max-width: 768px) {
   .messages-container {
     flex-direction: column;
-    padding: var(--padding-m);
-    gap: var(--margin-m);
   }
 
   .conversations-list {
     width: 100%;
     margin-right: 0;
-    border-right: none;
-    border-bottom: 1.5px solid var(--border-color);
     max-height: 30vh;
   }
 
   .chat-window {
     width: 100%;
-    margin-top: 0;
     border: 1px solid var(--border-color);
   }
 
@@ -240,9 +239,27 @@
 
   .message-input-container {
     padding: var(--padding-m);
+    gap: var(--margin-xs);
   }
 
   #message-input {
     padding: var(--padding-s);
+    box-sizing: border-box;
+  }
+
+  .btn-accent {
+    height: auto;
+    padding: var(--padding-xs) var(--padding-s);
+    flex-shrink: 0;
+  }
+
+  .messages-container .btn-accent {
+    width: auto;
+    flex-grow: inherit;
+    height: 40px;
+  }
+
+  .messages-container #send-message-btn {
+    width: 40px;
   }
 }
