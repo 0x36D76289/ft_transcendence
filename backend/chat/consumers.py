@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 
 from pong.users import pong_data
 from user.models import User
-from chat.models import Message, Conversation
+from chat.models import Message, Conversation, UserBlock
 from chat.serializers import MessageSerializer
 
 from sys import stderr
@@ -23,15 +23,20 @@ class ChatConsumer(WebsocketConsumer):
         sender = self.scope.get("user")
 
         try:
-            # print("on est la", file=stderr)
-            # print([obj for obj in Conversation.objects.all()], file=stderr)
             conversation = Conversation.objects.get(id=int(self.room_name))
-            # print("on est la 2", file=stderr)
             sender = self.scope["user"]
-            # print(sender.username, file=stderr)
-            # print(conversation.participants.all(), file=stderr)
             if sender not in conversation.participants.all():
                 raise Exception("user not in conv")
+            if conversation.participants.all().count() == 2:
+                print(f"{sender.username} pov: la conv est de 2 personne", file=stderr)
+                other_p = conversation.participants.exclude(id=sender.id)[0]
+                print(f"{sender.username} pov: l'autre personne est {other_p.username}", file=stderr)
+                if UserBlock.objects.filter(uid1=sender, uid2=other_p).exists():
+                    print(f"{sender.username} pov: {sender.username} block {other_p.username}", file=stderr)
+                    pu = pong_data.get_pong_user(sender)
+                    if pu:
+                        pu.send("notify", "notifications.chat.is_blocked")
+                    raise Exception("user is blocked") 
         except Exception as e:
             print("found error", e, file=stderr)
             self.close()
@@ -58,10 +63,15 @@ class ChatConsumer(WebsocketConsumer):
         conversation = Conversation.objects.get(id=int(self.room_name))
         sender = self.scope["user"]
 
+        if conversation.participants.all().count() == 2:
+            other_p = conversation.participants.exclude(id=sender.id)[0]
+            if UserBlock.objects.filter(uid1=other_p, uid2=sender).exists():
+                pu = pong_data.get_pong_user(sender)
+                if pu:
+                    pu.send("notify", "notifications.chat.blocked_you")
+                return
+
         for participant in conversation.participants.all():
-            # print("participant:", participant, file=stderr)
-            # print("participant:", type(participant), file=stderr)
-            # print("participant:", participant == sender, file=stderr)
             if participant != sender:
                 pong_data.message_notify(participant)
 

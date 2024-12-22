@@ -226,6 +226,10 @@
 			}
 		},
 		"message": "Message reçu!",
+		"chat": {
+			"is_blocked": "Vous avez bloqué cet utilisateur",
+			"blocked_you": "Cet utilisateur vous a bloqué"
+		},
 		"profile": {
 			"update": "Profil mis à jour avec succès"
 		}

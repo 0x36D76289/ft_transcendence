@@ -48,6 +48,13 @@ def get_conversation(request, convo_id):
             {"detail": "You are not in this conversation"},
             status=status.HTTP_403_FORBIDDEN,
         )
+    if conversation.participants.all().count() == 2:
+        other_p = conversation.participants.exclude(id=request.user.id)[0]
+        if UserBlock.objects.filter(uid1=other_p, uid2=request.id).exists():
+            return Response(
+                {"detail": "You blocked this user"},
+                status=status.HTTP_403_FORBIDDEN
+			)
     return Response(ConversationSerializer(conversation).data)
 
 
