@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from user.models import User, UserFriend
 import os
+from string import ascii_letters, digits
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta(object):
@@ -28,8 +29,12 @@ class UserSerializer(serializers.ModelSerializer):
 		return instance
 	
 	def validate_username(self, username):
+		allowed = ascii_letters + digits + "_-"
+		for letter in username:
+			if letter not in allowed:
+				raise serializers.ValidationError('username must contain only letters, digits, _ and -')
 		if username.startswith('noob_') or username.startswith('42_'):
-			raise serializers.ValidationError('username can not start with noob_ or 42_.')
+			raise serializers.ValidationError('username can not start with noob_ or 42_')
 		return username
 
 class UserFriendSerializer(serializers.ModelSerializer):
