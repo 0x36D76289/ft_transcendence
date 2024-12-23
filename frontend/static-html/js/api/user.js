@@ -2,6 +2,7 @@ import * as cookies from "../utils/cookies.js";
 import { popupSystem } from "../services/popup.js";
 import { API_URL } from "../app.js";
 import { close_online_sock } from "./socket.js";
+import { i18n } from '../services/i18n.js';
 
 export class UserAPI {
   // Helper method to handle API responses

@@ -188,10 +188,11 @@ export async function init() {
 
 			const updatedData = await UserAPI.updateProfile(formData);
 
-			document.getElementById('username-input').value = updatedData.username;
-			document.getElementById('bio-input').value = updatedData.bio;
-
-			popupSystem('success', i18n.t('notifications.profile.update'));
+			if (updatedData) {
+				document.getElementById('username-input').value = updatedData.username;
+				document.getElementById('bio-input').value = updatedData.bio;
+				popupSystem('success', i18n.t('notifications.profile.update'));
+			}
 		});
 
 		// Logout button
