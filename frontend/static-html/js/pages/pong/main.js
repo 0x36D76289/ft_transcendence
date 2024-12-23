@@ -73,27 +73,6 @@ export function render() {
           ${i18n.t("pong.local_tournament")}
         </button>
       </div>
-
-      <!-- New Chat Section -->
-      <div class="chat-section">
-        <div class="chat-container">
-          <div class="chat-messages" id="chat-messages">
-            <!-- Messages will be inserted here dynamically -->
-          </div>
-          <div class="chat-input-container">
-            <input
-              type="text"
-              class="chat-input"
-              id="chat-input"
-              placeholder="Type your message..."
-              maxlength="500"
-            >
-            <button class="send-button" id="send-message">
-              Send
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
   `;
@@ -164,32 +143,6 @@ export async function init(options) {
   } else {
     offline_layout();
   }
-
-  // Chat functionality
-  // const chatInput = document.getElementById("chat-input");
-  // const sendButton = document.getElementById("send-message");
-  // const chatMessages = document.getElementById("chat-messages");
-
-  // if (chatInput && sendButton) {
-  //   const sendMessage = () => {
-  //     const message = chatInput.value.trim();
-  //     if (message) {
-  //       // Add message to chat
-  //       const messageElement = document.createElement("div");
-  //       messageElement.textContent = message;
-  //       chatMessages?.appendChild(messageElement);
-
-  //       // Clear input
-  //       chatInput.value = "";
-
-  //       // Scroll to bottom
-  //       chatMessages?.scrollTo(0, chatMessages.scrollHeight);
-  //     }
-  //   };
-
-  //   // Send on button click
-  //   sendButton.onclick = sendMessage;
-  // }
 }
 
 export async function unload() {

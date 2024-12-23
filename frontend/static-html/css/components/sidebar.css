@@ -117,7 +117,7 @@
 	opacity: 0.7;
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1401px) {
 	.sidebar {
 		position: fixed;
 		left: 0;
@@ -130,7 +130,7 @@
 }
 
 /* Tablet */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
+@media screen and (min-width: 768px) and (max-width: 1400px) {
 	.sidebar {
 		position: fixed;
 		left: 0;

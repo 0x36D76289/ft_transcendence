@@ -79,7 +79,7 @@
 	--b-mobile: 480px;
 	--b-tablet: 768px;
 	--b-desktop: 1024px;
-	--b-large: 1200px;
+	--b-large: 1400px;
 
 	--transition: all 0.3s ease;
 
@@ -191,7 +191,7 @@ a {
 }
 
 /* mobile */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1400px) {
 	main {
 		margin-left: 0;
 		padding-bottom: var(--mobile-height);
@@ -199,14 +199,14 @@ a {
 }
 
 /* tablet */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
+@media screen and (min-width: 768px) and (max-width: 1400px) {
 	main {
 		margin-left: var(--sidebar-collapsed);
 	}
 }
 
 /* desktop */
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1401px) {
 	main {
 		margin-left: var(--sidebar-width);
 	}
