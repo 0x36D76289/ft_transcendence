@@ -73,9 +73,14 @@ export function create_socket() {
     }
   };
   online_sock.addEventListener("close", () => {
+    if (getToken() == null) return;
     set_led(false);
     create_socket();
   });
+}
+
+export function close_online_sock() {
+  online_sock.close();
 }
 
 /**
