@@ -101,7 +101,8 @@
 		"last_message": "Último mensaje",
 		"conversation_load_error": "Error al cargar la conversación",
 		"message_send_error": "Error al enviar el mensaje",
-		"invite_to_match": "Invitar a una partida"
+		"invite_to_match": "Invitar a una partida",
+		"invite_to_match_message": "*te invita a un partido*"
 	},
 	"user": {
 		"title": "Perfil",
@@ -174,6 +175,7 @@
 		"start_tournament": "Comenzar torneo"
 	},
 	"notifications": {
+		"error": "Error interno",
 		"matchmaking": {
 			"join": "¡Te has unido al matchmaking!",
 			"leave": "Has salido del matchmaking"

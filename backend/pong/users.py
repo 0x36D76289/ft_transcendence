@@ -430,9 +430,9 @@ class pong_data:
         if pu.wants_to_fight == opponent:
             pu.send(
                 "notify",
-                "notifications.fight.cancel.pre "
+                "notifications.fight.invite.cancel.pre "
                 + opponent
-                + " notifications.fight.cancel.post",
+                + " notifications.fight.invite.cancel.post",
             )
             pu.wants_to_fight = None
             return
@@ -440,9 +440,9 @@ class pong_data:
         def offline():
             pu.send(
                 "notify-error",
-                "notifications.fight.invite.other-offline.pre "
+                "notifications.fight.other-offline.pre "
                 + opponent
-                + " notifications.fight.invite.other-offline.post",
+                + " notifications.fight.other-offline.post",
             )
 
         if opponent in cls.name_to_user:
