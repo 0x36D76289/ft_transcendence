@@ -102,7 +102,7 @@
 		"conversation_load_error": "Échec du chargement de la conversation",
 		"message_send_error": "Échec de l'envoi du message",
 		"invite_to_match": "Inviter à un combat",
-		"invite_to_match_message": "*vous invite à un match"
+		"invite_to_match_message": "*vous invite à un match*"
 	},
 	"user": {
 		"title": "Profil",

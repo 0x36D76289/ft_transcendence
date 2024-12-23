@@ -101,7 +101,8 @@
 		"last_message": "Last message",
 		"conversation_load_error": "Failed to load conversation",
 		"message_send_error": "Failed to send message",
-		"invite_to_match": "Invite to match"
+		"invite_to_match": "Invite to match",
+		"invite_to_match_message": "*invites you to a game*"
 	},
 	"user": {
 		"title": "Profile",
@@ -143,11 +144,16 @@
 		"remove_success": "User removed",
 		"profile_load_error": "Failed to load profile",
 		"friend_request_sent": "Friend request sent",
+		"friend_request_accepted": "Accepted friend request",
 		"friend_request_received": "Friend request received",
+		"friend_request_declined": "Rejected friend request",
 		"game_invite_sent": {
 			"pre": "Game invitation sent to ",
 			"post": ""
-		}
+		},
+		"accept_request": "Accept request",
+		"decline_request": "Reject request",
+		"cancel_request": "Cancel request"
 	},
 	"pong": {
 		"local_tournament": "Local Tournament",
@@ -169,6 +175,7 @@
 		"start_tournament": "Start tournament"
 	},
 	"notifications": {
+		"error": "internal error",
 		"matchmaking": {
 			"join": "You have joined matchmaking!",
 			"leave": "You have left matchmaking"
