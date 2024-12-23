@@ -6,9 +6,8 @@ import { send_to_online_sock } from "../api/socket.js";
 import { popupSystem } from "../services/popup.js";
 import { i18n } from "../services/i18n.js";
 
-
 function createProfilePreviewPopup(userData, userStats, userHistory) {
-	return `
+  return `
   <div id="profile-preview-overlay" class="profile-preview-overlay">
 	<div class="profile-preview-container">
 	  <button id="close-preview" class="close-preview-btn">
@@ -20,12 +19,16 @@ function createProfilePreviewPopup(userData, userStats, userHistory) {
 		  <div class="game-history-section">
 			<h3 class="game-history-header">${i18n.t("user.game_history")}</h3>
 			<div class="game-history-list">
-			  ${userHistory.length > 0 ? userHistory.map(game => `
+			  ${
+          userHistory.length > 0
+            ? userHistory
+                .map(
+                  (game) => `
 				<div class="game-history-item">
 				  <div class="game-players">
-					<span class="${game.p1.username === userData.username ? 'player-self' : ''}">${game.p1.username}</span>
+					<span class="${game.p1.username === userData.username ? "player-self" : ""}">${game.p1.username}</span>
 					<span class="vs">vs</span>
-					<span class="${game.p2.username === userData.username ? 'player-self' : ''}">${game.p2.username}</span>
+					<span class="${game.p2.username === userData.username ? "player-self" : ""}">${game.p2.username}</span>
 				  </div>
 				  <div class="game-score">
 					<span>${game.p1_score}</span>
@@ -34,7 +37,11 @@ function createProfilePreviewPopup(userData, userStats, userHistory) {
 				  </div>
 				  <div class="game-date">${new Date(game.time_end).toLocaleDateString()}</div>
 				</div>
-			  `).join('') : `<p>${i18n.t("user.no_games")}</p>`}
+			  `,
+                )
+                .join("")
+            : `<p>${i18n.t("user.no_games")}</p>`
+        }
 			</div>
 		  </div>
 
@@ -80,80 +87,92 @@ function createProfilePreviewPopup(userData, userStats, userHistory) {
 }
 
 async function handleActionButton(event) {
-	const action = event.currentTarget.classList[1];
-	const username = document.querySelector(".preview-username").textContent;
+  const action = event.currentTarget.classList[1];
+  const username = document.querySelector(".preview-username").textContent;
 
-	switch (action) {
-		case "message":
-			await ChatAPI.startConversation(username);
-			popupSystem("info", i18n.t("friends.message_sent") + " " + username);
-			break;
-		case "play":
-			send_to_online_sock("fight " + username);
-			popupSystem("info", `${i18n.t("notifications.fight.invite.send.pre")} ${username}`);
-			return;
-		case "block":
-			const is_blocked = await ChatAPI.isUserBlocked(username);
-			if (is_blocked.detail) {
-				await ChatAPI.unblockUser(username);
-				popupSystem("info", i18n.t("friends.unblock_success"));
-			} else {
-				await ChatAPI.blockUser(username);
-				popupSystem("info", i18n.t("friends.block_success"));
-			}
-			break;
-		case "remove":
-			await UserAPI.removeFriendRequest(username);
-			popupSystem("info", i18n.t("friends.remove"));
-			break;
-		default:
-			console.error("Unknown action:", action);
-			break;
-	}
-	document.getElementById("profile-preview-overlay").remove();
-	navigate("/friends");
+  switch (action) {
+    case "message":
+      await ChatAPI.startConversation(username);
+      popupSystem(
+        "info",
+        i18n.t("friends.message_sent.pre") +
+          username +
+          i18n.t("friends.message_sent.post"),
+      );
+      break;
+    case "play":
+      send_to_online_sock("fight " + username);
+      popupSystem(
+        "info",
+        i18n.t("notifications.fight.invite.send.pre") + username,
+        i18n.t("notifications.fight.invite.send.post"),
+      );
+      return;
+    case "block":
+      const is_blocked = await ChatAPI.isUserBlocked(username);
+      if (is_blocked.detail) {
+        await ChatAPI.unblockUser(username);
+        popupSystem("info", i18n.t("friends.unblock_success"));
+      } else {
+        await ChatAPI.blockUser(username);
+        popupSystem("info", i18n.t("friends.block_success"));
+      }
+      break;
+    case "remove":
+      await UserAPI.removeFriendRequest(username);
+      popupSystem("info", i18n.t("friends.remove"));
+      break;
+    default:
+      console.error("Unknown action:", action);
+      break;
+  }
+  document.getElementById("profile-preview-overlay").remove();
+  navigate("/friends");
 }
 
 export async function showProfilePreview(username) {
-	try {
-		// Fetch user profile and stats
-		const userData = await UserAPI.getProfile(username);
-		const userStats = await UserAPI.getUserStats(username);
-		const userHistory = await GameAPI.getUserGameHistory(username);
+  try {
+    // Fetch user profile and stats
+    const userData = await UserAPI.getProfile(username);
+    const userStats = await UserAPI.getUserStats(username);
+    const userHistory = await GameAPI.getUserGameHistory(username);
 
-		// Create and insert popup
-		const popupHTML = createProfilePreviewPopup(userData, userStats, userHistory);
-		document.body.insertAdjacentHTML("beforeend", popupHTML);
+    // Create and insert popup
+    const popupHTML = createProfilePreviewPopup(
+      userData,
+      userStats,
+      userHistory,
+    );
+    document.body.insertAdjacentHTML("beforeend", popupHTML);
 
-		// Close button
-		document.getElementById("close-preview").addEventListener("click", () => {
-			document.getElementById("profile-preview-overlay").remove();
-		});
+    // Close button
+    document.getElementById("close-preview").addEventListener("click", () => {
+      document.getElementById("profile-preview-overlay").remove();
+    });
 
-		// Close on outside click
-		document
-			.getElementById("profile-preview-overlay")
-			.addEventListener("click", (e) => {
-				if (e.target.id === "profile-preview-overlay") {
-					e.target.remove();
-				}
-			});
+    // Close on outside click
+    document
+      .getElementById("profile-preview-overlay")
+      .addEventListener("click", (e) => {
+        if (e.target.id === "profile-preview-overlay") {
+          e.target.remove();
+        }
+      });
 
-		// Add event listeners for profile action buttons
-		const actionButtons = document.querySelectorAll(".profile-action-btn");
-		actionButtons.forEach((button) => {
-			button.addEventListener("click", handleActionButton);
-		});
+    // Add event listeners for profile action buttons
+    const actionButtons = document.querySelectorAll(".profile-action-btn");
+    actionButtons.forEach((button) => {
+      button.addEventListener("click", handleActionButton);
+    });
 
-		// si j'appuie sur echap je ferme la fenetre
-		document.addEventListener("keydown", (e) => {
-			if (e.key === "Escape") {
-				document.getElementById("profile-preview-overlay").remove();
-			}
-		});										
-
-	} catch (error) {
-		console.error("Failed to load profile preview:", error);
-		popupSystem("error", i18n.t("friends.profile_load_error"));
-	}
+    // si j'appuie sur echap je ferme la fenetre
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        document.getElementById("profile-preview-overlay").remove();
+      }
+    });
+  } catch (error) {
+    console.error("Failed to load profile preview:", error);
+    popupSystem("error", i18n.t("friends.profile_load_error"));
+  }
 }
