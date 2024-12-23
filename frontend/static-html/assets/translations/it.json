@@ -153,7 +153,8 @@
 		},
 		"accept_request": "Accetta richiesta",
 		"decline_request": "Rifiuta richiesta",
-		"cancel_request": "Annulla richiesta"
+		"cancel_request": "Annulla richiesta",
+		"unblock": "Sblocca"
 	},
 	"pong": {
 		"local_tournament": "Torneo Locale",

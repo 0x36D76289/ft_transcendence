@@ -62,7 +62,7 @@ export async function initSidebar() {
 
 		if (window.innerWidth < 768) {
 			main.style.marginLeft = '0';
-		} else if (window.innerWidth < 1024) {
+		} else if (window.innerWidth < 1400) {
 			main.style.marginLeft = `${getComputedStyle(document.documentElement).getPropertyValue('--sidebar-collapsed')}`;
 		} else {
 			main.style.marginLeft = `${getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')}`;
