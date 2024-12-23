@@ -33,6 +33,14 @@ export function online_layout() {
   /** @type {?HTMLButtonElement} */
   let tournamentButton = document.getElementById("local-tournament");
   if (tournamentButton) tournamentButton.remove();
+
+  let p1c = document.getElementById("p1controls");
+  let p2c = document.getElementById("p2controls");
+  let settingsContainer = document.getElementById("settings-container");
+
+  if (p1c) p1c.remove();
+  if (p2c) p2c.remove();
+  if (settingsContainer) settingsContainer.remove();
 }
 
 /**
@@ -49,20 +57,20 @@ function add_slider(paramName, min, max) {
   const sliderHTML = `
     <div class="setting-container">
       <label for="pongsetting-${paramName}">${i18n.t("pong.setting." + paramName)}</label>
-      <input type="range" 
-             min="${min}" 
-             max="${max}" 
-             class="setting-slider" 
+      <input type="range"
+             min="${min}"
+             max="${max}"
+             class="setting-slider"
              id="pongsetting-${paramName}">
-      <input type="text" 
-             readonly 
-             class="setting-value" 
+      <input type="text"
+             readonly
+             class="setting-value"
              id="pongshow-${paramName}">
     </div>
   `;
 
   // Add the slider to the container
-  settingsContainer.insertAdjacentHTML('beforeend', sliderHTML);
+  settingsContainer.insertAdjacentHTML("beforeend", sliderHTML);
 
   // Set up the slider functionality
   const slider = document.getElementById("pongsetting-" + paramName);
@@ -70,7 +78,7 @@ function add_slider(paramName, min, max) {
 
   if (slider && value) {
     slider.value = GAME_SETTINGS[paramName];
-    
+
     slider.oninput = () => {
       value.value = slider.value;
       GAME_SETTINGS[paramName] = parseInt(slider.value);
@@ -92,14 +100,16 @@ function add_slider(paramName, min, max) {
   }
 }
 
-
 /** @returns {void} */
 export function offline_layout() {
   // Add title to settings panel if needed
   const settingsContainer = document.getElementById("settings-container");
   if (settingsContainer) {
-    if (!settingsContainer.querySelector('h3')) {
-      settingsContainer.insertAdjacentHTML('afterbegin', '<h3>Game Settings</h3>');
+    if (!settingsContainer.querySelector("h3")) {
+      settingsContainer.insertAdjacentHTML(
+        "afterbegin",
+        "<h3>Game Settings</h3>",
+      );
     }
   }
 

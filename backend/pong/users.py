@@ -100,7 +100,14 @@ class PongGame:
             number = 1
         if user == self.p2:
             number = 2
-        return json.dumps({"type": "player_assign", "value": number})
+        return json.dumps(
+            {
+                "type": "player_assign",
+                "value": number,
+                "p1": self.p1.get_username(),
+                "p2": self.p2.get_username(),
+            }
+        )
 
 
 def next_power_of_2(n: int) -> int:

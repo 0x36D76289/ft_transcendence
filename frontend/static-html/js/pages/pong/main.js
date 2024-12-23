@@ -24,12 +24,12 @@ export function render() {
         <h2 class="game-title">Pong</h2>
         <div class="scores-container">
           <div class="player-score">
-            <span class="player-name">Player 1 (W/S)</span>
-            <span class="score" id="score1">0</span>
+            <span class="player-name" id="p1name">Player 1</span>
+            <span class="player-one-controls" id="p1controls">(W/S)</span>
           </div>
           <div class="player-score">
-            <span class="player-name">Player 2 (↑/↓)</span>
-            <span class="score" id="score2">0</span>
+            <span class="player-name" id="p2name">Player 2</span>
+            <span class="player-two-controls" id="p2controls">(↑/↓)</span>
           </div>
         </div>
       </div>

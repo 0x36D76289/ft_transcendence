@@ -168,3 +168,16 @@ export function draw_main_menu() {
   buff_ctx.fillText("2P Game", quarter_x * 3, half_y);
   ctx.drawImage(BUFF, 0, 0);
 }
+
+/**
+ * @param {string} name1
+ * @param {string} name2
+ * @returns {void}
+ */
+export function changenames(name1 = "Player1", name2 = "Player2") {
+  let p1div = document.getElementById("p1name");
+  let p2div = document.getElementById("p2name");
+
+  if (p1div) p1div.innerText = name1;
+  if (p2div) p2div.innerText = name2;
+}

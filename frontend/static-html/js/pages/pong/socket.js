@@ -11,6 +11,7 @@ import {
   player_read_message,
   set_player_num,
 } from "./online_gameplay.js";
+import { changenames } from "./render.js";
 import {
   GAME_SETTINGS,
   interval,
@@ -74,6 +75,7 @@ function game_sock_receive(object) {
         break;
       case "player_assign":
         let player_num = inner.value;
+        changenames(inner.p1, inner.p2);
         set_player_num(player_num);
         console.log("Assigned to player ", player_num);
         if (player_num == 1 || player_num == 2) {

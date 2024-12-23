@@ -4,7 +4,7 @@ import { game_end_callback } from "./game_end_callback.js";
 import { set_page_state, STATES } from "./globals.js";
 import { local_update } from "./local_gameplay.js";
 import { main_menu } from "./main_menu.js";
-import { render_name, render_rounds } from "./render.js";
+import { changenames, render_name, render_rounds } from "./render.js";
 import {
   bots,
   init,
@@ -149,6 +149,7 @@ function play_game(p1, p2) {
   if (p2 === "bot") bots[1] = 1;
   if (interval) clearInterval(interval);
   start_simulation(local_update);
+  changenames(p1, p2);
 }
 
 /**

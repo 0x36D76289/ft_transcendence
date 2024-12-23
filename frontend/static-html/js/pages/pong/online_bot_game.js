@@ -1,7 +1,9 @@
 //@ts-check
 
+import { getUsername } from "../../utils/cookies.js";
 import { set_page_state, STATES } from "./globals.js";
 import { local_update } from "./local_gameplay.js";
+import { changenames } from "./render.js";
 import {
   bots,
   init,
@@ -29,6 +31,7 @@ export function start_online_bot_game() {
   set_page_state(STATES.SP_Game);
   is_online_bot_game = true;
   bot_game_start_time = Date.now();
+  changenames(getUsername(), "bot");
 }
 
 /** @returns {void} */

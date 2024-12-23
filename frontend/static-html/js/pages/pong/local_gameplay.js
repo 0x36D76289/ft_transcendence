@@ -32,7 +32,7 @@ import { game_players } from "./tournament.js";
  * @returns {input}
  */
 function bot_sim(p_y, ball_y, ball_x) {
-  if (ball_x < GAME_SETTINGS.ball_speed * 2) {
+  if (ball_x < GAME_SETTINGS.ball_speed * 4) {
     if (p_y < ball_y) {
       p_y += ((GAME_SETTINGS.paddle_height * 2) / 3) | 0;
     } else {
