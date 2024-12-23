@@ -101,19 +101,3 @@ def is_user_blocked(request):
     if UserBlock.objects.filter(uid1=logged_user, uid2=other_user).exists():
         return Response({"detail": True})
     return Response({"detail": False})
-
-
-# DEBUG
-from rest_framework import serializers
-from rest_framework import generics
-
-
-class MessageSerializerDebug(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = ["sender", "receiver", "content", "time_created"]
-
-
-class MessageList(generics.ListCreateAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializerDebug

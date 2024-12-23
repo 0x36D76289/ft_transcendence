@@ -95,10 +95,6 @@ def logout(request):
     user.save()
     return Response({"detail": "Logged out!"})
 
-
-from sys import stderr
-
-
 def get_42_login(request):
     if not request.data.get("code"):
         return Response(
@@ -219,7 +215,7 @@ def create_guest(request):
     guest = User.objects.create()
     guest.username = f"noob_{guest.id}"
     guest.is_guest = True
-    guest.bio = "humain super cool ^^"
+    guest.bio = ""
     guest.save()
     token, created = Token.objects.get_or_create(user=guest)
     return Response(

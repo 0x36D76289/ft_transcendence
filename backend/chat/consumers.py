@@ -35,7 +35,7 @@ class ChatConsumer(WebsocketConsumer):
                     print(f"{sender.username} pov: {sender.username} block {other_p.username}", file=stderr)
                     pu = pong_data.get_pong_user(sender)
                     if pu:
-                        pu.send("notify", "notifications.chat.is_blocked")
+                        pu.send("notify-error", "notifications.chat.is_blocked")
                     raise Exception("user is blocked") 
         except Exception as e:
             print("found error", e, file=stderr)
@@ -68,7 +68,7 @@ class ChatConsumer(WebsocketConsumer):
             if UserBlock.objects.filter(uid1=other_p, uid2=sender).exists():
                 pu = pong_data.get_pong_user(sender)
                 if pu:
-                    pu.send("notify", "notifications.chat.blocked_you")
+                    pu.send("notify-error", "notifications.chat.blocked_you")
                 return
 
         for participant in conversation.participants.all():

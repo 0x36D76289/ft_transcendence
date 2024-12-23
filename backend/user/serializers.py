@@ -19,6 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
 	def update(self, instance, validated_data):
 		if validated_data.get('password'):
 			instance.set_password(validated_data['password'])
+		if instance.is_guest and instance.username != validated_data.get('username', instance.username):
+			raise serializers.ValidationError('guest users cannot change their username')
 		instance.username = validated_data.get('username', instance.username)
 		instance.bio = validated_data.get('bio', instance.bio)
 		if validated_data.get('pfp'):
