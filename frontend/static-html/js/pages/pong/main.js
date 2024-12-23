@@ -14,49 +14,90 @@ import { render_name } from "./render.js";
 
 export function render() {
   return `
-	<div class="page-container" id="pong-fullpage">
-        <!-- First Canvas Section -->
-        <div class="canvas-layout">
+  <div class="pong-page">
+    <div class="settings-panel" id="settings-container">
+      <h3>Game Settings</h3>
+    </div>
 
-            <!-- Main Canvas -->
-			<canvas class="canvas" id="game">
-	  			you're not supposed to see this
-	  		</canvas>
-
-            <!-- Left Buttons -->
-            <div class="button-container left-buttons">
-                <button class="control-button" id="p1up">
-	  				<span class=material-icons>arrow_upward</span>
-	  			</button>
-                <button class="control-button" id="p1down">
-	  				<span class=material-icons>arrow_downward</span>
-	  			</button>
-            </div>
-
-            <!-- Right Buttons -->
-            <div class="button-container right-buttons">
-                <button class="control-button" id="p2up">
-	  				<span class=material-icons>arrow_upward</span>
-	  			</button>
-                <button class="control-button" id="p2down">
-	  				<span class=material-icons>arrow_downward</span>
-	  			</button>
-            </div>
-
-            <!-- Bottom Buttons -->
-            <div class="button-container bottom-buttons" id="bottom-flex">
-                <button class="pong-nav-button" id="queue-button">
-					${in_queue ? i18n.t("notifications.matchmaking.leave") : i18n.t("notifications.matchmaking.join")}
-				</button>
-                <button type="button" class="pong-nav-button" id="local-tournament">
-					${i18n.t("pong.local_tournament")}
-				</button>
-            </div>
+    <div class="pong-container">
+      <div class="game-header">
+        <h2 class="game-title">Pong</h2>
+        <div class="scores-container">
+          <div class="player-score">
+            <span class="player-name">Player 1 (W/S)</span>
+            <span class="score" id="score1">0</span>
+          </div>
+          <div class="player-score">
+            <span class="player-name">Player 2 (↑/↓)</span>
+            <span class="score" id="score2">0</span>
+          </div>
         </div>
-	<div class="page_container">
-	`;
-}
+      </div>
 
+      <div class="game-section">
+        <!-- Left Controls -->
+        <div class="controls controls-left">
+          <button class="control-btn up-btn" id="p1up">
+            <span class="material-icons">arrow_upward</span>
+          </button>
+          <button class="control-btn down-btn" id="p1down">
+            <span class="material-icons">arrow_downward</span>
+          </button>
+        </div>
+
+        <!-- Game Canvas -->
+        <div class="game-wrapper">
+          <div class="canvas-wrapper">
+            <canvas id="game">
+              You need a browser that supports HTML5 canvas to play this game.
+            </canvas>
+          </div>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="controls controls-right">
+          <button class="control-btn up-btn" id="p2up">
+            <span class="material-icons">arrow_upward</span>
+          </button>
+          <button class="control-btn down-btn" id="p2down">
+            <span class="material-icons">arrow_downward</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="game-actions" id="bottom-flex">
+        <button class="action-btn queue-btn" id="queue-button">
+          ${in_queue ? i18n.t("notifications.matchmaking.leave") : i18n.t("notifications.matchmaking.join")}
+        </button>
+        <button class="action-btn tournament-btn" id="local-tournament">
+          ${i18n.t("pong.local_tournament")}
+        </button>
+      </div>
+
+      <!-- New Chat Section -->
+      <div class="chat-section">
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be inserted here dynamically -->
+          </div>
+          <div class="chat-input-container">
+            <input 
+              type="text" 
+              class="chat-input" 
+              id="chat-input" 
+              placeholder="Type your message..."
+              maxlength="500"
+            >
+            <button class="send-button" id="send-message">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
 /**
  * @param {string} buttonname
  * @param {string} keyname
@@ -119,10 +160,35 @@ export async function init(options) {
 
   if (options?.game != undefined) {
     online_layout();
-    read_room(options.game);
   } else {
     offline_layout();
   }
+
+  // Chat functionality
+  // const chatInput = document.getElementById("chat-input");
+  // const sendButton = document.getElementById("send-message");
+  // const chatMessages = document.getElementById("chat-messages");
+
+  // if (chatInput && sendButton) {
+  //   const sendMessage = () => {
+  //     const message = chatInput.value.trim();
+  //     if (message) {
+  //       // Add message to chat
+  //       const messageElement = document.createElement("div");
+  //       messageElement.textContent = message;
+  //       chatMessages?.appendChild(messageElement);
+
+  //       // Clear input
+  //       chatInput.value = "";
+
+  //       // Scroll to bottom
+  //       chatMessages?.scrollTo(0, chatMessages.scrollHeight);
+  //     }
+  //   };
+
+  //   // Send on button click
+  //   sendButton.onclick = sendMessage;
+  // }
 }
 
 export async function unload() {

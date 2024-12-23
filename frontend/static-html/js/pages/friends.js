@@ -160,14 +160,14 @@ export async function init() {
   searchInput.addEventListener("keypress", async (event) => {
     if (event.key === "Enter") {
       await UserAPI.sendFriendRequest(searchInput.value);
-      popupSystem("info", i18n.t("friends.friend_request_sent"));
+      // popupSystem("info", i18n.t("friends.friend_request_sent"));
       await refreshFriends();
     }
   });
 
   addFriendBtn.addEventListener("click", async () => {
     await UserAPI.sendFriendRequest(searchInput.value);
-    popupSystem("info", i18n.t("friends.friend_request_sent"));
+    // popupSystem("info", i18n.t("friends.friend_request_sent"));
     await refreshFriends();
   });
 

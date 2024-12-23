@@ -1,116 +1,282 @@
-.pong-nav-button {
-  padding: var(--padding-s) var(--padding-m);
-  font-size: 0.3rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border: 3px solid var(--accent-color);
-  background: transparent;
-  color: var(--text-primary);
-  border-radius: 50rem;
-  cursor: pointer;
-  transition: var(--transition);
-  backdrop-filter: blur(var(--blur));
-}
-
-.pong-nav-button:hover {
-  background: var(--accent-gradient);
-  transform: scale(1.1);
-}
-
-.pong-nav-button:active {
-  transform: scale(1);
-}
-
-.game {
-	border: 1px solid #aaaaaa;
-	min-width: 600px;
-	max-width: 600px;
-	min-height: 450px;
-	max-height: 450px;
-}
-
-.hflex {
-	display: flex;
-	flex-direction: row;
-	flex-grow: 0;
-	flex-shrink: 0;
-	justify-content: space-around;
-	align-items: center;
-}
-
-.vflex {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 0;
-	flex-shrink: 0;
-	justify-content: space-around;
-	align-items: center;
-}
-
-.spacer {
-	/* min-width: var(--sidebar-width); */
-	min-height: 1rem;
-}
-
-.page-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.pong-page {
+    width: 100%;
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: var(--padding-m);
     box-sizing: border-box;
 }
 
-
-/* Canvas Section Layout */
-.canvas-layout {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+.settings-panel {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto var(--margin-m);
+    backdrop-filter: blur(var(--blur));
+    border-radius: 8px;
+    padding: var(--padding-m);
+    box-shadow: var(--card-shadow);
 }
 
-.canvas {
-	width: 40vw;
-	aspect-ratio: 4 / 3;
-    background-color: #555;
-    display: flex;
-    justify-content: center;
+.setting-container {
+    display: grid;
+    grid-template-columns: 1fr 120px 40px;
+    gap: var(--margin-s);
+    margin-bottom: var(--margin-s);
     align-items: center;
-    color: white;
-    font-size: 18px;
-    border-radius: 5px;
 }
 
-.button-container {
+.pong-container {
+    flex: 1;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: absolute;
-}
-
-.left-buttons, .right-buttons {
     flex-direction: column;
-    height: 70%;
-    top: 15%;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: var(--margin-m);
 }
 
-.left-buttons {
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--margin-m);
+    padding: var(--padding-s);
+}
+
+.scores-container {
+    display: flex;
+    gap: var(--margin-xl);
+    flex-wrap: wrap;
+}
+
+.game-section {
+    display: flex;
+    gap: var(--margin-xl);
+    align-items: center;
+    justify-content: center;
+}
+
+.game-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 16/9;
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#game {
+    position: absolute;
+    top: 0;
     left: 0;
-    transform: translateX(-130%);
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    object-fit: contain;
 }
 
-.right-buttons {
-    right: 0;
-    transform: translateX(130%);
-}
-.bottom-buttons {
-    flex-direction: row;
-    width: 70%;
-    left: 15%;
-    bottom:0;
-    transform: translateY(130%);
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--margin-l);
 }
 
+.control-btn {
+    width: clamp(40px, 5vw, 56px);
+    height: clamp(40px, 5vw, 56px);
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 2px solid var(--accent-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.control-btn:hover {
+    background-color: var(--hover-bg);
+    transform: scale(1.05);
+}
+
+.control-btn:active {
+    background-color: var(--active-bg);
+    transform: scale(0.95);
+}
+
+.game-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--margin-l);
+    padding: var(--padding-m);
+    flex-wrap: wrap;
+    margin-bottom: var(--margin-m);
+}
+
+.action-btn {
+    padding: var(--padding-s) var(--padding-l);
+    backdrop-filter: blur(var(--blur));
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font: var(--pui);
+    transition: var(--transition);
+    min-width: 120px;
+    text-align: center;
+}
+
+.action-btn:hover {
+    background-color: var(--accent-hover);
+    transform: scale(1.05);
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Chat/Text Box Styles */
+.chat-section {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    /* background: var(--bg-secondary); */
+
+    backdrop-filter: blur(var(--blur));
+    border-radius: 8px;
+    padding: var(--padding-m);
+    box-shadow: var(--card-shadow);
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--margin-m);
+}
+
+.chat-messages {
+    height: 200px;
+    overflow-y: auto;
+    padding: var(--padding-s);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.chat-input-container {
+    display: flex;
+    gap: var(--margin-s);
+}
+
+.chat-input {
+    flex: 1;
+    padding: var(--padding-s);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font: var(--pui);
+    backdrop-filter: blur(var(--blur));
+    background: var(--bg-secondary);
+}
+
+.chat-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.send-button {
+    padding: var(--padding-s) var(--padding-l);
+    backdrop-filter: blur(var(--blur));
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font: var(--pui);
+    transition: var(--transition);
+}
+
+.send-button:hover {
+    background-color: var(--accent-hover);
+    transform: scale(1.05);
+}
+
+.send-button:active {
+    transform: scale(0.95);
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .pong-page {
+        padding: var(--padding-s);
+    }
+
+    .game-wrapper {
+        aspect-ratio: 4/3;
+    }
+
+    .game-section {
+        flex-direction: column;
+        gap: var(--margin-m);
+    }
+
+    .controls {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .game-header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .setting-container {
+        grid-template-columns: 1fr 80px 40px;
+    }
+
+    .chat-section {
+        padding: var(--padding-s);
+    }
+
+    .chat-messages {
+        height: 150px;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    .game-wrapper {
+        aspect-ratio: 1/1;
+    }
+
+    .control-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .game-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .action-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .chat-input-container {
+        flex-direction: column;
+    }
+
+    .send-button {
+        width: 100%;
+    }
+}

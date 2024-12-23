@@ -9,28 +9,28 @@ let socket = null;
 
 export function render() {
 	return `
-	<div class="messages-container">
-		<div class="conversations-list" id="conversations-list">
-		</div>
-		<div class="chat-window" id="chat-window">
-			<div class="chat-header">
-				<div id="chat-participants">
-				</div>
-			</div>
-			<div class="messages-list" id="messages-list">
-			</div>
-			<div class="message-input-container">
-				<textarea id="message-input" placeholder="${i18n.t('messages.type_message')}" rows="3"></textarea>
-				<button id="send-message-btn" class="btn-accent">
-					<i class="material-icons">send</i>
-				</button>
-				<button id="invite-match-btn" class="btn-accent">
-					${i18n.t('messages.invite_to_match')}
-				</button>
-			</div>
-		</div>
-	</div>
-	`;
+    <div class="messages-container">
+        <div class="conversations-list" id="conversations-list">
+        </div>
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <div id="chat-participants">
+                </div>
+            </div>
+            <div class="messages-list" id="messages-list">
+            </div>
+            <div class="message-input-container">
+                <textarea id="message-input" placeholder="${i18n.t('messages.type_message')}" rows="3"></textarea>
+                <button id="send-message-btn" class="btn-accent">
+                    <i class="material-icons">send</i>
+                </button>
+                <button id="invite-match-btn" class="btn-accent">
+                    ${i18n.t('messages.invite_to_match')}
+                </button>
+            </div>
+        </div>
+    </div>
+    `;
 }
 
 export async function init() {
@@ -46,24 +46,43 @@ export async function init() {
 	async function loadConversations() {
 		try {
 			const conversations = await ChatAPI.getConversations();
-			conversationsList.innerHTML = conversations.map(conv => {
-				const otherUser = conv.participants[0];
+			conversationsList.innerHTML = '';
 
-				if (otherUser === undefined) {
-					return '';
-				}
-				return `
-					<div class="conversation-item" data-conv-id="${conv.id}">
-						<button class="avatar-button" data-username="${otherUser.username}">
-							<img src="/media/${otherUser.pfp}" alt="${otherUser.username}" class="avatar">
-						</button>
-						<div class="conversation-details">
-							<h4>${otherUser.username}</h4>
-							<p class="last-message">${conv.last_message?.content || ''}</p>
-						</div>
-					</div>
-				`;
-			}).join('');
+			conversations.forEach(conv => {
+				const otherUser = conv.participants[0];
+				if (!otherUser) return;
+
+				const conversationItem = document.createElement('div');
+				conversationItem.classList.add('conversation-item');
+				conversationItem.dataset.convId = conv.id;
+
+				const avatarButton = document.createElement('button');
+				avatarButton.classList.add('avatar-button');
+				avatarButton.dataset.username = otherUser.username;
+
+				const avatarImg = document.createElement('img');
+				avatarImg.src = `/media/${otherUser.pfp}`;
+				avatarImg.alt = otherUser.username;
+				avatarImg.classList.add('avatar');
+				avatarButton.appendChild(avatarImg);
+
+				const conversationDetails = document.createElement('div');
+				conversationDetails.classList.add('conversation-details');
+
+				const usernameHeading = document.createElement('h4');
+				usernameHeading.textContent = otherUser.username;
+				conversationDetails.appendChild(usernameHeading);
+
+				const lastMessageElement = document.createElement('p');
+				lastMessageElement.classList.add('last-message');
+				lastMessageElement.textContent = conv.last_message?.content || '';
+				conversationDetails.appendChild(lastMessageElement);
+
+				conversationItem.appendChild(avatarButton);
+				conversationItem.appendChild(conversationDetails);
+
+				conversationsList.appendChild(conversationItem);
+			});
 
 			document.querySelectorAll('.conversation-item').forEach(item => {
 				item.addEventListener('click', () => {
@@ -81,7 +100,7 @@ export async function init() {
 
 			document.querySelectorAll('.avatar-button').forEach(button => {
 				button.addEventListener('click', (e) => {
-					e.stopPropagation(); // Empêche le déclenchement de l'événement conversation-item
+					e.stopPropagation();
 					showProfilePreview(button.dataset.username);
 				});
 			});
@@ -95,14 +114,25 @@ export async function init() {
 			const conversation = await ChatAPI.getConversation(conversationId);
 
 			// Dynamic Chat Header
-			chatParticipants.innerHTML = conversation.participants.map(participant => `
-				<div class="chat-participant">
-					<button class="avatar-button" data-username="${participant.username}">
-						<img src="/media/${participant.pfp}" alt="${participant.username}" class="avatar">
-					</button>
-				</div>
-			`).join('');     
-	
+			chatParticipants.innerHTML = ''; // Clear existing participants
+			conversation.participants.forEach(participant => {
+				const chatParticipant = document.createElement('div');
+				chatParticipant.classList.add('chat-participant');
+
+				const avatarButton = document.createElement('button');
+				avatarButton.classList.add('avatar-button');
+				avatarButton.dataset.username = participant.username;
+
+				const avatarImg = document.createElement('img');
+				avatarImg.src = `/media/${participant.pfp}`;
+				avatarImg.alt = participant.username;
+				avatarImg.classList.add('avatar');
+
+				avatarButton.appendChild(avatarImg);
+				chatParticipant.appendChild(avatarButton);
+				chatParticipants.appendChild(chatParticipant);
+			});
+
 			chatParticipants.querySelectorAll('.avatar-button').forEach(button => {
 				button.addEventListener('click', () => {
 					showProfilePreview(button.dataset.username);
@@ -110,24 +140,39 @@ export async function init() {
 			});
 
 			// Messages with Profile Pictures
-			messagesList.innerHTML = conversation.message_set.reverse().map(message => {
+			messagesList.innerHTML = '';
+			conversation.message_set.reverse().forEach(message => {
 				const sender = conversation.participants.find(p => p.username === message.sender);
 				const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
 
-				return `
-					<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
-							<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
-							<div class="message-content-wrapper">
-									<div class="message-content">
-										${message.content}
-									</div>
-									<div class="message-time">
-										${new Date(message.time_created).toLocaleTimeString()}
-									</div>
-							</div>
-					</div>
-					`;
-			}).join('');
+				const messageElement = document.createElement('div');
+				messageElement.classList.add('messages');
+				messageElement.classList.add(message.sender === getUsername() ? 'sent' : 'received');
+
+				const avatarImg = document.createElement('img');
+				avatarImg.src = `/media/${senderPfp}`;
+				avatarImg.alt = message.sender;
+				avatarImg.classList.add('message-avatar');
+
+				const messageContentWrapper = document.createElement('div');
+				messageContentWrapper.classList.add('message-content-wrapper');
+
+				const messageContent = document.createElement('div');
+				messageContent.classList.add('message-content');
+				messageContent.textContent = message.content;
+
+				const messageTime = document.createElement('div');
+				messageTime.classList.add('message-time');
+				messageTime.textContent = new Date(message.time_created).toLocaleTimeString();
+
+				messageContentWrapper.appendChild(messageContent);
+				messageContentWrapper.appendChild(messageTime);
+
+				messageElement.appendChild(avatarImg);
+				messageElement.appendChild(messageContentWrapper);
+
+				messagesList.appendChild(messageElement);
+			});
 			messagesList.scrollTop = messagesList.scrollHeight;
 		} catch (error) {
 			console.error('Failed to load conversation:', error);
@@ -142,9 +187,7 @@ export async function init() {
 		}
 
 		console.log(messageInput.value);
-		socket.send(JSON.stringify({
-			message: messageInput.value
-		}));
+		socket.send(JSON.stringify({ message: messageInput.value }));
 		messageInput.value = '';
 	}
 
@@ -164,19 +207,33 @@ export async function init() {
 			const sender = conversation.participants.find(p => p.username === message.sender);
 			const senderPfp = sender ? sender.pfp : 'default_pfp.svg';
 
-			messagesList.innerHTML += `
-				<div class="messages ${message.sender === getUsername() ? 'sent' : 'received'}">
-						<img src="/media/${senderPfp}" alt="${message.sender}" class="message-avatar">
-						<div class="message-content-wrapper">
-								<div class="message-content">
-										${message.content}
-								</div>
-								<div class="message-time">
-										${new Date(message.time_created).toLocaleTimeString()}
-								</div>
-						</div>
-				</div>
-			`;
+			const messageElement = document.createElement('div');
+			messageElement.classList.add('messages');
+			messageElement.classList.add(message.sender === getUsername() ? 'sent' : 'received');
+
+			const avatarImg = document.createElement('img');
+			avatarImg.src = `/media/${senderPfp}`;
+			avatarImg.alt = message.sender;
+			avatarImg.classList.add('message-avatar');
+
+			const messageContentWrapper = document.createElement('div');
+			messageContentWrapper.classList.add('message-content-wrapper');
+
+			const messageContent = document.createElement('div');
+			messageContent.classList.add('message-content');
+			messageContent.textContent = message.content;
+
+			const messageTime = document.createElement('div');
+			messageTime.classList.add('message-time');
+			messageTime.textContent = new Date(message.time_created).toLocaleTimeString();
+
+			messageContentWrapper.appendChild(messageContent);
+			messageContentWrapper.appendChild(messageTime);
+
+			messageElement.appendChild(avatarImg);
+			messageElement.appendChild(messageContentWrapper);
+
+			messagesList.appendChild(messageElement);
 			messagesList.scrollTop = messagesList.scrollHeight;
 		};
 	}

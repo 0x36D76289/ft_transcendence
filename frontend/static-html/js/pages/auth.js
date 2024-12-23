@@ -39,7 +39,7 @@ export function render() {
 			<button type="submit" class="auth-button">${i18n.t('auth.register.submit')}</button>
 		</form>
 		<p>${i18n.t('auth.register.has_account')} <a id="showLogin">${i18n.t('auth.register.login')}</a></p>
-	</div>
+	</div>w
 </div>
 	`;
 }

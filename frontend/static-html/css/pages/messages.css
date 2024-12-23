@@ -216,6 +216,7 @@
 @media screen and (max-width: 768px) {
   .messages-container {
     flex-direction: column;
+    height: calc(100vh - var(--mobile-height));
   }
 
   .conversations-list {

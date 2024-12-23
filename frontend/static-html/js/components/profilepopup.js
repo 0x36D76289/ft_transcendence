@@ -52,7 +52,7 @@ function createProfilePreviewPopup(userData, userStats, userHistory) {
 				<span class="stat-label">${i18n.t("user.games_played")}</span>
 			  </div>
 			  <div class="stat-item">
-				<span class="stat-value">${userStats.win_rate}%</span>
+				<span class="stat-value">${userStats.win_rate.toFixed(2)}%</span>
 				<span class="stat-label">${i18n.t("user.win_rate")}</span>
 			  </div>
 			</div>

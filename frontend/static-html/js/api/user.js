@@ -8,7 +8,7 @@ export class UserAPI {
 		const responseData = await response.json();
 		console.log(responseData);
 		if (!response.ok) {
-			// popupSystem('error', responseData.detail || i18n.t('notifications.error'));
+			popupSystem('error', responseData.detail || i18n.t('notifications.error'));
 			console.warn('API Error:', responseData);
 			return;
 		}
@@ -195,7 +195,7 @@ export class UserAPI {
 	}
 
 	// Delete user account
-	static async delete_account() {
+	static async deleteAccount() {
 		const response = await fetch(`${API_URL}/user/delete_user`, {
 			method: 'POST',
 			headers: this._getHeaders()
