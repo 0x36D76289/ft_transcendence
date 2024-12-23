@@ -46,7 +46,7 @@ export function render() {
             <!-- Bottom Buttons -->
             <div class="button-container bottom-buttons" id="bottom-flex">
                 <button class="pong-nav-button" id="queue-button">
-					${in_queue ? i18n.t("notifications.matchmaking.leave") : i18n.t("notifications.matchmaking.join")}
+					${in_queue ? i18n.t("home.leave_mm") : i18n.t("home.join_mm")}
 				</button>
                 <button type="button" class="pong-nav-button" id="local-tournament">
 					${i18n.t("pong.local_tournament")}
