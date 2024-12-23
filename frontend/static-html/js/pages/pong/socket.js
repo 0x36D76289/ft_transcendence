@@ -35,7 +35,7 @@ function game_url(room_name) {
 }
 
 /** @type {WebSocket} */
-export var game_sock = new WebSocket(game_url("test"));
+export var game_sock;
 
 /**
  * @param {Object} object
@@ -47,7 +47,7 @@ export function read_room(object) {
   if (room === "bot") {
     start_online_bot_game();
   }
-  game_sock.close();
+  if (game_sock !== undefined) game_sock.close();
   game_sock = new WebSocket(game_url(room));
   game_sock.onmessage = game_sock_receive;
   console.log(

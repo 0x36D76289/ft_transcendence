@@ -67,7 +67,7 @@ export function render() {
 
       <div class="game-actions" id="bottom-flex">
         <button class="action-btn queue-btn" id="queue-button">
-          ${in_queue ? i18n.t("notifications.matchmaking.leave") : i18n.t("notifications.matchmaking.join")}
+          ${in_queue ? i18n.t("home.leave_mm") : i18n.t("home.join_mm")}
         </button>
         <button class="action-btn tournament-btn" id="local-tournament">
           ${i18n.t("pong.local_tournament")}
@@ -81,10 +81,10 @@ export function render() {
             <!-- Messages will be inserted here dynamically -->
           </div>
           <div class="chat-input-container">
-            <input 
-              type="text" 
-              class="chat-input" 
-              id="chat-input" 
+            <input
+              type="text"
+              class="chat-input"
+              id="chat-input"
               placeholder="Type your message..."
               maxlength="500"
             >
@@ -160,6 +160,7 @@ export async function init(options) {
 
   if (options?.game != undefined) {
     online_layout();
+    read_room(options.game);
   } else {
     offline_layout();
   }
@@ -196,5 +197,5 @@ export async function unload() {
   window.removeEventListener("keyup", onkeyup);
   window.removeEventListener("resize", resize);
   if (interval) clearInterval(interval);
-  game_sock.close();
+  if (game_sock !== undefined) game_sock.close();
 }

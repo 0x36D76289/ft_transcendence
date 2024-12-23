@@ -95,7 +95,7 @@ function three_part_translate(str) {
  * @returns {void}
  */
 function read_sock(object) {
-  console.log("received ", object);
+  // console.log("received ", object);
   let inner;
   try {
     inner = JSON.parse(object.data);
