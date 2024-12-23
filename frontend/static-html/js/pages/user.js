@@ -132,7 +132,6 @@ export async function init() {
 				gamePlayers.classList.add('game-players');
 
 				const player1 = document.createElement('span');
-				player1.classList.add(game.p1_score > game.p2_score ? 'player-self' : '');
 				player1.textContent = game.p1.username;
 
 				const vs = document.createElement('span');
@@ -140,8 +139,13 @@ export async function init() {
 				vs.textContent = 'vs';
 
 				const player2 = document.createElement('span');
-				player2.classList.add(game.p2_score > game.p1_score ? 'player-self' : '');
 				player2.textContent = game.p2.username;
+
+				if (game.p1_score > game.p2_score) {
+					player1.classList.add('player-self');
+				} else {
+					player2.classList.add('player-self');
+				}
 
 				gamePlayers.appendChild(player1);
 				gamePlayers.appendChild(vs);
